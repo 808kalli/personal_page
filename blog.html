@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elias — Blog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #111118;
+  --bg-card: #16161e;
+  --bg-card-hover: #1c1c28;
+  --text-primary: #e8e6e3;
+  --text-secondary: #8a8a9a;
+  --text-muted: #55556a;
+  --accent: #00e5a0;
+  --accent-dim: rgba(0, 229, 160, 0.15);
+  --accent-glow: rgba(0, 229, 160, 0.3);
+  --accent-secondary: #7b61ff;
+  --accent-secondary-dim: rgba(123, 97, 255, 0.15);
+  --border: #222233;
+  --border-subtle: #1a1a2a;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg-secondary); }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 80px clamp(24px, 5vw, 80px) 60px;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.back-link {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--accent); }
+
+.page-header { margin-bottom: 48px; }
+
+.page-title {
+  font-family: var(--mono);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.page-title .bracket { color: var(--accent); }
+
+.page-subtitle {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── post list ── */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 760px;
+}
+
+/* ────────────────────────────────────────
+   TO ADD A NEW POST:
+   Copy one .post-card block, update the
+   date, tags, title, preview text, and
+   the onclick modal id. Then add a
+   matching modal at the bottom.
+   ──────────────────────────────────────── */
+
+.post-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px 28px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 24px;
+  align-items: start;
+}
+
+.post-card:hover {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+  transform: translateX(4px);
+}
+
+.post-card-left h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.post-card-left p {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.post-tag {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+
+.post-tag.purple {
+  color: var(--accent-secondary);
+  background: var(--accent-secondary-dim);
+}
+
+.post-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.post-date {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.post-open-hint {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+.post-card:hover .post-open-hint { color: var(--accent); }
+
+/* ── empty state ── */
+.empty-state {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 40px 0;
+}
+
+/* ── modal ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 40px;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-card);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-family: var(--mono);
+  font-size: 1.3rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--accent); }
+
+.modal-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.modal-tag {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 2px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.modal-tag.purple {
+  color: var(--accent-secondary);
+  background: var(--accent-secondary-dim);
+}
+
+.modal h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  letter-spacing: -0.2px;
+}
+
+.modal-date {
+  font-family: var(--mono);
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.modal-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+.modal-body p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.85;
+  margin-bottom: 18px;
+}
+
+.modal-body p:last-child { margin-bottom: 0; }
+
+.modal-body h4 {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 24px;
+  margin-bottom: 10px;
+}
+
+.modal-body code {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--accent);
+}
+
+@media (max-width: 600px) {
+  .post-card {
+    grid-template-columns: 1fr;
+  }
+  .post-card-right {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <a href="index.html" class="back-link">← back to main</a>
+  <h1 class="page-title"><span class="bracket">&lt;</span>blog<span class="bracket">&gt;</span></h1>
+  <p class="page-subtitle">// notes, writeups, and things I found interesting</p>
+</div>
+
+<!-- ════════════════════════════════════
+     POST LIST
+     To add a new post:
+     1. Copy a .post-card div below and
+        paste it at the top of .post-list
+     2. Update date, tags, title, preview
+     3. Set a unique onclick id like
+        onclick="openModal('modal-slug')"
+     4. Add a matching modal at the bottom
+     ════════════════════════════════════ -->
+<div class="post-list">
+
+  <!-- ── POST: example entry ── -->
+  <div class="post-card" onclick="openModal('modal-vla-distillation')">
+    <div class="post-card-left">
+      <div class="post-tags">
+        <span class="post-tag">robotics</span>
+        <span class="post-tag purple">VLA</span>
+      </div>
+      <h3>What I learned distilling a VLA model for 6 months</h3>
+      <p>Reflections on the practical difficulties of teacher-student distillation for manipulation policies — what worked, what didn't, and what I'd do differently.</p>
+    </div>
+    <div class="post-card-right">
+      <div class="post-date">Mar 2026</div>
+      <div class="post-open-hint">↗ read</div>
+    </div>
+  </div>
+
+  <!-- ── ADD NEW POSTS ABOVE THIS LINE ── -->
+
+</div>
+
+<!-- ════════════════════════════════════
+     MODALS
+     To add a new post modal:
+     Copy a modal-overlay block, give it
+     the matching id, and fill in the body.
+     ════════════════════════════════════ -->
+
+<div class="modal-overlay" id="modal-vla-distillation" onclick="closeModalOnBg(event,'modal-vla-distillation')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-vla-distillation')">×</button>
+    <div class="modal-tags">
+      <span class="modal-tag">robotics</span>
+      <span class="modal-tag purple">VLA</span>
+    </div>
+    <h2>What I learned distilling a VLA model for 6 months</h2>
+    <div class="modal-date">March 2026</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        Spending six months making a large Vision-Language-Action model smaller taught me a surprising amount — mostly about how fragile these systems are when you start pulling them apart.
+      </p>
+      <p>
+        The basic setup sounds clean: take a large VLA teacher, supervise a smaller student with a mix of behavioural cloning and feature-level distillation, and hope the student picks up the important stuff. In practice it's messier. Feature alignment between architectures of different sizes is not obvious — matching layers naively leads to the student memorising representations that are locally correct but globally inconsistent.
+      </p>
+      <p>
+        What helped most was a staged training curriculum: first warm up the student on pure behavioural cloning, then introduce distillation losses progressively. Jumping straight into joint training made the student collapse to imitating the teacher's activations without understanding the task.
+      </p>
+      <p>
+        LoRA for fine-tuning the student backbone was the right call — full fine-tuning diverged quickly on the small LIBERO datasets. The adapter ranks needed careful tuning per module; attention layers wanted lower rank than feed-forward layers.
+      </p>
+      <p>
+        Long-horizon tasks exposed the main remaining gap. The student performs well on short, atomic operations but accumulates errors over sequences. This is the classic compounding error problem under behavioural cloning, and distillation doesn't fix it — it just inherits the teacher's same failure mode at lower cost.
+      </p>
+      <h4>// what I'd do differently</h4>
+      <p>
+        Start with a much simpler student architecture and only scale up if needed. The pressure to match the teacher's design biased me toward an unnecessarily similar structure. Also: instrument everything from day one. Loss curves lie; per-task success rates tell the real story.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD NEW MODALS ABOVE THIS LINE ── -->
+
+<script>
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnBg(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => {
+      m.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  }
+});
+</script>
+
+</body>
+</html>

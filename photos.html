@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elias — Pictures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #111118;
+  --bg-card: #16161e;
+  --bg-card-hover: #1c1c28;
+  --text-primary: #e8e6e3;
+  --text-secondary: #8a8a9a;
+  --text-muted: #55556a;
+  --accent: #00e5a0;
+  --accent-dim: rgba(0, 229, 160, 0.15);
+  --accent-glow: rgba(0, 229, 160, 0.3);
+  --border: #222233;
+  --border-subtle: #1a1a2a;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg-secondary); }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 80px clamp(24px, 5vw, 80px) 60px;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── header ── */
+.page-header {
+  margin-bottom: 48px;
+}
+
+.back-link {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--accent); }
+
+.page-title {
+  font-family: var(--mono);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.page-title .bracket { color: var(--accent); }
+
+.page-subtitle {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── folder tabs ── */
+.folder-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.folder-tab {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  padding: 8px 18px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.folder-tab:hover,
+.folder-tab.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ── gallery grid ── */
+.gallery {
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.gallery.active { display: grid; }
+
+.gallery-item {
+  position: relative;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.gallery-item:hover {
+  border-color: var(--accent);
+  transform: scale(1.01);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.3s;
+}
+
+.gallery-item .img-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 6px 10px;
+  background: rgba(10,10,15,0.8);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gallery-item:hover .img-label { opacity: 1; }
+
+/* empty folder placeholder */
+.empty-folder {
+  display: none;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 40px 0;
+}
+.empty-folder.active { display: block; }
+
+/* ── lightbox ── */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox.open { display: flex; }
+
+.lightbox img {
+  max-width: 90vw;
+  max-height: 88vh;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 24px;
+  right: 32px;
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.lightbox-close:hover { color: var(--accent); }
+
+.lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--mono);
+  font-size: 1.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 12px;
+  transition: color 0.2s;
+  user-select: none;
+}
+.lightbox-nav:hover { color: var(--accent); }
+.lightbox-nav.prev { left: 24px; }
+.lightbox-nav.next { right: 24px; }
+
+.lightbox-caption {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <a href="index.html" class="back-link">← back to main</a>
+  <h1 class="page-title"><span class="bracket">&lt;</span>pictures<span class="bracket">&gt;</span></h1>
+  <p class="page-subtitle">// add images to photos/ subfolders to populate these galleries</p>
+</div>
+
+<div class="folder-tabs">
+  <button class="folder-tab active" onclick="showFolder('wallpapers', this)">_wallpapers</button>
+  <button class="folder-tab" onclick="showFolder('webcam', this)">_webcam</button>
+  <button class="folder-tab" onclick="showFolder('misc', this)">_misc</button>
+</div>
+
+<!-- wallpapers -->
+<div class="gallery active" id="gallery-wallpapers">
+  <div class="gallery-item" onclick="openLightbox('photos/wallpapers/1174531.jpg', 0, 'wallpapers')">
+    <img src="photos/wallpapers/1174531.jpg" alt="wallpaper" loading="lazy">
+    <div class="img-label">1174531.jpg</div>
+  </div>
+  <div class="gallery-item" onclick="openLightbox('photos/wallpapers/clay-banks-u27Rrbs9Dwc-unsplash.jpg', 1, 'wallpapers')">
+    <img src="photos/wallpapers/clay-banks-u27Rrbs9Dwc-unsplash.jpg" alt="wallpaper" loading="lazy">
+    <div class="img-label">clay-banks-unsplash.jpg</div>
+  </div>
+  <div class="gallery-item" onclick="openLightbox('photos/wallpapers/jupiter-comet.jpeg', 2, 'wallpapers')">
+    <img src="photos/wallpapers/jupiter-comet.jpeg" alt="jupiter comet" loading="lazy">
+    <div class="img-label">jupiter-comet.jpeg</div>
+  </div>
+  <div class="gallery-item" onclick="openLightbox('photos/wallpapers/977477.png', 3, 'wallpapers')">
+    <img src="photos/wallpapers/977477.png" alt="wallpaper" loading="lazy">
+    <div class="img-label">977477.png</div>
+  </div>
+  <div class="gallery-item" onclick="openLightbox('photos/wallpapers/bluedot.jpg', 4, 'wallpapers')">
+    <img src="photos/wallpapers/bluedot.jpg" alt="pale blue dot" loading="lazy">
+    <div class="img-label">bluedot.jpg</div>
+  </div>
+</div>
+
+<!-- webcam -->
+<div class="gallery" id="gallery-webcam">
+  <div class="gallery-item" onclick="openLightbox('photos/webcam/2026-01-15-001021.jpg', 0, 'webcam')">
+    <img src="photos/webcam/2026-01-15-001021.jpg" alt="webcam" loading="lazy">
+    <div class="img-label">2026-01-15.jpg</div>
+  </div>
+</div>
+
+<!-- misc -->
+<div class="gallery" id="gallery-misc">
+  <div class="gallery-item" onclick="openLightbox('photos/misc/r2d2.png', 0, 'misc')">
+    <img src="photos/misc/r2d2.png" alt="r2d2" loading="lazy">
+    <div class="img-label">r2d2.png</div>
+  </div>
+  <div class="gallery-item" onclick="openLightbox('photos/misc/r2-d2.png', 1, 'misc')">
+    <img src="photos/misc/r2-d2.png" alt="r2-d2" loading="lazy">
+    <div class="img-label">r2-d2.png</div>
+  </div>
+</div>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightboxOnBg(event)">
+  <span class="lightbox-close" onclick="closeLightbox()">×</span>
+  <span class="lightbox-nav prev" onclick="navLightbox(-1)">‹</span>
+  <img src="" alt="" id="lightboxImg">
+  <span class="lightbox-nav next" onclick="navLightbox(1)">›</span>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<script>
+// folder data — src arrays per folder, populated from HTML
+const folders = {
+  wallpapers: [
+    'photos/wallpapers/1174531.jpg',
+    'photos/wallpapers/clay-banks-u27Rrbs9Dwc-unsplash.jpg',
+    'photos/wallpapers/jupiter-comet.jpeg',
+    'photos/wallpapers/977477.png',
+    'photos/wallpapers/bluedot.jpg',
+  ],
+  webcam: [
+    'photos/webcam/2026-01-15-001021.jpg',
+  ],
+  misc: [
+    'photos/misc/r2d2.png',
+    'photos/misc/r2-d2.png',
+  ],
+};
+
+let currentFolder = 'wallpapers';
+let currentIndex = 0;
+
+function showFolder(name, btn) {
+  document.querySelectorAll('.gallery').forEach(g => g.classList.remove('active'));
+  document.querySelectorAll('.folder-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('gallery-' + name).classList.add('active');
+  btn.classList.add('active');
+  currentFolder = name;
+}
+
+function openLightbox(src, idx, folder) {
+  currentFolder = folder;
+  currentIndex = idx;
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  const cap = document.getElementById('lightboxCaption');
+  img.src = src;
+  cap.textContent = src.split('/').pop();
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeLightboxOnBg(e) {
+  if (e.target === document.getElementById('lightbox')) closeLightbox();
+}
+
+function navLightbox(dir) {
+  const imgs = folders[currentFolder];
+  currentIndex = (currentIndex + dir + imgs.length) % imgs.length;
+  const src = imgs[currentIndex];
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxCaption').textContent = src.split('/').pop();
+}
+
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowRight') navLightbox(1);
+  if (e.key === 'ArrowLeft') navLightbox(-1);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elias — Publications & Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #111118;
+  --bg-card: #16161e;
+  --bg-card-hover: #1c1c28;
+  --text-primary: #e8e6e3;
+  --text-secondary: #8a8a9a;
+  --text-muted: #55556a;
+  --accent: #00e5a0;
+  --accent-dim: rgba(0, 229, 160, 0.15);
+  --accent-glow: rgba(0, 229, 160, 0.3);
+  --accent-secondary: #7b61ff;
+  --accent-secondary-dim: rgba(123, 97, 255, 0.15);
+  --border: #222233;
+  --border-subtle: #1a1a2a;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg-secondary); }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 80px clamp(24px, 5vw, 80px) 60px;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.back-link {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--accent); }
+
+.page-header { margin-bottom: 48px; }
+
+.page-title {
+  font-family: var(--mono);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.page-title .bracket { color: var(--accent); }
+
+.page-subtitle {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── section label ── */
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 16px;
+  margin-top: 48px;
+}
+.section-label:first-of-type { margin-top: 0; }
+
+/* ── cards grid ── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.cards-grid.full { grid-template-columns: 1fr; }
+
+.research-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.research-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.research-card:hover {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,229,160,0.07);
+}
+
+.research-card:hover::before { opacity: 1; }
+
+.card-tag {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 3px 10px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.card-tag.purple {
+  color: var(--accent-secondary);
+  background: var(--accent-secondary-dim);
+}
+
+.research-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+}
+
+.research-card p {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.card-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.card-tech span {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+  padding: 3px 9px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+.card-open-hint {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  transition: color 0.2s;
+}
+.research-card:hover .card-open-hint { color: var(--accent); }
+
+/* ── modal ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 40px;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-card);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-family: var(--mono);
+  font-size: 1.3rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--accent); }
+
+.modal-tag {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 3px 10px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modal-tag.purple {
+  color: var(--accent-secondary);
+  background: var(--accent-secondary-dim);
+}
+
+.modal h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+
+.modal-meta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.modal-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 24px 0;
+}
+
+.modal-body p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.modal-body p:last-child { margin-bottom: 0; }
+
+.modal-body h4 {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  margin-top: 24px;
+}
+
+.modal-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.modal-tech span {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+.modal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 8px 18px;
+  border-radius: 6px;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+.modal-link:hover { background: var(--accent-dim); }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <a href="index.html" class="back-link">← back to main</a>
+  <h1 class="page-title"><span class="bracket">&lt;</span>publications<span class="bracket">&gt;</span></h1>
+  <p class="page-subtitle">// thesis and papers</p>
+</div>
+
+<div class="section-label">// papers & thesis</div>
+<div class="cards-grid">
+
+  <div class="research-card" onclick="openModal('modal-thesis')">
+    <span class="card-tag">diploma thesis</span>
+    <h3>Teacher-Student Distillation for Efficient Deployment of VLA Models in Robotic Manipulation</h3>
+    <p>Diploma Thesis, National Technical University of Athens (2026). Supervised by Prof. Panayiotis Tsanakas (NTUA) and Dr. Vasileios Balntas (University of Oxford).</p>
+    <div class="card-tech">
+      <span>PyTorch</span><span>LoRA</span><span>LIBERO</span><span>HuggingFace</span><span>VLA Models</span>
+    </div>
+    <div class="card-open-hint">↗ read more</div>
+  </div>
+
+  <div class="research-card" onclick="openModal('modal-interspeech')">
+    <span class="card-tag purple">in submission</span>
+    <h3>All Interactions Matter: Modality-preserving Deep Fusion for Multimodal Sentiment Analysis</h3>
+    <p>Elias Kallioras, Nikolos Xiros, et al. Manuscript in submission — Interspeech 2026.</p>
+    <div class="card-tech">
+      <span>Multimodal Learning</span><span>Sentiment Analysis</span><span>Deep Fusion</span>
+    </div>
+    <div class="card-open-hint">↗ read more</div>
+  </div>
+
+</div>
+
+<!-- ── Modals ── -->
+
+<div class="modal-overlay" id="modal-thesis" onclick="closeModalOnBg(event, 'modal-thesis')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-thesis')">×</button>
+    <span class="modal-tag">diploma thesis</span>
+    <h2>Teacher-Student Distillation for Efficient Deployment of VLA Models in Robotic Manipulation</h2>
+    <div class="modal-meta">
+      Elias Kallioras · NTUA School of ECE · Feb 2026<br>
+      Supervised by Prof. Panayiotis Tsanakas (NTUA) and Dr. Vasileios Balntas (University of Oxford)
+    </div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        Vision-Language-Action (VLA) models have demonstrated strong generalisation to novel manipulation tasks by grounding language instructions in visual observations. However, their size makes real-time deployment on robotic hardware impractical. This thesis investigates whether teacher-student knowledge distillation can compress VLA models while preserving task performance.
+      </p>
+      <p>
+        I designed a distillation framework where a large, pre-trained VLA teacher supervises a smaller student model through a combination of behaviour cloning on demonstration data and intermediate feature-level distillation. Experiments were conducted on the LIBERO benchmark suite, covering a range of manipulation tasks with varying object diversity and instruction complexity.
+      </p>
+      <p>
+        The results show that the student model achieves competitive task success rates at a fraction of the inference cost, with LoRA-based fine-tuning enabling efficient adaptation. The work also identifies key failure modes — particularly in long-horizon tasks — that remain open challenges for distilled policies.
+      </p>
+      <h4>// tools & methods</h4>
+      <div class="modal-tech">
+        <span>PyTorch</span><span>LoRA</span><span>LIBERO</span><span>HuggingFace Transformers</span><span>VLA Models</span><span>CUDA</span><span>LaTeX</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-interspeech" onclick="closeModalOnBg(event, 'modal-interspeech')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-interspeech')">×</button>
+    <span class="modal-tag purple">in submission</span>
+    <h2>All Interactions Matter: Modality-preserving Deep Fusion for Multimodal Sentiment Analysis</h2>
+    <div class="modal-meta">
+      Elias Kallioras, Nikolos Xiros, et al. · Interspeech 2026 (in submission)
+    </div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        Multimodal sentiment analysis aims to infer sentiment from combinations of text, audio, and visual signals. Most existing fusion approaches lose modality-specific information in the process of cross-modal interaction, particularly when one modality dominates or when cross-modal attention is applied naively.
+      </p>
+      <p>
+        This work proposes a modality-preserving deep fusion architecture that explicitly maintains each modality's representation throughout the fusion process. By ensuring that individual modalities are not collapsed early, the model retains fine-grained signals from each input stream, which improves performance on ambiguous or noisy samples where all available cues must be leveraged.
+      </p>
+      <p>
+        The method is evaluated on standard multimodal sentiment benchmarks and shows consistent improvements over fusion baselines, especially on instances where cross-modal cues are complementary rather than redundant.
+      </p>
+      <h4>// tools & methods</h4>
+      <div class="modal-tech">
+        <span>Multimodal Learning</span><span>Sentiment Analysis</span><span>Deep Fusion</span><span>PyTorch</span><span>Transformers</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnBg(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => {
+      m.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  }
+});
+</script>
+
+</body>
+</html>

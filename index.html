@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elias — Robotics & AI Researcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   CSS VARIABLES & RESET
+   ═══════════════════════════════════════ */
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #111118;
+  --bg-card: #16161e;
+  --bg-card-hover: #1c1c28;
+  --text-primary: #e8e6e3;
+  --text-secondary: #8a8a9a;
+  --text-muted: #55556a;
+  --accent: #00e5a0;
+  --accent-dim: rgba(0, 229, 160, 0.15);
+  --accent-glow: rgba(0, 229, 160, 0.3);
+  --accent-secondary: #7b61ff;
+  --accent-secondary-dim: rgba(123, 97, 255, 0.15);
+  --border: #222233;
+  --border-subtle: #1a1a2a;
+  --mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+  --nav-height: 70px;
+  --section-padding: 100px 0;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-secondary);
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ═══════════════════════════════════════
+   CURSOR GLOW EFFECT
+   ═══════════════════════════════════════ */
+.cursor-glow {
+  position: fixed;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,229,160,0.09) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  transition: left 0.08s ease, top 0.08s ease;
+}
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(24px, 5vw, 80px);
+}
+
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+.nav-logo span {
+  color: var(--text-muted);
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.nav-links a::before {
+  content: '_';
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover::before {
+  color: var(--accent);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1001;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+/* ═══════════════════════════════════════
+   HERO SECTION
+   ═══════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(24px, 5vw, 80px);
+  position: relative;
+}
+
+.hero-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.4;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%);
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: clamp(40px, 6vw, 100px);
+  width: 100%;
+}
+
+.hero-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-pixel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+  transition: opacity 0.3s;
+  position: relative;
+}
+
+.hero-r2d2-wrap:hover {
+  opacity: 1;
+}
+
+/* ── pixel speech bubble ── */
+.hero-r2d2-wrap {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+.hero-bubble {
+  position: absolute;
+  bottom: 78%;
+  right: 88%;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.18s, transform 0.18s;
+  z-index: 10;
+}
+.hero-r2d2-wrap:hover .hero-bubble {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero-r2d2-wrap:hover .hero-r2d2 {
+  filter: drop-shadow(0 0 22px rgba(0,229,160,0.32));
+}
+
+.hero-r2d2 {
+  width: 240px;
+  height: auto;
+  filter: drop-shadow(0 0 18px rgba(0,229,160,0.18));
+  image-rendering: pixelated;
+}
+
+@media (max-width: 768px) {
+  .hero-inner {
+    flex-direction: column-reverse;
+    gap: 32px;
+    padding-top: 100px;
+    align-items: flex-start;
+  }
+  .hero-pixel {
+    align-self: center;
+  }
+  .hero-r2d2 {
+    width: 180px;
+  }
+}
+
+.hero-greeting {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+
+.hero-greeting span {
+  color: var(--accent);
+}
+
+.hero-title {
+  font-family: var(--sans);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+}
+
+.hero-title .code-brace {
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-weight: 300;
+  font-size: clamp(1rem, 2vw, 1.6rem);
+  vertical-align: middle;
+}
+
+.hero-field {
+  font-size: clamp(1.4rem, 3.5vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: -1px;
+  vertical-align: middle;
+}
+
+.hero-roles {
+  display: block;
+  margin-top: 8px;
+}
+
+.hero-role {
+  font-family: var(--mono);
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  font-weight: 400;
+  color: var(--accent);
+  position: relative;
+}
+
+.hero-role::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+  margin-left: 2px;
+  color: var(--accent);
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-bottom: 40px;
+  line-height: 1.8;
+}
+
+.hero-cta-group {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  padding: 14px 32px;
+  background: var(--accent);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 30px var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-outline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-8px); }
+}
+
+.scroll-indicator .arrow {
+  width: 20px;
+  height: 20px;
+  border-right: 1.5px solid var(--text-muted);
+  border-bottom: 1.5px solid var(--text-muted);
+  transform: rotate(45deg);
+}
+
+/* ═══════════════════════════════════════
+   SECTION STYLES
+   ═══════════════════════════════════════ */
+section {
+  padding: var(--section-padding);
+  padding-left: clamp(24px, 5vw, 80px);
+  padding-right: clamp(24px, 5vw, 80px);
+  position: relative;
+}
+
+.section-tag {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.section-title {
+  font-family: var(--mono);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.section-title .bracket {
+  color: var(--accent);
+}
+
+.section-desc {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 600px;
+  margin-bottom: 60px;
+  line-height: 1.8;
+}
+
+.section-desc::before {
+  content: '// ';
+  font-family: var(--mono);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* ═══════════════════════════════════════
+   ABOUT SECTION
+   ═══════════════════════════════════════ */
+#about {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+.about-text p {
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.8;
+}
+
+.about-text .highlight {
+  color: var(--text-primary);
+  font-weight: 500;
+  border-left: 3px solid var(--accent);
+  padding-left: 20px;
+  margin: 30px 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.about-stats .stat-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  transition: all 0.3s ease;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+  transform: translateY(-4px);
+}
+
+.stat-card .stat-icon {
+  font-family: var(--mono);
+  font-size: 1.2rem;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.stat-card h4 {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-weight: 400;
+}
+
+.stat-card .stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════
+   RESUME / EXPERIENCE SECTION
+   ═══════════════════════════════════════ */
+.resume-link-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.resume-link-bar a {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 8px 20px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.resume-link-bar a:hover {
+  background: var(--accent-dim);
+}
+
+.resume-link-bar span {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* vertical scrollable timeline */
+.timeline-scroll-wrap {
+  max-height: 520px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-secondary);
+}
+
+.timeline {
+  position: relative;
+  max-width: 720px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent-secondary), var(--border-subtle));
+}
+
+.timeline-item {
+  padding-left: 40px;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+
+.timeline-item.tl-birth::before {
+  background: var(--text-muted);
+  box-shadow: none;
+}
+
+.timeline-item .tl-date {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.timeline-item.tl-birth .tl-date {
+  color: var(--text-muted);
+}
+
+.timeline-item h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.timeline-item .tl-place {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.timeline-item p {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.tl-type {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ═══════════════════════════════════════
+   CONTACT SECTION
+   ═══════════════════════════════════════ */
+#contact {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+  border-color: var(--accent);
+  transform: translateX(8px);
+}
+
+.contact-link .cl-icon {
+  font-size: 1.4rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-dim);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.contact-link h4 {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+
+.contact-link p {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+/* ═══════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════ */
+footer {
+  padding: 40px clamp(24px, 5vw, 80px);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+}
+
+/* ═══════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════ */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-in-delay-1 { transition-delay: 0.1s; }
+.fade-in-delay-2 { transition-delay: 0.2s; }
+.fade-in-delay-3 { transition-delay: 0.3s; }
+.fade-in-delay-4 { transition-delay: 0.4s; }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .about-grid,
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    background: var(--bg-secondary);
+    flex-direction: column;
+    padding: 100px 32px 32px;
+    border-left: 1px solid var(--border);
+    gap: 4px;
+  }
+  .nav-links.open {
+    display: flex;
+  }
+  .nav-links a {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+  .hamburger {
+    display: flex;
+  }
+  .hamburger.open span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+  .hamburger.open span:nth-child(2) {
+    opacity: 0;
+  }
+  .hamburger.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-title {
+    letter-spacing: -1px;
+  }
+  .about-stats {
+    grid-template-columns: 1fr;
+  }
+  footer {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor Glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- ═══════════════ NAVIGATION ═══════════════ -->
+<nav>
+  <a href="#hero" class="nav-logo">elias</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#hero">home</a></li>
+    <li><a href="#about">about</a></li>
+    <li><a href="research.html">research</a></li>
+    <li><a href="experience.html">experience</a></li>
+    <li><a href="blog.html">blog</a></li>
+    <li><a href="photos.html">pictures</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section id="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <p class="hero-greeting fade-in">
+        <span>//</span> hi, I'm Elias, a...
+      </p>
+      <h1 class="hero-title fade-in fade-in-delay-1">
+        <span class="code-brace">{" </span><span class="hero-field">Robotics &amp; AI</span><br>
+        <span class="hero-roles">
+          <span class="hero-role" id="heroRole">researcher</span>
+        </span>
+        <span class="code-brace"> "}</span>
+      </h1>
+      <p class="hero-subtitle fade-in fade-in-delay-2">
+        Recent graduate from NTUA. Working on learning-based robotic systems and Vision-Language-Action models.
+      </p>
+      <div class="hero-cta-group fade-in fade-in-delay-3">
+        <a href="research.html" class="btn-primary">{publications} →</a>
+        <a href="#contact" class="btn-outline">{contact_me}</a>
+      </div>
+    </div>
+    <div class="hero-pixel fade-in fade-in-delay-2">
+      <div class="hero-r2d2-wrap">
+        <!-- pixel speech bubble -->
+        <svg class="hero-bubble" viewBox="0 0 156 50" width="156" height="50" xmlns="http://www.w3.org/2000/svg">
+          <!-- fill -->
+          <rect x="4" y="4" width="148" height="32" fill="#0a0a0f"/>
+          <!-- border top -->
+          <rect x="8"   y="0"  width="140" height="4" fill="#00e5a0"/>
+          <!-- border left -->
+          <rect x="4"   y="4"  width="4"   height="32" fill="#00e5a0"/>
+          <!-- border right -->
+          <rect x="148" y="4"  width="4"   height="32" fill="#00e5a0"/>
+          <!-- border bottom — leave gap at bottom-right for tail -->
+          <rect x="8"   y="36" width="128" height="4" fill="#00e5a0"/>
+          <rect x="148" y="36" width="4"   height="4" fill="#00e5a0"/>
+          <!-- corners -->
+          <rect x="4"   y="4"  width="4" height="4" fill="#00e5a0"/>
+          <rect x="148" y="4"  width="4" height="4" fill="#00e5a0"/>
+          <rect x="4"   y="32" width="4" height="4" fill="#00e5a0"/>
+          <rect x="148" y="32" width="4" height="4" fill="#00e5a0"/>
+          <!-- tail: steps down-right from bottom-right corner toward R2-D2 -->
+          <rect x="140" y="40" width="8" height="4" fill="#00e5a0"/>
+          <rect x="144" y="44" width="8" height="4" fill="#00e5a0"/>
+          <!-- text: uppercase, JetBrains Mono -->
+          <text x="14" y="26" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="600" letter-spacing="1">
+            <tspan fill="#00e5a0">HELLO </tspan><tspan fill="#7b61ff">THERE...</tspan>
+          </text>
+        </svg>
+        <img src="photos/r2d2_slow.gif" alt="R2-D2" class="hero-r2d2">
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>scroll</span>
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<section id="about">
+  <p class="section-tag fade-in">{/}</p>
+  <h2 class="section-title fade-in"><span class="bracket">&lt;</span>about_me<span class="bracket">&gt;</span></h2>
+  <p class="section-desc fade-in">robotics and AI researcher</p>
+
+  <div class="about-grid">
+    <div class="about-text fade-in">
+      <p>
+        I'm Elias — an engineer and researcher from Athens. I recently graduated from the School of Electrical and Computer Engineering at NTUA, where I spent six years building things, breaking them, and occasionally understanding why.
+      </p>
+      <p>
+        I care about making robots that work in the real world. Most of my time goes into reading papers, running experiments, and staring at loss curves. Outside of that, I enjoy long walks, good coffee, and collecting wallpapers I never actually use as wallpapers.
+      </p>
+      <p>
+        This site is mostly for keeping track of what I've done and where I'm going. If something here interests you, feel free to reach out.
+      </p>
+      <p>
+        My research focuses on making learning-based robotic systems work reliably outside controlled settings. Right now I'm most interested in how to give VLA models a better grasp of physical reality — things like object dynamics, reachability constraints, and whether a proposed action is actually feasible. Related to this is the question of continual learning: how do you let a policy accumulate knowledge across deployments without overwriting what it already knows? I'm also drawn to the distribution shift problem under behavioural cloning, where compounding errors push robots into states they've never seen, and to the broader question of what data and architecture choices actually drive generalisation in robotic pre-training.
+      </p>
+    </div>
+    <div class="about-stats fade-in fade-in-delay-2">
+      <a href="#timeline" class="stat-card">
+        <div class="stat-icon">{◦}</div>
+        <h4>_life</h4>
+        <div class="stat-value" style="font-size:1rem;">timeline &amp; CV</div>
+      </a>
+      <a href="research.html" class="stat-card">
+        <div class="stat-icon">{🔬}</div>
+        <h4>_research</h4>
+        <div class="stat-value" style="font-size:1rem;">publications &amp; interests</div>
+      </a>
+      <a href="experience.html" class="stat-card">
+        <div class="stat-icon">{⚙}</div>
+        <h4>_experience</h4>
+        <div class="stat-value" style="font-size:1rem;">work &amp; projects</div>
+      </a>
+      <a href="blog.html" class="stat-card">
+        <div class="stat-icon">{✍}</div>
+        <h4>_blog</h4>
+        <div class="stat-value" style="font-size:1rem;">notes &amp; writing</div>
+      </a>
+      <a href="photos.html" class="stat-card">
+        <div class="stat-icon">{🖼}</div>
+        <h4>_pictures</h4>
+        <div class="stat-value" style="font-size:1rem;">photos &amp; stuff</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ TIMELINE ═══════════════ -->
+<section id="timeline">
+  <p class="section-tag fade-in">{*}</p>
+  <h2 class="section-title fade-in"><span class="bracket">&lt;</span>life<span class="bracket">&gt;</span></h2>
+  <p class="section-desc fade-in">timeline, education, and CV</p>
+
+  <div class="resume-link-bar fade-in">
+    <a href="https://drive.google.com/file/d/18NQ2q4D6z1ZtPTxcdbAWeVPaV5dGMyfC/view?usp=sharing" target="_blank" rel="noopener">↗ full CV (PDF)</a>
+    <span>// updated Feb 2026</span>
+  </div>
+
+  <div class="timeline-scroll-wrap fade-in">
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="tl-date">Feb 2026</div>
+        <div class="tl-type">milestone</div>
+        <h3>Diploma Graduation</h3>
+        <div class="tl-place">NTUA — School of ECE</div>
+        <p>Graduated with a Diploma in Electrical &amp; Computer Engineering. Grade: 8.75/10.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-date">2025 – 2026</div>
+        <div class="tl-type">research</div>
+        <h3>Diploma Thesis</h3>
+        <div class="tl-place">NTUA, supervised by Dr. V. Balntas (Oxford)</div>
+        <p>Teacher-student distillation for efficient VLA model deployment in robotic manipulation.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-date">Mar – Aug 2025</div>
+        <div class="tl-type">experience</div>
+        <h3>Robotics &amp; AI Engineering Intern</h3>
+        <div class="tl-place">I-SENSE Research Group — Athens</div>
+        <p>3D semantic mapping combining CLIP, SAM, and LiDAR SLAM with natural language querying.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-date">Sep – Dec 2023</div>
+        <div class="tl-type">education</div>
+        <h3>Erasmus+ Exchange</h3>
+        <div class="tl-place">Technical University of Denmark (DTU) — Copenhagen</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-date">Sep 2020</div>
+        <div class="tl-type">education</div>
+        <h3>Started Diploma, ECE</h3>
+        <div class="tl-place">National Technical University of Athens (NTUA)</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-date">Jun 2020</div>
+        <div class="tl-type">education</div>
+        <h3>Secondary School</h3>
+        <div class="tl-place">8th Junior-Senior High School of Chalandri</div>
+        <p>Grade 19.6/20 — Eurobank Award for Excellence in Panhellenic Exams.</p>
+      </div>
+
+      <div class="timeline-item tl-birth">
+        <div class="tl-date">03 Apr 2002</div>
+        <h3>Born</h3>
+        <div class="tl-place">Athens, Greece</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CONTACT ═══════════════ -->
+<section id="contact">
+  <p class="section-tag fade-in">{✉}</p>
+  <h2 class="section-title fade-in"><span class="bracket">&lt;</span>contact_me<span class="bracket">&gt;</span></h2>
+  <p class="section-desc fade-in">interested in collaborating? let's talk</p>
+
+  <div class="contact-grid">
+    <form class="contact-form fade-in" id="contact-form" method="POST" action="https://formspree.io/f/mkoqpjdl">
+      <input type="hidden" name="_subject" value="New message from your website">
+      <input type="text" name="_gotcha" style="display:none">
+      <div class="form-group">
+        <label>_name</label>
+        <input type="text" name="name" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label>_email *</label>
+        <input type="email" name="email" placeholder="your@email.com" required>
+      </div>
+      <div class="form-group">
+        <label>_message *</label>
+        <textarea name="message" placeholder="Your message..." required></textarea>
+      </div>
+      <button class="btn-primary" type="submit" id="contact-btn">{send} →</button>
+      <p id="contact-status" style="font-family:var(--mono);font-size:0.78rem;color:var(--accent);margin-top:10px;display:none;"></p>
+    </form>
+    <div class="contact-info fade-in fade-in-delay-2">
+      <a href="mailto:eliaskallioras@gmail.com" class="contact-link">
+        <div class="cl-icon">✉</div>
+        <div>
+          <h4>_email</h4>
+          <p>eliaskallioras@gmail.com</p>
+        </div>
+      </a>
+      <a href="https://github.com/808kalli" target="_blank" class="contact-link">
+        <div class="cl-icon">⌨</div>
+        <div>
+          <h4>_github</h4>
+          <p>github.com/808kalli</p>
+        </div>
+      </a>
+      <a href="https://linkedin.com/in/elias-kallioras-b79198248" target="_blank" class="contact-link">
+        <div class="cl-icon">💼</div>
+        <div>
+          <h4>_linkedin</h4>
+          <p>linkedin.com/in/elias-kallioras-b79198248</p>
+        </div>
+      </a>
+      <a href="https://scholar.google.com/" target="_blank" class="contact-link">
+        <div class="cl-icon">📄</div>
+        <div>
+          <h4>_scholar</h4>
+          <p>Google Scholar Profile</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <span>© 2026 Elias — Built with precision</span>
+  <div class="footer-links">
+    <a href="#hero">_home</a>
+    <a href="#about">_about</a>
+    <a href="research.html">_research</a>
+    <a href="experience.html">_experience</a>
+    <a href="blog.html">_blog</a>
+    <a href="#contact">_contact</a>
+  </div>
+</footer>
+
+<!-- ═══════════════ SCRIPTS ═══════════════ -->
+<script>
+// Contact form
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+  contactForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = document.getElementById('contact-btn');
+    const status = document.getElementById('contact-status');
+    btn.textContent = '{sending...}';
+    btn.disabled = true;
+    try {
+      const res = await fetch(contactForm.action, {
+        method: 'POST',
+        body: new FormData(contactForm),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        status.textContent = '// message sent. thanks!';
+        status.style.display = 'block';
+        contactForm.reset();
+        btn.textContent = '{sent} ✓';
+      } else {
+        throw new Error();
+      }
+    } catch {
+      status.textContent = '// something went wrong. try emailing directly.';
+      status.style.color = '#ff6b6b';
+      status.style.display = 'block';
+      btn.textContent = '{send} →';
+      btn.disabled = false;
+    }
+  });
+}
+
+// Cursor glow
+const glow = document.getElementById('cursorGlow');
+document.addEventListener('mousemove', (e) => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+});
+
+// Mobile menu
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+
+// Close menu on link click
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+  });
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Typing effect for hero role
+const roles = ['researcher', 'engineer', 'builder', 'problem_solver'];
+let roleIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+const roleEl = document.getElementById('heroRole');
+
+function typeRole() {
+  const current = roles[roleIndex];
+  if (isDeleting) {
+    roleEl.textContent = current.substring(0, charIndex - 1);
+    charIndex--;
+    if (charIndex === 0) {
+      isDeleting = false;
+      roleIndex = (roleIndex + 1) % roles.length;
+      setTimeout(typeRole, 500);
+      return;
+    }
+  } else {
+    roleEl.textContent = current.substring(0, charIndex + 1);
+    charIndex++;
+    if (charIndex === current.length) {
+      isDeleting = true;
+      setTimeout(typeRole, 2000);
+      return;
+    }
+  }
+  setTimeout(typeRole, isDeleting ? 50 : 100);
+}
+
+setTimeout(typeRole, 2000);
+
+// Navbar shrink on scroll
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 50) {
+    nav.style.height = '56px';
+    nav.style.borderBottomColor = 'var(--border)';
+  } else {
+    nav.style.height = 'var(--nav-height)';
+    nav.style.borderBottomColor = 'var(--border-subtle)';
+  }
+});
+</script>
+
+</body>
+</html>

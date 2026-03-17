@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elias — Experience & Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #111118;
+  --bg-card: #16161e;
+  --bg-card-hover: #1c1c28;
+  --text-primary: #e8e6e3;
+  --text-secondary: #8a8a9a;
+  --text-muted: #55556a;
+  --accent: #00e5a0;
+  --accent-dim: rgba(0, 229, 160, 0.15);
+  --accent-glow: rgba(0, 229, 160, 0.3);
+  --accent-secondary: #7b61ff;
+  --accent-secondary-dim: rgba(123, 97, 255, 0.15);
+  --border: #222233;
+  --border-subtle: #1a1a2a;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg-secondary); }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 80px clamp(24px, 5vw, 80px) 60px;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.back-link {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--accent); }
+
+.page-header { margin-bottom: 48px; }
+
+.page-title {
+  font-family: var(--mono);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.page-title .bracket { color: var(--accent); }
+
+.page-subtitle {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── section label ── */
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 16px;
+  margin-top: 48px;
+}
+.section-label:first-of-type { margin-top: 0; }
+
+/* ── experience list ── */
+.exp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 900px;
+}
+
+.exp-entry {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px 32px;
+  align-items: start;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.exp-entry:hover {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+  transform: translateX(4px);
+}
+
+.exp-entry-left h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.exp-entry-left .exp-role {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.exp-entry-left p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.exp-entry-right {
+  text-align: right;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.exp-date {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.exp-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.exp-skills span {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.exp-open-hint {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.exp-entry:hover .exp-open-hint { color: var(--accent); }
+
+/* ── modal ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  max-width: 680px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 40px;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--bg-card);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-family: var(--mono);
+  font-size: 1.3rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--accent); }
+
+.modal-type {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 8px;
+  border-radius: 3px;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.modal h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 4px;
+  letter-spacing: -0.2px;
+}
+
+.modal-org {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.modal-date {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.modal-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+.modal-body p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.modal-body p:last-child { margin-bottom: 0; }
+
+.modal-body h4 {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+
+.modal-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.modal-tech span {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 700px) {
+  .exp-entry {
+    grid-template-columns: 1fr;
+  }
+  .exp-entry-right {
+    text-align: left;
+    align-items: flex-start;
+  }
+  .exp-skills { justify-content: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <a href="index.html" class="back-link">← back to main</a>
+  <h1 class="page-title"><span class="bracket">&lt;</span>experience<span class="bracket">&gt;</span></h1>
+  <p class="page-subtitle">// work, research roles, and team projects — click an entry for details</p>
+</div>
+
+<div class="section-label">// positions & internships</div>
+<div class="exp-list">
+
+  <div class="exp-entry" onclick="openModal('modal-isense')">
+    <div class="exp-entry-left">
+      <h4>Robotics &amp; AI Engineering Intern</h4>
+      <div class="exp-role">I-SENSE Research Group — Athens, Greece</div>
+      <p>Built an interactive 3D semantic mapping system combining CLIP, SAM, and LiDAR SLAM with natural language querying.</p>
+    </div>
+    <div class="exp-entry-right">
+      <div class="exp-date">Mar–Aug 2025</div>
+      <div class="exp-skills">
+        <span>Python</span><span>CLIP</span><span>SAM</span><span>ROS</span>
+      </div>
+      <div class="exp-open-hint">↗ details</div>
+    </div>
+  </div>
+
+  <div class="exp-entry" onclick="openModal('modal-thesis')">
+    <div class="exp-entry-left">
+      <h4>Diploma Thesis Researcher</h4>
+      <div class="exp-role">NTUA — School of ECE</div>
+      <p>Distillation framework for VLA models benchmarked on LIBERO. Supervised by Prof. P. Tsanakas (NTUA) and Dr. V. Balntas (Oxford).</p>
+    </div>
+    <div class="exp-entry-right">
+      <div class="exp-date">2025–2026</div>
+      <div class="exp-skills">
+        <span>PyTorch</span><span>LoRA</span><span>CUDA</span>
+      </div>
+      <div class="exp-open-hint">↗ details</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section-label">// team projects & competitions</div>
+<div class="exp-list">
+
+  <div class="exp-entry" onclick="openModal('modal-ras')">
+    <div class="exp-entry-left">
+      <h4>IEEE NTUA Robotics and Automation Society (RAS)</h4>
+      <div class="exp-role">Member / Project Coordinator</div>
+      <p>Coordinated the Autonomous Driving Vehicle project and implemented YOLO-based traffic sign detection.</p>
+    </div>
+    <div class="exp-entry-right">
+      <div class="exp-date">Mar 2022–Jun 2024</div>
+      <div class="exp-skills">
+        <span>Python</span><span>YOLO</span><span>ROS</span>
+      </div>
+      <div class="exp-open-hint">↗ details</div>
+    </div>
+  </div>
+
+  <div class="exp-entry" onclick="openModal('modal-bosch')">
+    <div class="exp-entry-left">
+      <h4>Bosch Future Mobility Challenge</h4>
+      <div class="exp-role">Competitor — Autonomous Driving</div>
+      <p>Developed control, CV, and sensor fusion modules for an autonomous vehicle in a competitive annual setting.</p>
+    </div>
+    <div class="exp-entry-right">
+      <div class="exp-date">Nov 2022–Jun 2024</div>
+      <div class="exp-skills">
+        <span>Python</span><span>C++</span><span>Sensor Fusion</span>
+      </div>
+      <div class="exp-open-hint">↗ details</div>
+    </div>
+  </div>
+
+  <div class="exp-entry" onclick="openModal('modal-prom')">
+    <div class="exp-entry-left">
+      <h4>PROM Racing NTUA — Formula Student Driverless</h4>
+      <div class="exp-role">Software Member</div>
+      <p>Developed a custom SLAM algorithm in C for autonomous racecar navigation using camera and LiDAR data.</p>
+    </div>
+    <div class="exp-entry-right">
+      <div class="exp-date">Nov 2022–May 2023</div>
+      <div class="exp-skills">
+        <span>C</span><span>SLAM</span><span>LiDAR</span>
+      </div>
+      <div class="exp-open-hint">↗ details</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Modals ── -->
+
+<div class="modal-overlay" id="modal-isense" onclick="closeModalOnBg(event,'modal-isense')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-isense')">×</button>
+    <div class="modal-type">internship</div>
+    <h2>Robotics &amp; AI Engineering Intern</h2>
+    <div class="modal-org">I-SENSE Research Group — Athens, Greece</div>
+    <div class="modal-date">Mar – Aug 2025</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        At I-SENSE I worked on an interactive 3D semantic mapping system that combines open-vocabulary vision models with classical LiDAR SLAM. The goal was to let a user query a reconstructed 3D environment using natural language — for example, "show me all chairs" — and get back color-coded 3D regions matching the description.
+      </p>
+      <p>
+        The pipeline runs CLIP and SAM on RGB images to generate segmentation masks with semantic embeddings, which are then associated with the 3D point cloud produced by the SLAM backend. Query-time retrieval uses cosine similarity between the query embedding and stored segment embeddings to rank and highlight regions in the 3D scene viewer.
+      </p>
+      <p>
+        This project gave me hands-on experience integrating large vision models into real-time robotic pipelines, dealing with latency constraints, and working with ROS and the full sensor stack (LiDAR + RGB-D camera).
+      </p>
+      <h4>// tools</h4>
+      <div class="modal-tech">
+        <span>Python</span><span>CLIP</span><span>SAM</span><span>LiDAR SLAM</span><span>ROS</span><span>OpenCV</span><span>Open3D</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-thesis" onclick="closeModalOnBg(event,'modal-thesis')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-thesis')">×</button>
+    <div class="modal-type">research</div>
+    <h2>Diploma Thesis Researcher</h2>
+    <div class="modal-org">NTUA — School of ECE</div>
+    <div class="modal-date">2025 – 2026 · Supervised by Prof. P. Tsanakas (NTUA) and Dr. V. Balntas (Oxford)</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        My diploma thesis focuses on making Vision-Language-Action (VLA) models practical for deployment on robotic hardware. These models are powerful generalists — they can follow language instructions across novel manipulation tasks — but their inference cost is prohibitive for real-time control.
+      </p>
+      <p>
+        I designed a teacher-student distillation framework where a compact student model learns from a large pre-trained VLA teacher through a combination of behavioural cloning on demonstration data and feature-level distillation at selected intermediate layers. LoRA-based fine-tuning keeps the adaptation computationally tractable.
+      </p>
+      <p>
+        Experiments on the LIBERO benchmark show that the student achieves competitive task success rates at significantly reduced inference cost. The work also surfaces interesting failure modes in distilled policies on long-horizon tasks, which I discuss in the thesis as directions for future work.
+      </p>
+      <h4>// tools</h4>
+      <div class="modal-tech">
+        <span>PyTorch</span><span>HuggingFace</span><span>LoRA</span><span>CUDA</span><span>LIBERO</span><span>LaTeX</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-ras" onclick="closeModalOnBg(event,'modal-ras')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-ras')">×</button>
+    <div class="modal-type">team project</div>
+    <h2>IEEE NTUA Robotics and Automation Society (RAS)</h2>
+    <div class="modal-org">Member / Project Coordinator</div>
+    <div class="modal-date">Mar 2022 – Jun 2024</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        I joined IEEE RAS NTUA in my second year and eventually coordinated the Autonomous Driving Vehicle (ADV) project. The project's goal was to build a small-scale autonomous car capable of lane following, intersection handling, and traffic sign compliance.
+      </p>
+      <p>
+        My main technical contribution was implementing a real-time traffic sign detection and classification pipeline using YOLOv5, trained on a custom dataset we collected and annotated. The pipeline ran onboard and fed decisions into the vehicle's control stack via ROS topics.
+      </p>
+      <p>
+        I also contributed to RAS Academy, a semester-long robotics workshop series we ran for undergraduate students — writing tutorials, preparing hands-on exercises, and co-presenting sessions on computer vision and ROS fundamentals.
+      </p>
+      <h4>// tools</h4>
+      <div class="modal-tech">
+        <span>Python</span><span>YOLO</span><span>OpenCV</span><span>ROS</span><span>Control Theory</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-bosch" onclick="closeModalOnBg(event,'modal-bosch')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-bosch')">×</button>
+    <div class="modal-type">competition</div>
+    <h2>Bosch Future Mobility Challenge</h2>
+    <div class="modal-org">Competitor — Autonomous Driving</div>
+    <div class="modal-date">Nov 2022 – Jun 2024</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        The Bosch Future Mobility Challenge is an annual university competition where teams build autonomous vehicles and compete on a standardised miniature track. I competed twice, in 2023 and 2024, as part of the NTUA team.
+      </p>
+      <p>
+        My contributions spanned the full stack: control algorithms (PID and model-based lateral control), sensor fusion for localization using a combination of camera odometry and IMU, and a deep learning pipeline for traffic sign recognition. In 2024 I took a more senior role, helping newer team members integrate their modules and debugging the full system under time pressure at the competition venue.
+      </p>
+      <p>
+        The competition is a demanding environment — live hardware, real track conditions, time-boxed debugging — and a good forcing function for writing robust, testable code.
+      </p>
+      <h4>// tools</h4>
+      <div class="modal-tech">
+        <span>Python</span><span>C++</span><span>Sensor Fusion</span><span>Computer Vision</span><span>Control Systems</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-prom" onclick="closeModalOnBg(event,'modal-prom')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-prom')">×</button>
+    <div class="modal-type">team project</div>
+    <h2>PROM Racing NTUA — Formula Student Driverless</h2>
+    <div class="modal-org">Software Member</div>
+    <div class="modal-date">Nov 2022 – May 2023</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        PROM Racing is NTUA's Formula Student team. I joined the driverless division and worked on the perception and mapping pipeline for autonomous lap completion on an unknown circuit marked by coloured cones.
+      </p>
+      <p>
+        The key challenge is that the vehicle has no prior map — it must detect cones with a camera and LiDAR, triangulate their positions, and build a local map on the fly while simultaneously estimating its own pose. I contributed to the SLAM backend, written in C for performance, focusing on the map update and loop closure components.
+      </p>
+      <p>
+        Working in a Formula Student team was a good introduction to writing low-level, performance-critical code under strict latency budgets, and to integrating software with real hardware in a competitive setting.
+      </p>
+      <h4>// tools</h4>
+      <div class="modal-tech">
+        <span>C</span><span>SLAM</span><span>LiDAR</span><span>Camera Fusion</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOnBg(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => {
+      m.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  }
+});
+</script>
+
+</body>
+</html>
