@@ -11,20 +11,20 @@
    CSS VARIABLES & RESET
    ═══════════════════════════════════════ */
 :root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #111118;
-  --bg-card: #16161e;
-  --bg-card-hover: #1c1c28;
-  --text-primary: #e8e6e3;
-  --text-secondary: #8a8a9a;
-  --text-muted: #55556a;
+  --bg-primary: #1a1b1f;
+  --bg-secondary: #202227;
+  --bg-card: #26282e;
+  --bg-card-hover: #2d3037;
+  --text-primary: #e9eaec;
+  --text-secondary: #a6aab3;
+  --text-muted: #787d87;
   --accent: #00e5a0;
-  --accent-dim: rgba(0, 229, 160, 0.15);
-  --accent-glow: rgba(0, 229, 160, 0.3);
-  --accent-secondary: #7b61ff;
-  --accent-secondary-dim: rgba(123, 97, 255, 0.15);
-  --border: #222233;
-  --border-subtle: #1a1a2a;
+  --accent-dim: rgba(0, 229, 160, 0.14);
+  --accent-glow: rgba(0, 229, 160, 0.22);
+  --accent-secondary: #8b7bff;
+  --accent-secondary-dim: rgba(139, 123, 255, 0.16);
+  --border: #383b43;
+  --border-subtle: #2c2f36;
   --mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
   --sans: 'Space Grotesk', sans-serif;
   --nav-height: 70px;
@@ -62,21 +62,6 @@ img {
 }
 
 /* ═══════════════════════════════════════
-   CURSOR GLOW EFFECT
-   ═══════════════════════════════════════ */
-.cursor-glow {
-  position: fixed;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,229,160,0.09) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-  transform: translate(-50%, -50%);
-  transition: left 0.08s ease, top 0.08s ease;
-}
-
-/* ═══════════════════════════════════════
    NAVIGATION
    ═══════════════════════════════════════ */
 nav {
@@ -85,9 +70,7 @@ nav {
   left: 0;
   right: 0;
   height: var(--nav-height);
-  background: rgba(10, 10, 15, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--bg-primary);
   border-bottom: 1px solid var(--border-subtle);
   z-index: 1000;
   display: flex;
@@ -167,18 +150,6 @@ nav {
   position: relative;
 }
 
-.hero-bg-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--border-subtle) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
-  background-size: 60px 60px;
-  opacity: 0.4;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%);
-}
-
 .hero-inner {
   position: relative;
   z-index: 1;
@@ -227,10 +198,6 @@ nav {
   opacity: 1;
   transform: translateY(0);
 }
-.hero-r2d2-wrap:hover .hero-r2d2 {
-  filter: drop-shadow(0 0 22px rgba(0,229,160,0.32));
-}
-
 .hero-r2d2 {
   width: 240px;
   height: auto;
@@ -267,10 +234,10 @@ nav {
 
 .hero-title {
   font-family: var(--sans);
-  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-size: clamp(1.5rem, 3.5vw, 2.8rem);
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -2px;
+  line-height: 1.4;
+  letter-spacing: -1px;
   margin-bottom: 24px;
 }
 
@@ -290,8 +257,7 @@ nav {
 }
 
 .hero-roles {
-  display: block;
-  margin-top: 8px;
+  display: inline;
 }
 
 .hero-role {
@@ -300,17 +266,6 @@ nav {
   font-weight: 400;
   color: var(--accent);
   position: relative;
-}
-
-.hero-role::after {
-  content: '|';
-  animation: blink 1s step-end infinite;
-  margin-left: 2px;
-  color: var(--accent);
-}
-
-@keyframes blink {
-  50% { opacity: 0; }
 }
 
 .hero-subtitle {
@@ -344,8 +299,7 @@ nav {
 }
 
 .btn-primary:hover {
-  box-shadow: 0 0 30px var(--accent-glow);
-  transform: translateY(-2px);
+  background: #1af0b0;
 }
 
 .btn-outline {
@@ -382,12 +336,6 @@ nav {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-8px); }
 }
 
 .scroll-indicator .arrow {
@@ -501,7 +449,6 @@ section {
 .stat-card:hover {
   border-color: var(--accent);
   background: var(--bg-card-hover);
-  transform: translateY(-4px);
 }
 
 .stat-card .stat-icon {
@@ -577,7 +524,7 @@ section {
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(to bottom, var(--accent), var(--accent-secondary), var(--border-subtle));
+  background: var(--border);
 }
 
 .timeline-item {
@@ -599,7 +546,6 @@ section {
   height: 12px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 16px var(--accent-glow);
 }
 
 .timeline-item.tl-birth::before {
@@ -725,7 +671,6 @@ section {
 
 .contact-link:hover {
   border-color: var(--accent);
-  transform: translateX(8px);
 }
 
 .contact-link .cl-icon {
@@ -784,21 +729,13 @@ footer {
 /* ═══════════════════════════════════════
    ANIMATIONS
    ═══════════════════════════════════════ */
-.fade-in {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.fade-in.visible {
+.fade-in,
+.fade-in-delay-1,
+.fade-in-delay-2,
+.fade-in-delay-3,
+.fade-in-delay-4 {
   opacity: 1;
-  transform: translateY(0);
 }
-
-.fade-in-delay-1 { transition-delay: 0.1s; }
-.fade-in-delay-2 { transition-delay: 0.2s; }
-.fade-in-delay-3 { transition-delay: 0.3s; }
-.fade-in-delay-4 { transition-delay: 0.4s; }
 
 /* ═══════════════════════════════════════
    RESPONSIVE
@@ -863,7 +800,6 @@ footer {
 <body>
 
 <!-- Cursor Glow -->
-<div class="cursor-glow" id="cursorGlow"></div>
 
 <!-- ═══════════════ NAVIGATION ═══════════════ -->
 <nav>
@@ -884,14 +820,13 @@ footer {
 
 <!-- ═══════════════ HERO ═══════════════ -->
 <section id="hero">
-  <div class="hero-bg-grid"></div>
   <div class="hero-inner">
     <div class="hero-content">
       <p class="hero-greeting fade-in">
         <span>//</span> hi, I'm Elias, a...
       </p>
       <h1 class="hero-title fade-in fade-in-delay-1">
-        <span class="code-brace">{" </span><span class="hero-field">Robotics &amp; AI</span><br>
+        <span class="code-brace">{" </span><span class="hero-field">Robotics &amp; AI</span>
         <span class="hero-roles">
           <span class="hero-role" id="heroRole">researcher</span>
         </span>
@@ -910,7 +845,7 @@ footer {
         <!-- pixel speech bubble -->
         <svg class="hero-bubble" viewBox="0 0 156 50" width="156" height="50" xmlns="http://www.w3.org/2000/svg">
           <!-- fill -->
-          <rect x="4" y="4" width="148" height="32" fill="#0a0a0f"/>
+          <rect x="4" y="4" width="148" height="32" fill="#1a1b1f"/>
           <!-- border top -->
           <rect x="8"   y="0"  width="140" height="4" fill="#00e5a0"/>
           <!-- border left -->
@@ -930,7 +865,7 @@ footer {
           <rect x="144" y="44" width="8" height="4" fill="#00e5a0"/>
           <!-- text: uppercase, JetBrains Mono -->
           <text x="14" y="26" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="600" letter-spacing="1">
-            <tspan fill="#00e5a0">HELLO </tspan><tspan fill="#7b61ff">THERE...</tspan>
+            <tspan fill="#00e5a0">HELLO </tspan><tspan fill="#8b7bff">THERE...</tspan>
           </text>
         </svg>
         <img src="photos/r2d2_slow.gif" alt="R2-D2" class="hero-r2d2">
@@ -1155,13 +1090,6 @@ if (contactForm) {
   });
 }
 
-// Cursor glow
-const glow = document.getElementById('cursorGlow');
-document.addEventListener('mousemove', (e) => {
-  glow.style.left = e.clientX + 'px';
-  glow.style.top = e.clientY + 'px';
-});
-
 // Mobile menu
 function toggleMenu() {
   document.getElementById('navLinks').classList.toggle('open');
@@ -1174,61 +1102,6 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     document.getElementById('navLinks').classList.remove('open');
     document.getElementById('hamburger').classList.remove('open');
   });
-});
-
-// Scroll reveal
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-// Typing effect for hero role
-const roles = ['researcher', 'engineer', 'builder', 'problem_solver'];
-let roleIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-const roleEl = document.getElementById('heroRole');
-
-function typeRole() {
-  const current = roles[roleIndex];
-  if (isDeleting) {
-    roleEl.textContent = current.substring(0, charIndex - 1);
-    charIndex--;
-    if (charIndex === 0) {
-      isDeleting = false;
-      roleIndex = (roleIndex + 1) % roles.length;
-      setTimeout(typeRole, 500);
-      return;
-    }
-  } else {
-    roleEl.textContent = current.substring(0, charIndex + 1);
-    charIndex++;
-    if (charIndex === current.length) {
-      isDeleting = true;
-      setTimeout(typeRole, 2000);
-      return;
-    }
-  }
-  setTimeout(typeRole, isDeleting ? 50 : 100);
-}
-
-setTimeout(typeRole, 2000);
-
-// Navbar shrink on scroll
-window.addEventListener('scroll', () => {
-  const nav = document.querySelector('nav');
-  if (window.scrollY > 50) {
-    nav.style.height = '56px';
-    nav.style.borderBottomColor = 'var(--border)';
-  } else {
-    nav.style.height = 'var(--nav-height)';
-    nav.style.borderBottomColor = 'var(--border-subtle)';
-  }
 });
 </script>
 
