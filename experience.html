@@ -395,6 +395,41 @@ a { color: inherit; text-decoration: none; }
 
 </div>
 
+<div class="section-label">// personal projects</div>
+<div class="exp-list">
+
+  <div class="exp-entry" onclick="openModal('modal-dronebounce')">
+    <div class="exp-entry-left">
+      <h4>Drone Bounce Control</h4>
+      <div class="exp-role">Personal project (control and state estimation)</div>
+      <p>An underactuated planar quadrotor with a racket that rallies a ball to a commanded apex height, under wind and with sparse, noisy measurements.</p>
+    </div>
+    <div class="exp-entry-right">
+      <div class="exp-date">Jul 2026</div>
+      <div class="exp-skills">
+        <span>Python</span><span>MuJoCo</span><span>Kalman Filter</span>
+      </div>
+      <div class="exp-open-hint">↗ details</div>
+    </div>
+  </div>
+
+  <div class="exp-entry" onclick="openModal('modal-clitimer')">
+    <div class="exp-entry-left">
+      <h4>cli-timer</h4>
+      <div class="exp-role">Personal project (terminal UI)</div>
+      <p>A full screen countdown, stopwatch, and clock for the terminal, drawn in a seven segment font, with a wandering slime for company.</p>
+    </div>
+    <div class="exp-entry-right">
+      <div class="exp-date">Jul 2026</div>
+      <div class="exp-skills">
+        <span>Node.js</span><span>ANSI/TUI</span><span>Zero deps</span>
+      </div>
+      <div class="exp-open-hint">↗ details</div>
+    </div>
+  </div>
+
+</div>
+
 <!-- ── Modals ── -->
 
 <div class="modal-overlay" id="modal-isense" onclick="closeModalOnBg(event,'modal-isense')">
@@ -523,6 +558,61 @@ a { color: inherit; text-decoration: none; }
       <div class="modal-tech">
         <span>C</span><span>SLAM</span><span>LiDAR</span><span>Camera Fusion</span>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-dronebounce" onclick="closeModalOnBg(event,'modal-dronebounce')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-dronebounce')">×</button>
+    <div class="modal-type">personal project</div>
+    <h2>Drone Bounce Control</h2>
+    <div class="modal-org">Control, estimation, and simulation in MuJoCo</div>
+    <div class="modal-date">Jul 2026</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        A planar (2D) underactuated quadrotor carries a racket and has to bounce a ball so that every apex lands on a commanded height, then keep the rally going indefinitely. The catch is that it fights wind, and it only sees the ball every 0.30 s through noisy measurements, so most of the work happens between observations.
+      </p>
+      <p>
+        The stack is a bounce aware Kalman filter that propagates the ball through its own contact discontinuity, plus a controller that plans each strike against a fixed anchored plane rather than the racket's live rising plane. An earlier lead float version taught me the most. It survived beautifully by tapping the ball near its apex and almost never scored, which is why the grader also requires the ball to genuinely fall before an apex counts. Survival is not competence.
+      </p>
+      <p>
+        The final anchored controller with lateral follow tuning reaches 35.0 and 19.3 good bounces per 20 s at the two target heights, at 98% and 91% survival, up from 17.8 and 0.1 bounces at 9% and 0% survival for the naive proportional baseline, measured over 100 seeds per cell. The write up is the real deliverable, a single self contained HTML report with the maths, every plot, and video of each landmark controller inlined.
+      </p>
+      <h4>// tools</h4>
+      <div class="modal-tech">
+        <span>Python</span><span>MuJoCo</span><span>NumPy</span><span>Kalman Filtering</span><span>Control Systems</span><span>Matplotlib</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-clitimer" onclick="closeModalOnBg(event,'modal-clitimer')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-clitimer')">×</button>
+    <div class="modal-type">personal project</div>
+    <h2>cli-timer</h2>
+    <div class="modal-org">Terminal application in Node.js, no dependencies</div>
+    <div class="modal-date">Jul 2026</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        A full screen countdown timer, stopwatch, and clock for the terminal, rendered in a solid seven segment font with a warm ember palette. It takes durations in whatever form is natural (<code>25</code>, <code>90s</code>, <code>1h30m</code>, <code>10:00</code>), records laps, and beeps and waits for a keypress at zero so a finished timer never vanishes unnoticed.
+      </p>
+      <p>
+        Most of the effort went into the layout behaving under every terminal shape. Digits never grow taller than their width allows, the date beside the clock takes only the space left spare so it never costs the display a size step, and everything is drawn on the alternate screen buffer so scrollback survives. The renderer is a pure function from state to string, which means the layout can be inspected and tested without a TTY.
+      </p>
+      <p>
+        There is also a slime that wanders along the floor of the box and glances up at the clock. Terminals have no hover event, so when you point at it, it startles and jumps, synthesised from SGR mouse motion reports hit tested against where it is standing. Install it with <code>npm install -g github:808kalli/cli-timer</code>.
+      </p>
+      <h4>// tools</h4>
+      <div class="modal-tech">
+        <span>Node.js</span><span>ANSI escape codes</span><span>TUI</span><span>Zero dependencies</span>
+      </div>
+      <p style="margin-top:18px;">
+        <a href="https://github.com/808kalli/cli-timer" target="_blank" rel="noopener">↗ github.com/808kalli/cli-timer</a>
+      </p>
     </div>
   </div>
 </div>

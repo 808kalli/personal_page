@@ -340,11 +340,11 @@ a { color: inherit; text-decoration: none; }
   </div>
 
   <div class="research-card" onclick="openModal('modal-interspeech')">
-    <span class="card-tag purple">in submission</span>
-    <h3>All Interactions Matter: Modality-preserving Deep Fusion for Multimodal Sentiment Analysis</h3>
-    <p>Elias Kallioras, Nikolos Xiros, et al. Manuscript in submission — Interspeech 2026.</p>
+    <span class="card-tag purple">accepted · interspeech 2026</span>
+    <h3>Segregate, Refine, Integrate: Interaction Topology as an Independent Design Axis for Multimodal Language Models</h3>
+    <p>A. Filippakopoulos, N. Xiros, E. Kallioras, et al. Accepted for publication at Interspeech 2026.</p>
     <div class="card-tech">
-      <span>Multimodal Learning</span><span>Sentiment Analysis</span><span>Deep Fusion</span>
+      <span>Multimodal Learning</span><span>Interaction Topology</span><span>Deep Fusion</span>
     </div>
     <div class="card-open-hint">↗ read more</div>
   </div>
@@ -384,25 +384,25 @@ a { color: inherit; text-decoration: none; }
 <div class="modal-overlay" id="modal-interspeech" onclick="closeModalOnBg(event, 'modal-interspeech')">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modal-interspeech')">×</button>
-    <span class="modal-tag purple">in submission</span>
-    <h2>All Interactions Matter: Modality-preserving Deep Fusion for Multimodal Sentiment Analysis</h2>
+    <span class="modal-tag purple">accepted · interspeech 2026</span>
+    <h2>Segregate, Refine, Integrate: Interaction Topology as an Independent Design Axis for Multimodal Language Models</h2>
     <div class="modal-meta">
-      Elias Kallioras, Nikolos Xiros, et al. · Interspeech 2026 (in submission)
+      A. Filippakopoulos, N. Xiros, E. Kallioras, et al. · Interspeech 2026 (accepted)
     </div>
     <hr class="modal-divider">
     <div class="modal-body">
       <p>
-        Multimodal sentiment analysis aims to infer sentiment from combinations of text, audio, and visual signals. Most existing fusion approaches lose modality-specific information in the process of cross-modal interaction, particularly when one modality dominates or when cross-modal attention is applied naively.
+        Multimodal language models combine text, audio, and visual streams, and most architectures treat fusion as a single design decision. This work argues that interaction topology (which modalities are allowed to interact, in what order, and at what depth) is an independent design axis that deserves to be studied on its own rather than folded into the choice of fusion operator.
       </p>
       <p>
-        This work proposes a modality-preserving deep fusion architecture that explicitly maintains each modality's representation throughout the fusion process. By ensuring that individual modalities are not collapsed early, the model retains fine-grained signals from each input stream, which improves performance on ambiguous or noisy samples where all available cues must be leveraged.
+        We frame the space as three stages. <strong>Segregate</strong> keeps each modality's representation intact so nothing is collapsed early, <strong>refine</strong> processes each stream before it is mixed, and <strong>integrate</strong> combines them once each carries a well formed representation. Varying the topology while holding capacity and training data fixed isolates its effect from the usual confounds.
       </p>
       <p>
-        The method is evaluated on standard multimodal sentiment benchmarks and shows consistent improvements over fusion baselines, especially on instances where cross-modal cues are complementary rather than redundant.
+        The design is evaluated on standard multimodal benchmarks, with the clearest gains on samples where cross modal cues are complementary rather than redundant.
       </p>
       <h4>// tools & methods</h4>
       <div class="modal-tech">
-        <span>Multimodal Learning</span><span>Sentiment Analysis</span><span>Deep Fusion</span><span>PyTorch</span><span>Transformers</span>
+        <span>Multimodal Learning</span><span>Interaction Topology</span><span>Deep Fusion</span><span>PyTorch</span><span>Transformers</span>
       </div>
     </div>
   </div>
