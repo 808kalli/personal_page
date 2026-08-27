@@ -15,9 +15,9 @@
   --text-primary: #e9eaec;
   --text-secondary: #a6aab3;
   --text-muted: #787d87;
-  --accent: #00e5a0;
-  --accent-dim: rgba(0, 229, 160, 0.14);
-  --accent-glow: rgba(0, 229, 160, 0.22);
+  --accent: #6f9ceb;
+  --accent-dim: rgba(111, 156, 235, 0.14);
+  --accent-glow: rgba(111, 156, 235, 0.20);
   --border: #383b43;
   --border-subtle: #2c2f36;
   --mono: 'JetBrains Mono', monospace;
@@ -56,13 +56,13 @@ a { color: inherit; text-decoration: none; }
 .back-link:hover { color: var(--accent); }
 
 .page-title {
-  font-family: var(--mono);
+  font-family: var(--sans);
+  letter-spacing: -0.5px;
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 6px;
 }
-.page-title .bracket { color: var(--accent); }
 
 .page-subtitle {
   font-family: var(--mono);
@@ -222,14 +222,14 @@ a { color: inherit; text-decoration: none; }
 
 <div class="page-header">
   <a href="index.html" class="back-link">← back to main</a>
-  <h1 class="page-title"><span class="bracket">&lt;</span>pictures<span class="bracket">&gt;</span></h1>
-  <p class="page-subtitle">// add images to photos/ subfolders to populate these galleries</p>
+  <h1 class="page-title">Pictures</h1>
+  <p class="page-subtitle">Add images to photos/ subfolders to populate these galleries</p>
 </div>
 
 <div class="folder-tabs">
-  <button class="folder-tab active" onclick="showFolder('wallpapers', this)">_wallpapers</button>
-  <button class="folder-tab" onclick="showFolder('webcam', this)">_webcam</button>
-  <button class="folder-tab" onclick="showFolder('misc', this)">_misc</button>
+  <button class="folder-tab active" onclick="showFolder('wallpapers', this)">Wallpapers</button>
+  <button class="folder-tab" onclick="showFolder('webcam', this)">Webcam</button>
+  <button class="folder-tab" onclick="showFolder('misc', this)">Misc</button>
 </div>
 
 <!-- wallpapers -->

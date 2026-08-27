@@ -18,11 +18,11 @@
   --text-primary: #e9eaec;
   --text-secondary: #a6aab3;
   --text-muted: #787d87;
-  --accent: #00e5a0;
-  --accent-dim: rgba(0, 229, 160, 0.14);
-  --accent-glow: rgba(0, 229, 160, 0.22);
-  --accent-secondary: #8b7bff;
-  --accent-secondary-dim: rgba(139, 123, 255, 0.16);
+  --accent: #6f9ceb;
+  --accent-dim: rgba(111, 156, 235, 0.14);
+  --accent-glow: rgba(111, 156, 235, 0.20);
+  --accent-secondary: #d9a35f;
+  --accent-secondary-dim: rgba(217, 163, 95, 0.16);
   --border: #383b43;
   --border-subtle: #2c2f36;
   --mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
@@ -110,16 +110,6 @@ nav {
 .nav-links a:hover {
   color: var(--accent);
   background: var(--accent-dim);
-}
-
-.nav-links a::before {
-  content: '_';
-  color: var(--text-muted);
-  transition: color 0.3s ease;
-}
-
-.nav-links a:hover::before {
-  color: var(--accent);
 }
 
 .hamburger {
@@ -241,14 +231,6 @@ nav {
   margin-bottom: 24px;
 }
 
-.hero-title .code-brace {
-  color: var(--text-muted);
-  font-family: var(--mono);
-  font-weight: 300;
-  font-size: clamp(1rem, 2vw, 1.6rem);
-  vertical-align: middle;
-}
-
 .hero-field {
   font-size: clamp(1.4rem, 3.5vw, 2.8rem);
   font-weight: 600;
@@ -299,7 +281,7 @@ nav {
 }
 
 .btn-primary:hover {
-  background: #1af0b0;
+  background: #87afef;
 }
 
 .btn-outline {
@@ -356,24 +338,13 @@ section {
   position: relative;
 }
 
-.section-tag {
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-  letter-spacing: 1px;
-}
-
 .section-title {
-  font-family: var(--mono);
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-family: var(--sans);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
   font-weight: 600;
+  letter-spacing: -0.5px;
   margin-bottom: 16px;
   color: var(--text-primary);
-}
-
-.section-title .bracket {
-  color: var(--accent);
 }
 
 .section-desc {
@@ -382,13 +353,6 @@ section {
   max-width: 600px;
   margin-bottom: 60px;
   line-height: 1.8;
-}
-
-.section-desc::before {
-  content: '// ';
-  font-family: var(--mono);
-  color: var(--text-muted);
-  font-size: 0.85rem;
 }
 
 /* ═══════════════════════════════════════
@@ -823,21 +787,20 @@ footer {
   <div class="hero-inner">
     <div class="hero-content">
       <p class="hero-greeting fade-in">
-        <span>//</span> hi, I'm Elias, a...
+        Hi, I'm Elias.
       </p>
       <h1 class="hero-title fade-in fade-in-delay-1">
-        <span class="code-brace">{" </span><span class="hero-field">Robotics &amp; AI</span>
+        <span class="hero-field">Robotics &amp; AI</span>
         <span class="hero-roles">
-          <span class="hero-role" id="heroRole">researcher</span>
+          <span class="hero-role">researcher</span>
         </span>
-        <span class="code-brace"> "}</span>
       </h1>
       <p class="hero-subtitle fade-in fade-in-delay-2">
         Recent graduate from NTUA. Working on learning-based robotic systems and Vision-Language-Action models.
       </p>
       <div class="hero-cta-group fade-in fade-in-delay-3">
-        <a href="research.html" class="btn-primary">{publications} →</a>
-        <a href="#contact" class="btn-outline">{contact_me}</a>
+        <a href="research.html" class="btn-primary">Publications →</a>
+        <a href="#contact" class="btn-outline">Get in touch</a>
       </div>
     </div>
     <div class="hero-pixel fade-in fade-in-delay-2">
@@ -847,25 +810,25 @@ footer {
           <!-- fill -->
           <rect x="4" y="4" width="148" height="32" fill="#1a1b1f"/>
           <!-- border top -->
-          <rect x="8"   y="0"  width="140" height="4" fill="#00e5a0"/>
+          <rect x="8"   y="0"  width="140" height="4" fill="#6f9ceb"/>
           <!-- border left -->
-          <rect x="4"   y="4"  width="4"   height="32" fill="#00e5a0"/>
+          <rect x="4"   y="4"  width="4"   height="32" fill="#6f9ceb"/>
           <!-- border right -->
-          <rect x="148" y="4"  width="4"   height="32" fill="#00e5a0"/>
+          <rect x="148" y="4"  width="4"   height="32" fill="#6f9ceb"/>
           <!-- border bottom — leave gap at bottom-right for tail -->
-          <rect x="8"   y="36" width="128" height="4" fill="#00e5a0"/>
-          <rect x="148" y="36" width="4"   height="4" fill="#00e5a0"/>
+          <rect x="8"   y="36" width="128" height="4" fill="#6f9ceb"/>
+          <rect x="148" y="36" width="4"   height="4" fill="#6f9ceb"/>
           <!-- corners -->
-          <rect x="4"   y="4"  width="4" height="4" fill="#00e5a0"/>
-          <rect x="148" y="4"  width="4" height="4" fill="#00e5a0"/>
-          <rect x="4"   y="32" width="4" height="4" fill="#00e5a0"/>
-          <rect x="148" y="32" width="4" height="4" fill="#00e5a0"/>
+          <rect x="4"   y="4"  width="4" height="4" fill="#6f9ceb"/>
+          <rect x="148" y="4"  width="4" height="4" fill="#6f9ceb"/>
+          <rect x="4"   y="32" width="4" height="4" fill="#6f9ceb"/>
+          <rect x="148" y="32" width="4" height="4" fill="#6f9ceb"/>
           <!-- tail: steps down-right from bottom-right corner toward R2-D2 -->
-          <rect x="140" y="40" width="8" height="4" fill="#00e5a0"/>
-          <rect x="144" y="44" width="8" height="4" fill="#00e5a0"/>
+          <rect x="140" y="40" width="8" height="4" fill="#6f9ceb"/>
+          <rect x="144" y="44" width="8" height="4" fill="#6f9ceb"/>
           <!-- text: uppercase, JetBrains Mono -->
           <text x="14" y="26" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="600" letter-spacing="1">
-            <tspan fill="#00e5a0">HELLO </tspan><tspan fill="#8b7bff">THERE...</tspan>
+            <tspan fill="#6f9ceb">HELLO </tspan><tspan fill="#d9a35f">THERE...</tspan>
           </text>
         </svg>
         <img src="photos/r2d2_slow.gif" alt="R2-D2" class="hero-r2d2">
@@ -880,8 +843,7 @@ footer {
 
 <!-- ═══════════════ ABOUT ═══════════════ -->
 <section id="about">
-  <p class="section-tag fade-in">{/}</p>
-  <h2 class="section-title fade-in"><span class="bracket">&lt;</span>about_me<span class="bracket">&gt;</span></h2>
+  <h2 class="section-title fade-in">About Me</h2>
   <p class="section-desc fade-in">robotics and AI researcher</p>
 
   <div class="about-grid">
@@ -895,28 +857,23 @@ footer {
     </div>
     <div class="about-stats fade-in fade-in-delay-2">
       <a href="#timeline" class="stat-card">
-        <div class="stat-icon">{◦}</div>
-        <h4>_life</h4>
+        <h4>Life</h4>
         <div class="stat-value" style="font-size:1rem;">timeline &amp; CV</div>
       </a>
       <a href="research.html" class="stat-card">
-        <div class="stat-icon">{🔬}</div>
-        <h4>_research</h4>
+        <h4>Research</h4>
         <div class="stat-value" style="font-size:1rem;">publications &amp; interests</div>
       </a>
       <a href="experience.html" class="stat-card">
-        <div class="stat-icon">{⚙}</div>
-        <h4>_experience</h4>
+        <h4>Experience</h4>
         <div class="stat-value" style="font-size:1rem;">work &amp; projects</div>
       </a>
       <a href="blog.html" class="stat-card">
-        <div class="stat-icon">{✍}</div>
-        <h4>_blog</h4>
+        <h4>Blog</h4>
         <div class="stat-value" style="font-size:1rem;">notes &amp; writing</div>
       </a>
       <a href="photos.html" class="stat-card">
-        <div class="stat-icon">{🖼}</div>
-        <h4>_pictures</h4>
+        <h4>Pictures</h4>
         <div class="stat-value" style="font-size:1rem;">photos &amp; stuff</div>
       </a>
     </div>
@@ -925,13 +882,12 @@ footer {
 
 <!-- ═══════════════ TIMELINE ═══════════════ -->
 <section id="timeline">
-  <p class="section-tag fade-in">{*}</p>
-  <h2 class="section-title fade-in"><span class="bracket">&lt;</span>life<span class="bracket">&gt;</span></h2>
+  <h2 class="section-title fade-in">Life</h2>
   <p class="section-desc fade-in">timeline, education, and CV</p>
 
   <div class="resume-link-bar fade-in">
-    <a href="https://drive.google.com/file/d/18NQ2q4D6z1ZtPTxcdbAWeVPaV5dGMyfC/view?usp=sharing" target="_blank" rel="noopener">↗ full CV (PDF)</a>
-    <span>// updated Feb 2026</span>
+    <a href="https://drive.google.com/file/d/18NQ2q4D6z1ZtPTxcdbAWeVPaV5dGMyfC/view?usp=sharing" target="_blank" rel="noopener">Full CV (PDF) ↗</a>
+    <span>Updated Feb 2026</span>
   </div>
 
   <div class="timeline-scroll-wrap fade-in">
@@ -986,8 +942,7 @@ footer {
 
 <!-- ═══════════════ CONTACT ═══════════════ -->
 <section id="contact">
-  <p class="section-tag fade-in">{✉}</p>
-  <h2 class="section-title fade-in"><span class="bracket">&lt;</span>contact_me<span class="bracket">&gt;</span></h2>
+  <h2 class="section-title fade-in">Contact Me</h2>
   <p class="section-desc fade-in">interested in collaborating? let's talk</p>
 
   <div class="contact-grid">
@@ -995,46 +950,46 @@ footer {
       <input type="hidden" name="_subject" value="New message from your website">
       <input type="text" name="_gotcha" style="display:none">
       <div class="form-group">
-        <label>_name</label>
+        <label>Name</label>
         <input type="text" name="name" placeholder="Your name">
       </div>
       <div class="form-group">
-        <label>_email *</label>
+        <label>Email *</label>
         <input type="email" name="email" placeholder="your@email.com" required>
       </div>
       <div class="form-group">
-        <label>_message *</label>
+        <label>Message *</label>
         <textarea name="message" placeholder="Your message..." required></textarea>
       </div>
-      <button class="btn-primary" type="submit" id="contact-btn">{send} →</button>
+      <button class="btn-primary" type="submit" id="contact-btn">Send →</button>
       <p id="contact-status" style="font-family:var(--mono);font-size:0.78rem;color:var(--accent);margin-top:10px;display:none;"></p>
     </form>
     <div class="contact-info fade-in fade-in-delay-2">
       <a href="mailto:eliaskallioras@gmail.com" class="contact-link">
         <div class="cl-icon">✉</div>
         <div>
-          <h4>_email</h4>
+          <h4>Email</h4>
           <p>eliaskallioras@gmail.com</p>
         </div>
       </a>
       <a href="https://github.com/808kalli" target="_blank" class="contact-link">
         <div class="cl-icon">⌨</div>
         <div>
-          <h4>_github</h4>
+          <h4>GitHub</h4>
           <p>github.com/808kalli</p>
         </div>
       </a>
       <a href="https://linkedin.com/in/elias-kallioras-b79198248" target="_blank" class="contact-link">
         <div class="cl-icon">💼</div>
         <div>
-          <h4>_linkedin</h4>
+          <h4>LinkedIn</h4>
           <p>linkedin.com/in/elias-kallioras-b79198248</p>
         </div>
       </a>
       <a href="https://scholar.google.com/" target="_blank" class="contact-link">
         <div class="cl-icon">📄</div>
         <div>
-          <h4>_scholar</h4>
+          <h4>Google Scholar</h4>
           <p>Google Scholar Profile</p>
         </div>
       </a>
@@ -1046,12 +1001,12 @@ footer {
 <footer>
   <span>© 2026 Elias — Built with precision</span>
   <div class="footer-links">
-    <a href="#hero">_home</a>
-    <a href="#about">_about</a>
-    <a href="research.html">_research</a>
-    <a href="experience.html">_experience</a>
-    <a href="blog.html">_blog</a>
-    <a href="#contact">_contact</a>
+    <a href="#hero">Home</a>
+    <a href="#about">About</a>
+    <a href="research.html">Research</a>
+    <a href="experience.html">Experience</a>
+    <a href="blog.html">Blog</a>
+    <a href="#contact">Contact</a>
   </div>
 </footer>
 
@@ -1064,7 +1019,7 @@ if (contactForm) {
     e.preventDefault();
     const btn = document.getElementById('contact-btn');
     const status = document.getElementById('contact-status');
-    btn.textContent = '{sending...}';
+    btn.textContent = 'Sending...';
     btn.disabled = true;
     try {
       const res = await fetch(contactForm.action, {
@@ -1073,18 +1028,18 @@ if (contactForm) {
         headers: { 'Accept': 'application/json' }
       });
       if (res.ok) {
-        status.textContent = '// message sent. thanks!';
+        status.textContent = 'Message sent. Thanks!';
         status.style.display = 'block';
         contactForm.reset();
-        btn.textContent = '{sent} ✓';
+        btn.textContent = 'Sent ✓';
       } else {
         throw new Error();
       }
     } catch {
-      status.textContent = '// something went wrong. try emailing directly.';
+      status.textContent = 'Something went wrong. Try emailing directly.';
       status.style.color = '#ff6b6b';
       status.style.display = 'block';
-      btn.textContent = '{send} →';
+      btn.textContent = 'Send →';
       btn.disabled = false;
     }
   });

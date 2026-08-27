@@ -15,11 +15,11 @@
   --text-primary: #e9eaec;
   --text-secondary: #a6aab3;
   --text-muted: #787d87;
-  --accent: #00e5a0;
-  --accent-dim: rgba(0, 229, 160, 0.14);
-  --accent-glow: rgba(0, 229, 160, 0.22);
-  --accent-secondary: #8b7bff;
-  --accent-secondary-dim: rgba(139, 123, 255, 0.16);
+  --accent: #6f9ceb;
+  --accent-dim: rgba(111, 156, 235, 0.14);
+  --accent-glow: rgba(111, 156, 235, 0.20);
+  --accent-secondary: #d9a35f;
+  --accent-secondary-dim: rgba(217, 163, 95, 0.16);
   --border: #383b43;
   --border-subtle: #2c2f36;
   --mono: 'JetBrains Mono', monospace;
@@ -55,13 +55,13 @@ a { color: inherit; text-decoration: none; }
 .page-header { margin-bottom: 48px; }
 
 .page-title {
-  font-family: var(--mono);
+  font-family: var(--sans);
+  letter-spacing: -0.5px;
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 6px;
 }
-.page-title .bracket { color: var(--accent); }
 
 .page-subtitle {
   font-family: var(--mono);
@@ -321,11 +321,11 @@ a { color: inherit; text-decoration: none; }
 
 <div class="page-header">
   <a href="index.html" class="back-link">← back to main</a>
-  <h1 class="page-title"><span class="bracket">&lt;</span>publications<span class="bracket">&gt;</span></h1>
-  <p class="page-subtitle">// thesis and papers</p>
+  <h1 class="page-title">Publications</h1>
+  <p class="page-subtitle">Thesis and papers</p>
 </div>
 
-<div class="section-label">// papers & thesis</div>
+<div class="section-label">Papers & thesis</div>
 <div class="cards-grid">
 
   <div class="research-card" onclick="openModal('modal-thesis')">
@@ -335,7 +335,7 @@ a { color: inherit; text-decoration: none; }
     <div class="card-tech">
       <span>PyTorch</span><span>LoRA</span><span>LIBERO</span><span>HuggingFace</span><span>VLA Models</span>
     </div>
-    <div class="card-open-hint">↗ read more</div>
+    <div class="card-open-hint">Read more ↗</div>
   </div>
 
   <div class="research-card" onclick="openModal('modal-interspeech')">
@@ -345,7 +345,7 @@ a { color: inherit; text-decoration: none; }
     <div class="card-tech">
       <span>Multimodal Learning</span><span>Interaction Topology</span><span>Deep Fusion</span>
     </div>
-    <div class="card-open-hint">↗ read more</div>
+    <div class="card-open-hint">Read more ↗</div>
   </div>
 
 </div>
@@ -372,7 +372,7 @@ a { color: inherit; text-decoration: none; }
       <p>
         The results show that the student model achieves competitive task success rates at a fraction of the inference cost, with LoRA-based fine-tuning enabling efficient adaptation. The work also identifies key failure modes — particularly in long-horizon tasks — that remain open challenges for distilled policies.
       </p>
-      <h4>// tools & methods</h4>
+      <h4>Tools & methods</h4>
       <div class="modal-tech">
         <span>PyTorch</span><span>LoRA</span><span>LIBERO</span><span>HuggingFace Transformers</span><span>VLA Models</span><span>CUDA</span><span>LaTeX</span>
       </div>
@@ -399,7 +399,7 @@ a { color: inherit; text-decoration: none; }
       <p>
         The design is evaluated on standard multimodal benchmarks, with the clearest gains on samples where cross modal cues are complementary rather than redundant.
       </p>
-      <h4>// tools & methods</h4>
+      <h4>Tools & methods</h4>
       <div class="modal-tech">
         <span>Multimodal Learning</span><span>Interaction Topology</span><span>Deep Fusion</span><span>PyTorch</span><span>Transformers</span>
       </div>
