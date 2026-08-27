@@ -1,0 +1,51 @@
+{
+  "lookback_days": 8,
+  "prefilter_keep": 60,
+  "max_items": 8,
+  "min_interest_score": 55,
+  "arxiv_queries": [
+    "abs:\"sparse autoencoder\" AND (cat:cs.LG OR cat:cs.CL)",
+    "abs:\"mechanistic interpretability\"",
+    "(abs:\"interpretability\" OR abs:\"probing\") AND cat:cs.RO",
+    "abs:\"circuit\" AND abs:\"transformer\" AND cat:cs.LG",
+    "abs:\"activation steering\" OR abs:\"representation engineering\"",
+    "abs:\"world model\" AND (cat:cs.RO OR cat:cs.LG)",
+    "abs:\"vision-language-action\" OR abs:\"VLA\" AND cat:cs.RO",
+    "abs:\"behavior cloning\" OR abs:\"behavioural cloning\" OR abs:\"imitation learning\"",
+    "abs:\"distribution shift\" AND (cat:cs.RO OR cat:cs.LG)",
+    "abs:\"action chunking\"",
+    "abs:\"robot\" AND abs:\"pre-training\" AND cat:cs.RO",
+    "abs:\"offline reinforcement learning\" AND cat:cs.LG"
+  ],
+  "feeds": [
+    {
+      "name": "Transformer Circuits",
+      "url": "https://transformer-circuits.pub/feed.xml"
+    },
+    {
+      "name": "Neel Nanda",
+      "url": "https://www.neelnanda.io/blog?format=rss"
+    },
+    {
+      "name": "Alignment Forum",
+      "url": "https://www.alignmentforum.org/feed.xml"
+    },
+    {
+      "name": "Lil'Log",
+      "url": "https://lilianweng.github.io/index.xml"
+    },
+    {
+      "name": "Google DeepMind Blog",
+      "url": "https://deepmind.google/blog/rss.xml"
+    }
+  ],
+  "huggingface_daily_papers": true,
+  "html_indexes": [
+    {
+      "name": "Seohong Park",
+      "url": "https://seohong.me/",
+      "link_pattern": "/blog/[a-z0-9-]+/?$",
+      "max_links": 5
+    }
+  ]
+}
