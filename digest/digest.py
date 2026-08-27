@@ -315,10 +315,24 @@ say so plainly. Never invent citations, venues, or affiliations. Say \
 Write in plain prose. Do not use em dashes, en dashes, or semicolons."""
 
 
-def rank(items: list[Item], profile: str, batch_size: int = 12) -> list[Item]:
-    import anthropic
+class RankingUnavailable(Exception):
+    """No usable Anthropic credentials, or every batch failed."""
 
-    client = anthropic.Anthropic()
+
+def matched_terms(item: Item) -> list[str]:
+    text = f"{item.title} {item.summary}".lower()
+    hits = [t.strip() for terms in PREFILTER_TERMS.values()
+            for t in terms if t in text]
+    return sorted(set(hits), key=len, reverse=True)[:5]
+
+
+def rank(items: list[Item], profile: str, batch_size: int = 12) -> list[Item]:
+    try:
+        import anthropic
+        client = anthropic.Anthropic()
+    except Exception as exc:
+        raise RankingUnavailable(f"client unavailable: {exc}") from exc
+
     ranked: list[Item] = []
 
     for start in range(0, len(items), batch_size):
@@ -346,6 +360,17 @@ def rank(items: list[Item], profile: str, batch_size: int = 12) -> list[Item]:
                 output_format=Judgements,
             )
         except Exception as exc:
+            # A credentials problem will fail every remaining batch the same
+            # way, so stop now rather than burning through the rest. The SDK
+            # raises a plain TypeError when no key resolves at all.
+            fatal = (
+                getattr(exc, "status_code", None) in (401, 403)
+                or isinstance(exc, (anthropic.AuthenticationError,
+                                    anthropic.PermissionDeniedError))
+                or "authentication" in str(exc).lower()
+            )
+            if fatal:
+                raise RankingUnavailable(f"no usable credentials: {exc}") from exc
             print(f"  ranking batch failed: {exc}", file=sys.stderr)
             continue
 
@@ -359,13 +384,33 @@ def rank(items: list[Item], profile: str, batch_size: int = 12) -> list[Item]:
             item.credibility = judgement.credibility
             ranked.append(item)
 
+    if not ranked:
+        raise RankingUnavailable("every batch failed")
+
     ranked.sort(key=lambda i: i.score, reverse=True)
     return ranked
 
 
+def unranked(items: list[Item], limit: int) -> list[Item]:
+    """Fallback when the model is unreachable.
+
+    No scores and no summaries, because inventing either would be worse than
+    admitting the ranking did not run. Each item carries the first part of its
+    own abstract and the keywords that matched.
+    """
+    picked = sorted(items, key=lambda i: i.prefilter_score(), reverse=True)[:limit]
+    for item in picked:
+        sentences = re.split(r"(?<=[.!?]) ", item.summary)
+        item.blurb = " ".join(sentences[:2])[:400] or "No abstract available."
+        item.why = "Matched " + ", ".join(matched_terms(item)) if matched_terms(item) \
+            else "Matched nothing specific, included on source alone."
+        item.credibility = item.signal
+    return picked
+
+
 # ──────────────────────────── output ────────────────────────────
 
-def render_html(items: list[Item], considered: int) -> str:
+def render_html(items: list[Item], considered: int, degraded: str = "") -> str:
     today = datetime.now(timezone.utc).strftime("%d %B %Y")
     rows = []
     for item in items:
@@ -375,13 +420,13 @@ def render_html(items: list[Item], considered: int) -> str:
           <a href="{html.escape(item.url)}" style="color:#2f6fd0;text-decoration:none;">{html.escape(item.title)}</a>
         </div>
         <div style="font:400 12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#8a8f98;padding-top:4px;">
-          {html.escape(item.source)} &middot; {html.escape(item.published)} &middot; interest {item.score}
+          {html.escape(item.source)} &middot; {html.escape(item.published)}{f" &middot; interest {item.score}" if item.score else ""}
         </div>
         <div style="font:400 14px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#333;padding-top:10px;">
           {html.escape(item.blurb)}
         </div>
         <div style="font:400 13px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#5b6068;padding-top:8px;">
-          <strong style="color:#333;">Why you:</strong> {html.escape(item.why)}<br>
+          <strong style="color:#333;">{"Keywords" if degraded else "Why you"}:</strong> {html.escape(item.why)}<br>
           <strong style="color:#333;">Standing:</strong> {html.escape(item.credibility)}
         </div>
       </td></tr>""")
@@ -390,9 +435,10 @@ def render_html(items: list[Item], considered: int) -> str:
 <html><body style="margin:0;padding:24px;background:#f6f7f9;">
 <table role="presentation" cellpadding="0" cellspacing="0" style="max-width:640px;margin:0 auto;background:#fff;border-radius:10px;padding:32px;">
   <tr><td style="font:600 20px/1.3 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding-bottom:4px;">Reading digest</td></tr>
-  <tr><td style="font:400 13px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#8a8f98;padding-bottom:28px;">
+  <tr><td style="font:400 13px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#8a8f98;padding-bottom:{"14px" if degraded else "28px"};">
     {today} &middot; {len(items)} of {considered} candidates
   </td></tr>
+  {f'<tr><td style="background:#fff6e5;border:1px solid #f0dcb0;border-radius:6px;padding:12px 14px;margin-bottom:20px;font:400 13px/1.6 -apple-system,BlinkMacSystemFont,sans-serif;color:#7a5a1a;">Ranking did not run, so this is the keyword shortlist only. No interest scores and no summaries, the text below is each abstract in its own words. Reason: {html.escape(degraded)}</td></tr><tr><td style="height:20px;"></td></tr>' if degraded else ''}
   {''.join(rows) if rows else '<tr><td style="font:400 14px/1.6 sans-serif;color:#5b6068;">Nothing cleared the bar this week.</td></tr>'}
   <tr><td style="border-top:1px solid #e6e8eb;padding-top:20px;font:400 12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#a0a5ad;">
     Ranked against digest/interests.md. Edit that file to change what gets through.
@@ -401,14 +447,17 @@ def render_html(items: list[Item], considered: int) -> str:
 </body></html>"""
 
 
-def render_text(items: list[Item], considered: int) -> str:
+def render_text(items: list[Item], considered: int, degraded: str = "") -> str:
     lines = [f"Reading digest, {len(items)} of {considered} candidates", ""]
+    if degraded:
+        lines += [f"Ranking did not run ({degraded}). Keyword shortlist only,",
+                  "no scores and no summaries, the text below is each abstract.", ""]
     for item in items:
         lines += [
             item.title,
-            f"  {item.source} | {item.published} | interest {item.score}",
+            f"  {item.source} | {item.published}" + (f" | interest {item.score}" if item.score else ""),
             f"  {item.blurb}",
-            f"  Why you: {item.why}",
+            f"  {'Keywords' if degraded else 'Why you'}: {item.why}",
             f"  Standing: {item.credibility}",
             f"  {item.url}",
             "",
@@ -469,6 +518,11 @@ def main() -> int:
     profile = (HERE / "interests.md").read_text()
     seen_path = HERE / "seen.json"
     seen = set(json.loads(seen_path.read_text())) if seen_path.exists() else set()
+    # Items listed in a fallback email were never judged, so they are tracked
+    # apart: they should not repeat next week, but they should still get a real
+    # ranking the first time a working key exists.
+    listed_path = HERE / "seen_unranked.json"
+    listed = set(json.loads(listed_path.read_text())) if listed_path.exists() else set()
 
     since = datetime.now(timezone.utc) - timedelta(days=config["lookback_days"])
     print(f"Collecting since {since:%Y-%m-%d}")
@@ -508,13 +562,27 @@ def main() -> int:
             print(f"  [{item.prefilter_score():2}] {item.source}: {item.title}")
         return 0
 
-    ranked = rank(shortlist, profile)
-    keep = [i for i in ranked if i.score >= config["min_interest_score"]][:config["max_items"]]
-    print(f"  {len(keep)} cleared the bar of {config['min_interest_score']}")
+    degraded = ""
+    try:
+        ranked = rank(shortlist, profile)
+        keep = [i for i in ranked
+                if i.score >= config["min_interest_score"]][:config["max_items"]]
+        print(f"  {len(keep)} cleared the bar of {config['min_interest_score']}")
+    except RankingUnavailable as exc:
+        # Keep the banner readable, the full error stays in the job log.
+        degraded = ("no Anthropic API key is configured for this repository"
+                    if "credentials" in str(exc).lower() else str(exc)[:140])
+        print(f"  ranking unavailable: {exc}", file=sys.stderr)
+        ranked = []
+        pool = [i for i in shortlist if canonical(i.uid) not in listed]
+        keep = unranked(pool, config["max_items"])
+        print(f"  falling back to {len(keep)} keyword matches", file=sys.stderr)
 
-    subject = f"Reading digest, {len(keep)} papers, {datetime.now():%d %b}"
-    html_body = render_html(keep, len(shortlist))
-    text_body = render_text(keep, len(shortlist))
+    subject = (f"Reading digest, {len(keep)} unranked, {datetime.now():%d %b}"
+               if degraded else
+               f"Reading digest, {len(keep)} papers, {datetime.now():%d %b}")
+    html_body = render_html(keep, len(shortlist), degraded)
+    text_body = render_text(keep, len(shortlist), degraded)
 
     if args.dry_run:
         print("\n" + text_body)
@@ -526,6 +594,10 @@ def main() -> int:
     # Only record what the model actually judged, so a failed batch retries.
     seen.update(canonical(i.uid) for i in ranked)
     seen_path.write_text(json.dumps(sorted(seen)[-4000:], indent=0))
+
+    if degraded:
+        listed.update(canonical(i.uid) for i in keep)
+        listed_path.write_text(json.dumps(sorted(listed)[-4000:], indent=0))
     return 0
 
 

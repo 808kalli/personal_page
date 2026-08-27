@@ -42,6 +42,21 @@ account, then generate an app password at myaccount.google.com:
 That ranks everything and prints the result in the log without sending mail or
 recording anything as seen.
 
+## Without an Anthropic key
+
+If no key is set, or the key is rejected, the run does not fail. It sends the
+keyword shortlist instead, with a banner saying the ranking did not run, no
+interest scores, and each item's own abstract in place of a summary. That is
+deliberately worse than the ranked digest, the keyword filter cannot tell an
+interpretability paper from a manipulation paper that mentions features.
+
+Fallback items are recorded in `seen_unranked.json`, not `seen.json`, so they
+do not repeat next week but still get a proper ranking the first time a
+working key exists.
+
+Add `ANTHROPIC_API_KEY` at any point and the next run ranks normally. Nothing
+else changes.
+
 ## Cost
 
 Around 60 candidates reach the model each week, batched twelve at a time, so
