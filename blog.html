@@ -276,6 +276,91 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 10px;
 }
 
+.modal-figure {
+  margin: 22px 0;
+}
+
+.modal-figure img,
+.modal-figure video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+}
+
+.modal-figure figcaption {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.modal-figure-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 22px 0;
+}
+
+.modal-figure-row .modal-figure { margin: 0; }
+
+.modal-table-wrap {
+  overflow-x: auto;
+  margin: 22px 0;
+}
+
+.modal-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 460px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+}
+
+.modal-table th,
+.modal-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.modal-table th {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-table tr.adopted td {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+@media (max-width: 700px) {
+  .modal-figure-row { grid-template-columns: 1fr; }
+}
+
+.modal-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.modal-tech span {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
 .modal-body code {
   font-family: var(--mono);
   font-size: 0.82rem;
@@ -303,7 +388,7 @@ a { color: inherit; text-decoration: none; }
 <div class="page-header">
   <a href="index.html" class="back-link">← back to main</a>
   <h1 class="page-title">Blog</h1>
-  <p class="page-subtitle">Notes, writeups, and things I found interesting</p>
+  <p class="page-subtitle">Project writeups, notes, and things I found interesting</p>
 </div>
 
 <!-- ════════════════════════════════════
@@ -330,6 +415,39 @@ a { color: inherit; text-decoration: none; }
     </div>
     <div class="post-card-right">
       <div class="post-date">Mar 2026</div>
+      <div class="post-open-hint">Read ↗</div>
+    </div>
+  </div>
+
+
+  <!-- ── POST: drone bounce control ── -->
+  <div class="post-card" onclick="openModal('modal-drone-bounce')">
+    <div class="post-card-left">
+      <div class="post-tags">
+        <span class="post-tag">project</span>
+        <span class="post-tag purple">control</span>
+      </div>
+      <h3>Making a drone rally a ball to a commanded height</h3>
+      <p>An underactuated planar quadrotor with a racket, keeping a rally going under wind while it only sees the ball every 0.30 s. Five controllers, and why survival is not competence.</p>
+    </div>
+    <div class="post-card-right">
+      <div class="post-date">Jul 2026</div>
+      <div class="post-open-hint">Read ↗</div>
+    </div>
+  </div>
+
+  <!-- ── POST: cli-timer ── -->
+  <div class="post-card" onclick="openModal('modal-cli-timer')">
+    <div class="post-card-left">
+      <div class="post-tags">
+        <span class="post-tag">project</span>
+        <span class="post-tag purple">terminal</span>
+      </div>
+      <h3>A terminal timer with a slime living in it</h3>
+      <p>A full screen countdown, stopwatch, and clock drawn in a seven segment font, and how you fake a hover event in a terminal that has none.</p>
+    </div>
+    <div class="post-card-right">
+      <div class="post-date">Jul 2026</div>
       <div class="post-open-hint">Read ↗</div>
     </div>
   </div>
@@ -374,6 +492,114 @@ a { color: inherit; text-decoration: none; }
       <h4>What I'd do differently</h4>
       <p>
         Start with a much simpler student architecture and only scale up if needed. The pressure to match the teacher's design biased me toward an unnecessarily similar structure. Also: instrument everything from day one. Loss curves lie; per-task success rates tell the real story.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-drone-bounce" onclick="closeModalOnBg(event,'modal-drone-bounce')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-drone-bounce')">×</button>
+    <div class="modal-tags">
+      <span class="modal-tag">project</span>
+      <span class="modal-tag purple">control</span>
+    </div>
+    <h2>Making a drone rally a ball to a commanded height</h2>
+    <div class="modal-date">July 2026</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        A planar (2D) underactuated quadrotor carries a racket and has to bounce a ball so that every apex lands on a commanded height, then keep the rally going indefinitely. The catch is that it fights wind, and it only sees the ball every 0.30 s through noisy measurements, so most of the work happens between observations.
+      </p>
+      <p>
+        The stack is a bounce aware Kalman filter that propagates the ball through its own contact discontinuity, plus a controller that plans each strike against a fixed anchored plane rather than the racket's live rising plane. An earlier lead float version taught me the most. It survived beautifully by tapping the ball near its apex and almost never scored, which is why the grader also requires the ball to genuinely fall before an apex counts. Survival is not competence.
+      </p>
+      <p>
+        The final anchored controller with lateral follow tuning reaches 35.0 and 19.3 good bounces per 20 s at the two target heights, at 98% and 91% survival, up from 17.8 and 0.1 bounces at 9% and 0% survival for the naive proportional baseline, measured over 100 seeds per cell. The write up is the real deliverable, a single self contained HTML report with the maths, every plot, and video of each landmark controller inlined.
+      </p>
+      <figure class="modal-figure">
+        <video src="photos/projects/drone-bounce/tuned_success_h2.0.mp4" autoplay muted loop playsinline></video>
+        <figcaption>The adopted controller rallying to a 2.0 m apex under nominal wind</figcaption>
+      </figure>
+      <div class="modal-table-wrap">
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>controller</th>
+              <th>good bounces / 20 s (1.5 m)</th>
+              <th>(2.0 m)</th>
+              <th>survival (1.5 m / 2.0 m)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>baseline</td><td>17.8</td><td>0.1</td><td>9% / 0%</td></tr>
+            <tr><td>fixed z</td><td>35.8</td><td>0.0</td><td>70% / 27%</td></tr>
+            <tr><td>lead float</td><td>3.0</td><td>1.6</td><td>87% / 69%</td></tr>
+            <tr><td>anchored</td><td>27.5</td><td>9.6</td><td>55% / 11%</td></tr>
+            <tr class="adopted"><td>anchored + tuned</td><td>35.0</td><td>19.3</td><td>98% / 91%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/good_vs_height.png" alt="good bounces per 20 s against target apex height, for each landmark controller" loading="lazy">
+        <figcaption>Scoring rate against target apex height. Fixed z matches the adopted controller at 1.5 m and collapses to zero by 2.0 m, which is what the single number in the table hides.</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/kpx_tuning.png" alt="sweep of the lateral follow gain against good bounces and survival" loading="lazy">
+        <figcaption>The lateral follow gain sweep. Scores rise, plateau between 12 and 20, then fall off a cliff past 24, so 20 was adopted.</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/estimator_tracking.png" alt="true ball state against the bounce aware Kalman estimate" loading="lazy">
+        <figcaption>The bounce aware filter tracking the ball. Note how the velocity covariance fans out between the sparse measurements (green) and snaps back at each contact (grey lines).</figcaption>
+      </figure>
+      <h4>Tools</h4>
+      <div class="modal-tech">
+        <span>Python</span><span>MuJoCo</span><span>NumPy</span><span>Kalman Filtering</span><span>Control Systems</span><span>Matplotlib</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-cli-timer" onclick="closeModalOnBg(event,'modal-cli-timer')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-cli-timer')">×</button>
+    <div class="modal-tags">
+      <span class="modal-tag">project</span>
+      <span class="modal-tag purple">terminal</span>
+    </div>
+    <h2>A terminal timer with a slime living in it</h2>
+    <div class="modal-date">July 2026</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        A full screen countdown timer, stopwatch, and clock for the terminal, rendered in a solid seven segment font with a warm ember palette. It takes durations in whatever form is natural (<code>25</code>, <code>90s</code>, <code>1h30m</code>, <code>10:00</code>), records laps, and beeps and waits for a keypress at zero so a finished timer never vanishes unnoticed.
+      </p>
+      <p>
+        Most of the effort went into the layout behaving under every terminal shape. Digits never grow taller than their width allows, the date beside the clock takes only the space left spare so it never costs the display a size step, and everything is drawn on the alternate screen buffer so scrollback survives. The renderer is a pure function from state to string, which means the layout can be inspected and tested without a TTY.
+      </p>
+      <p>
+        There is also a slime that wanders along the floor of the box and glances up at the clock. Terminals have no hover event, so when you point at it, it startles and jumps, synthesised from SGR mouse motion reports hit tested against where it is standing. Install it with <code>npm install -g github:808kalli/cli-timer</code>.
+      </p>
+      <figure class="modal-figure">
+        <img src="photos/projects/cli-timer/stopwatch_laps.png" alt="the stopwatch running with four recorded laps and the slime in the corner" loading="lazy">
+        <figcaption>The stopwatch, with recorded laps and their splits, and the slime taking a break</figcaption>
+      </figure>
+      <div class="modal-figure-row">
+        <figure class="modal-figure">
+          <img src="photos/projects/cli-timer/countdown.png" alt="the countdown timer with its progress bar" loading="lazy">
+          <figcaption>Countdown, with elapsed progress</figcaption>
+        </figure>
+        <figure class="modal-figure">
+          <img src="photos/projects/cli-timer/clock.png" alt="the clock mode showing the time of day with the date beside it" loading="lazy">
+          <figcaption>Clock, read from the system clock</figcaption>
+        </figure>
+      </div>
+      <h4>Tools</h4>
+      <div class="modal-tech">
+        <span>Node.js</span><span>ANSI escape codes</span><span>TUI</span><span>Zero dependencies</span>
+      </div>
+      <p style="margin-top:18px;">
+        <a href="https://github.com/808kalli/cli-timer" target="_blank" rel="noopener">↗ github.com/808kalli/cli-timer</a>
       </p>
     </div>
   </div>
