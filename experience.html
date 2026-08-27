@@ -280,6 +280,75 @@ a { color: inherit; text-decoration: none; }
   gap: 6px;
 }
 
+.modal-figure {
+  margin: 22px 0;
+}
+
+.modal-figure img,
+.modal-figure video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+}
+
+.modal-figure figcaption {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.modal-figure-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 22px 0;
+}
+
+.modal-figure-row .modal-figure { margin: 0; }
+
+.modal-table-wrap {
+  overflow-x: auto;
+  margin: 22px 0;
+}
+
+.modal-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 460px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+}
+
+.modal-table th,
+.modal-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.modal-table th {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-table tr.adopted td {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+@media (max-width: 700px) {
+  .modal-figure-row { grid-template-columns: 1fr; }
+}
+
 .modal-tech span {
   font-family: var(--mono);
   font-size: 0.7rem;
@@ -580,6 +649,41 @@ a { color: inherit; text-decoration: none; }
       <p>
         The final anchored controller with lateral follow tuning reaches 35.0 and 19.3 good bounces per 20 s at the two target heights, at 98% and 91% survival, up from 17.8 and 0.1 bounces at 9% and 0% survival for the naive proportional baseline, measured over 100 seeds per cell. The write up is the real deliverable, a single self contained HTML report with the maths, every plot, and video of each landmark controller inlined.
       </p>
+      <figure class="modal-figure">
+        <video src="photos/projects/drone-bounce/tuned_success_h2.0.mp4" autoplay muted loop playsinline></video>
+        <figcaption>// the adopted controller rallying to a 2.0 m apex under nominal wind</figcaption>
+      </figure>
+      <div class="modal-table-wrap">
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>controller</th>
+              <th>good bounces / 20 s (1.5 m)</th>
+              <th>(2.0 m)</th>
+              <th>survival (1.5 m / 2.0 m)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>baseline</td><td>17.8</td><td>0.1</td><td>9% / 0%</td></tr>
+            <tr><td>fixed z</td><td>35.8</td><td>0.0</td><td>70% / 27%</td></tr>
+            <tr><td>lead float</td><td>3.0</td><td>1.6</td><td>87% / 69%</td></tr>
+            <tr><td>anchored</td><td>27.5</td><td>9.6</td><td>55% / 11%</td></tr>
+            <tr class="adopted"><td>anchored + tuned</td><td>35.0</td><td>19.3</td><td>98% / 91%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/good_vs_height.png" alt="good bounces per 20 s against target apex height, for each landmark controller" loading="lazy">
+        <figcaption>// scoring rate against target apex height. Fixed z matches the adopted controller at 1.5 m and collapses to zero by 2.0 m, which is what the single number in the table hides.</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/kpx_tuning.png" alt="sweep of the lateral follow gain against good bounces and survival" loading="lazy">
+        <figcaption>// the lateral follow gain sweep. Scores rise, plateau between 12 and 20, then fall off a cliff past 24, so 20 was adopted.</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/estimator_tracking.png" alt="true ball state against the bounce aware Kalman estimate" loading="lazy">
+        <figcaption>// the bounce aware filter tracking the ball. Note how the velocity covariance fans out between the sparse measurements (green) and snaps back at each contact (grey lines).</figcaption>
+      </figure>
       <h4>// tools</h4>
       <div class="modal-tech">
         <span>Python</span><span>MuJoCo</span><span>NumPy</span><span>Kalman Filtering</span><span>Control Systems</span><span>Matplotlib</span>
@@ -606,6 +710,20 @@ a { color: inherit; text-decoration: none; }
       <p>
         There is also a slime that wanders along the floor of the box and glances up at the clock. Terminals have no hover event, so when you point at it, it startles and jumps, synthesised from SGR mouse motion reports hit tested against where it is standing. Install it with <code>npm install -g github:808kalli/cli-timer</code>.
       </p>
+      <figure class="modal-figure">
+        <img src="photos/projects/cli-timer/stopwatch_laps.png" alt="the stopwatch running with four recorded laps and the slime in the corner" loading="lazy">
+        <figcaption>// the stopwatch, with recorded laps and their splits, and the slime taking a break</figcaption>
+      </figure>
+      <div class="modal-figure-row">
+        <figure class="modal-figure">
+          <img src="photos/projects/cli-timer/countdown.png" alt="the countdown timer with its progress bar" loading="lazy">
+          <figcaption>// countdown, with elapsed progress</figcaption>
+        </figure>
+        <figure class="modal-figure">
+          <img src="photos/projects/cli-timer/clock.png" alt="the clock mode showing the time of day with the date beside it" loading="lazy">
+          <figcaption>// clock, read from the system clock</figcaption>
+        </figure>
+      </div>
       <h4>// tools</h4>
       <div class="modal-tech">
         <span>Node.js</span><span>ANSI escape codes</span><span>TUI</span><span>Zero dependencies</span>
