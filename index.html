@@ -133,10 +133,9 @@ nav {
    HERO SECTION
    ═══════════════════════════════════════ */
 #hero {
-  min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 0 clamp(24px, 5vw, 80px);
+  padding: clamp(80px, 12vh, 140px) clamp(24px, 5vw, 80px) clamp(60px, 9vh, 100px);
   position: relative;
 }
 
@@ -304,28 +303,6 @@ nav {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-dim);
-}
-
-.scroll-indicator {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.scroll-indicator .arrow {
-  width: 20px;
-  height: 20px;
-  border-right: 1.5px solid var(--text-muted);
-  border-bottom: 1.5px solid var(--text-muted);
-  transform: rotate(45deg);
 }
 
 /* ═══════════════════════════════════════
@@ -834,10 +811,6 @@ footer {
         <img src="photos/r2d2_slow.gif" alt="R2-D2" class="hero-r2d2">
       </div>
     </div>
-  </div>
-  <div class="scroll-indicator">
-    <span>scroll</span>
-    <div class="arrow"></div>
   </div>
 </section>
 
