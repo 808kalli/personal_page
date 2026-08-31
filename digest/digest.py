@@ -564,15 +564,23 @@ def rank(items: list[Item], profile: str, notes: str = "",
         prompt = ("Refine the proposed score for every candidate below, "
                   "keeping the index.\n\n" + "\n\n".join(lines))
 
-        try:
-            result = call_model(SYSTEM.format(profile=profile, cap=MAX_ADJUSTMENT)
-                                + notes, prompt, cfg)
-        except RankingUnavailable:
-            raise
-        except Exception as exc:
-            failures += 1
-            print(f"  batch failed, keeping keyword order for it: {exc}",
-                  file=sys.stderr)
+        result = None
+        for attempt in (1, 2):
+            try:
+                result = call_model(SYSTEM.format(profile=profile, cap=MAX_ADJUSTMENT)
+                                    + notes, prompt, cfg)
+                break
+            except RankingUnavailable:
+                raise
+            except Exception as exc:
+                if attempt == 2:
+                    failures += 1
+                    print(f"  batch failed twice, keeping keyword order "
+                          f"for it: {exc}", file=sys.stderr)
+                else:
+                    print(f"  batch failed, retrying once: {exc}",
+                          file=sys.stderr)
+        if result is None:
             continue
 
         for row in result.get("items", []):
@@ -706,7 +714,7 @@ def send(subject: str, html_body: str, text_body: str, to: str) -> None:
     resend_key = os.environ.get("RESEND_API_KEY")
     if resend_key:
         payload = json.dumps({
-            "from": os.environ.get("DIGEST_FROM", "onboarding@resend.dev"),
+            "from": os.environ.get("DIGEST_FROM") or "onboarding@resend.dev",
             "to": [to],
             "subject": subject,
             "html": html_body,
@@ -715,7 +723,8 @@ def send(subject: str, html_body: str, text_body: str, to: str) -> None:
         req = urllib.request.Request(
             "https://api.resend.com/emails", data=payload, method="POST",
             headers={"Authorization": f"Bearer {resend_key}",
-                     "Content-Type": "application/json"})
+                     "Content-Type": "application/json",
+                     "User-Agent": BROWSER_UA})
         try:
             with urllib.request.urlopen(req, timeout=30) as resp:
                 print("  sent via Resend:", resp.status)
@@ -724,7 +733,7 @@ def send(subject: str, html_body: str, text_body: str, to: str) -> None:
             detail = exc.read().decode("utf8", "replace")[:500]
             raise SystemExit(
                 f"Resend refused the send ({exc.code}): {detail}\n"
-                f"Sender was {os.environ.get('DIGEST_FROM', 'onboarding@resend.dev')}, "
+                f"Sender was {os.environ.get('DIGEST_FROM') or 'onboarding@resend.dev'}, "
                 f"recipient {to}.\nOn the free tier the onboarding@resend.dev sender "
                 "only delivers to the address the Resend account was created with. "
                 "Either set DIGEST_TO to that address, or verify a domain and set "

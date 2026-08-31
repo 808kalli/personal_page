@@ -7,8 +7,8 @@
     "provider": "gemini",
     "model": "gemini-3.6-flash",
     "endpoint": "https://generativelanguage.googleapis.com/v1beta/interactions",
-    "batch_size": 12,
-    "timeout": 120
+    "batch_size": 8,
+    "timeout": 240
   },
   "arxiv_queries": [
     "abs:\"sparse autoencoder\" AND (cat:cs.LG OR cat:cs.CL)",
