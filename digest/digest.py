@@ -749,10 +749,12 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.test_email:
+        to = os.environ.get("DIGEST_TO")
+        if not to:
+            raise SystemExit("DIGEST_TO is not set, nothing to test against.")
         body = "<p>Delivery works. The real digest will look nothing like this.</p>"
         send("Reading digest, delivery test", body,
-             "Delivery works. The real digest will look nothing like this.",
-             os.environ["DIGEST_TO"])
+             "Delivery works. The real digest will look nothing like this.", to)
         return 0
 
     config = json.loads((HERE / "sources.json").read_text())
@@ -835,7 +837,13 @@ def main() -> int:
         return 0
 
     if keep:
-        send(subject, html_body, text_body, os.environ["DIGEST_TO"])
+        to = os.environ.get("DIGEST_TO")
+        if not to:
+            raise SystemExit(
+                "DIGEST_TO is not set, so there is nowhere to send this.\n"
+                "Add it as a repository secret, or run with --dry-run to see "
+                "the digest without sending it.")
+        send(subject, html_body, text_body, to)
 
     # Only record what the model actually judged, so a failed batch retries.
     seen.update(canonical(i.uid) for i in ranked)
