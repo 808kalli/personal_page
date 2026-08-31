@@ -77,6 +77,15 @@ say plainly what the keywords got wrong.
 The cap lives in `MAX_ADJUSTMENT` in `digest.py`. Lower it to trust the
 keywords more, raise it to trust the model more.
 
+## Rate limits
+
+The Gemini free tier is 10 requests per minute and 1,500 a day. This digest
+uses at most a few dozen a run, so the day limit never matters, but the
+minute limit does: `pace_seconds` in `sources.json` sleeps that long between
+batches so requests never bunch up. A 429 specifically waits 30 seconds and
+retries once before giving up on that batch, other failures retry
+immediately once. If you see rate limit errors anyway, raise `pace_seconds`.
+
 ## Cost
 
 Nothing. Around 80 candidates reach the model each week, batched twelve at a
@@ -120,7 +129,7 @@ something irrelevant gets through, add why it was wrong there.
 | `prefilter_keep` | how many candidates reach the model, the rest are dropped on keyword score |
 | `max_items` | hard cap on the email |
 | `min_interest_score` | the bar, 0 to 100. Raise it if the digest feels padded |
-| `model` | provider, model id, endpoint, and batch size |
+| `model` | provider, model id, endpoint, batch size, timeout, and `pace_seconds` |
 | `arxiv_queries` | arXiv API query strings, one request each |
 | `feeds` | RSS or Atom, both parse |
 | `html_indexes` | sites with no feed at all, scraped for the newest links |

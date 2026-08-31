@@ -437,6 +437,10 @@ class RankingUnavailable(Exception):
     """No usable credentials, a refused request, or every batch failed."""
 
 
+class RateLimited(Exception):
+    """A 429. Worth a real wait, not the fast retry other errors get."""
+
+
 def prior_score(item: Item) -> int:
     """Keyword score, stretched onto the same 0-100 scale as the final one.
 
@@ -506,7 +510,9 @@ def call_model(system: str, prompt: str, cfg: dict) -> dict:
     if not key:
         raise RankingUnavailable("GEMINI_API_KEY is not set")
 
-    endpoint = os.environ.get("GEMINI_ENDPOINT", cfg["endpoint"])
+    endpoint = (os.environ.get("GEMINI_ENDPOINT")
+                or cfg.get("endpoint")
+                or "https://generativelanguage.googleapis.com/v1beta/interactions")
     body = json.dumps({
         "model": cfg["model"],
         "input": f"{system}\n\n{prompt}",
@@ -527,6 +533,8 @@ def call_model(system: str, prompt: str, cfg: dict) -> dict:
         detail = exc.read().decode("utf8", "replace")[:300]
         if exc.code in (401, 403):
             raise RankingUnavailable(f"credentials rejected: {detail}") from None
+        if exc.code == 429:
+            raise RateLimited(f"HTTP 429: {detail}") from None
         raise RuntimeError(f"HTTP {exc.code}: {detail}") from None
 
     # Documented convenience field first, then the long form.
@@ -549,7 +557,11 @@ def rank(items: list[Item], profile: str, notes: str = "",
     ranked: list[Item] = []
     failures = 0
 
+    pace_seconds = cfg.get("pace_seconds", 7)  # 10 RPM allows one per 6s
+
     for start in range(0, len(items), batch_size):
+        if start:
+            time.sleep(pace_seconds)
         batch = items[start:start + batch_size]
         lines = []
         for i, item in enumerate(batch):
@@ -572,6 +584,15 @@ def rank(items: list[Item], profile: str, notes: str = "",
                 break
             except RankingUnavailable:
                 raise
+            except RateLimited as exc:
+                if attempt == 2:
+                    failures += 1
+                    print(f"  still rate limited after backing off, "
+                          f"keeping keyword order for it: {exc}", file=sys.stderr)
+                else:
+                    print(f"  rate limited, waiting 30s before retrying: {exc}",
+                          file=sys.stderr)
+                    time.sleep(30)
             except Exception as exc:
                 if attempt == 2:
                     failures += 1
