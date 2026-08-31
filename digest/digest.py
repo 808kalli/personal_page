@@ -30,8 +30,6 @@ from email.message import EmailMessage
 from pathlib import Path
 from typing import Iterable
 
-from pydantic import BaseModel
-
 HERE = Path(__file__).resolve().parent
 UA = "reading-digest/1.0 (+https://github.com/808kalli/personal_page)"
 MODEL = "claude-opus-5"
@@ -412,62 +410,134 @@ def calibration(entries: list[dict], per_side: int = 12) -> str:
 
 
 # ──────────────────────────── ranking ────────────────────────────
+#
+# The keyword score proposes, the model refines. The model never sees a blank
+# slate and never returns a score of its own, only an adjustment to the one
+# the keywords already produced, so a bad model run degrades toward the
+# keyword ordering instead of toward noise.
 
-class Judgement(BaseModel):
-    index: int
-    interest: int          # 0-100, how interesting Elias would find it
-    why: str               # one line, what makes it a match or not
-    summary: str           # two sentences on what the work actually says
-    credibility: str       # what backs it, or what is missing
+# A hosted frontier-lite model earns more authority over the keyword prior
+# than a small local one would. At 60 the model can rescue something the
+# keywords scored 20 or bury something they scored 90, but the prior still
+# anchors where it starts from.
+MAX_ADJUSTMENT = 60
 
 
-class Judgements(BaseModel):
-    items: list[Judgement]
+class RankingUnavailable(Exception):
+    """No usable credentials, a refused request, or every batch failed."""
 
 
-SYSTEM = """You rank new papers and blog posts for one specific reader and \
-summarise the ones worth their time. The reader's interest profile follows. \
-Judge against that profile only, not against general importance.
+def prior_score(item: Item) -> int:
+    """Keyword score, stretched onto the same 0-100 scale as the final one.
+
+    Raw weighted scores land roughly between 0 and 20, so four points per unit
+    puts a strong keyword match near 80 and leaves headroom above it for the
+    model to push something genuinely good higher.
+    """
+    return min(90, item.prefilter_score() * 4)
+
+
+SCHEMA = {
+    "type": "object",
+    "properties": {
+        "items": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "index": {"type": "integer"},
+                    "adjustment": {"type": "integer"},
+                    "reason": {"type": "string"},
+                    "summary": {"type": "string"},
+                    "credibility": {"type": "string"},
+                },
+                "required": ["index", "adjustment", "reason", "summary",
+                             "credibility"],
+            },
+        }
+    },
+    "required": ["items"],
+}
+
+
+SYSTEM = """You are refining a reading list for one specific reader, and \
+summarising what is on it. Their interest profile follows. Judge against that \
+profile only, not against general importance.
 
 {profile}
 
-For each candidate return:
-  interest    0-100. How much would THIS reader want to read it. Be harsh. \
-Most papers should land under 40. Reserve 80+ for work that clearly sits in \
-the core interests and says something new. A paper in an adjacent field that \
-is excellent but off profile scores low, that is correct.
-  why         One line. Name the specific interest it hits, or say why it is \
-off profile. Do not restate the title.
-  summary     Two sentences on what the work actually claims and shows. \
-Concrete. No "this paper explores" throat clearing.
-  credibility What backs this work: recognisable authors or groups, a venue, \
+Each candidate arrives with a proposed score out of 100. That score came from \
+keyword matching, so it is crude: it can see that a paper says "sparse \
+autoencoder" but not whether the paper is about interpretability or merely \
+mentions the phrase. Your job is to correct it, not to replace it.
+
+Return for each candidate:
+  adjustment   An integer between -{cap} and +{cap} to add to the proposed \
+score. Zero is a valid and common answer, it means the keywords got it right. \
+Go strongly negative when the words matched but the substance is off profile, \
+which is the usual failure. Go strongly positive only when the paper sits in \
+the core interests and the keywords undersold it.
+  reason       One line. What the paper actually is, and why it moves up or \
+down. Any adjustment of 25 or more must say plainly what the keywords got \
+wrong. Do not restate the title.
+  summary      Two sentences on what the work claims and shows. Concrete. No \
+"this paper explores" throat clearing.
+  credibility  What backs this work: recognisable authors or groups, a venue, \
 community signal. If it is a fresh preprint with no track record you can see, \
-say so plainly. Never invent citations, venues, or affiliations. Say \
-"no signal yet" when there is none.
+say so plainly. Never invent citations, venues, or affiliations. Say "no \
+signal yet" when there is none.
 
 Write in plain prose. Do not use em dashes, en dashes, or semicolons."""
 
 
-class RankingUnavailable(Exception):
-    """No usable Anthropic credentials, or every batch failed."""
+def call_model(system: str, prompt: str, cfg: dict) -> dict:
+    """One structured request. Providers differ, the caller should not care."""
+    key = os.environ.get("GEMINI_API_KEY")
+    if not key:
+        raise RankingUnavailable("GEMINI_API_KEY is not set")
 
+    endpoint = os.environ.get("GEMINI_ENDPOINT", cfg["endpoint"])
+    body = json.dumps({
+        "model": cfg["model"],
+        "input": f"{system}\n\n{prompt}",
+        "response_format": {
+            "type": "text",
+            "mime_type": "application/json",
+            "schema": SCHEMA,
+        },
+    }).encode()
 
-def matched_terms(item: Item) -> list[str]:
-    text = f"{item.title} {item.summary}".lower()
-    hits = [t.strip() for terms in PREFILTER_TERMS.values()
-            for t in terms if t in text]
-    return sorted(set(hits), key=len, reverse=True)[:5]
+    req = urllib.request.Request(
+        endpoint, data=body, method="POST",
+        headers={"x-goog-api-key": key, "Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=cfg.get("timeout", 120)) as resp:
+            payload = json.loads(resp.read())
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf8", "replace")[:300]
+        if exc.code in (401, 403):
+            raise RankingUnavailable(f"credentials rejected: {detail}") from None
+        raise RuntimeError(f"HTTP {exc.code}: {detail}") from None
+
+    # Documented convenience field first, then the long form.
+    text = payload.get("output_text")
+    if not text:
+        chunks = [c.get("text", "")
+                  for step in payload.get("steps", [])
+                  for c in step.get("content", [])
+                  if c.get("type") == "text"]
+        text = "".join(chunks)
+    if not text:
+        raise RuntimeError(f"no text in response: {json.dumps(payload)[:300]}")
+    return json.loads(text)
 
 
 def rank(items: list[Item], profile: str, notes: str = "",
-         batch_size: int = 12) -> list[Item]:
-    try:
-        import anthropic
-        client = anthropic.Anthropic()
-    except Exception as exc:
-        raise RankingUnavailable(f"client unavailable: {exc}") from exc
-
+         cfg: dict | None = None) -> list[Item]:
+    cfg = cfg or {}
+    batch_size = cfg.get("batch_size", 12)
     ranked: list[Item] = []
+    failures = 0
 
     for start in range(0, len(items), batch_size):
         batch = items[start:start + batch_size]
@@ -475,51 +545,45 @@ def rank(items: list[Item], profile: str, notes: str = "",
         for i, item in enumerate(batch):
             lines.append(
                 f"[{i}] {item.title}\n"
+                f"    proposed score: {prior_score(item)}\n"
                 f"    source: {item.source} ({item.published})\n"
                 f"    authors: {item.authors or 'not listed'}\n"
                 f"    signal: {item.signal}\n"
                 f"    abstract: {item.summary[:1200] or 'not available'}"
             )
-        prompt = (
-            "Judge every candidate below and return one entry per candidate, "
-            "keeping the index.\n\n" + "\n\n".join(lines)
-        )
+        prompt = ("Refine the proposed score for every candidate below, "
+                  "keeping the index.\n\n" + "\n\n".join(lines))
 
         try:
-            response = client.messages.parse(
-                model=MODEL,
-                max_tokens=16000,
-                system=SYSTEM.format(profile=profile) + notes,
-                messages=[{"role": "user", "content": prompt}],
-                output_format=Judgements,
-            )
+            result = call_model(SYSTEM.format(profile=profile, cap=MAX_ADJUSTMENT)
+                                + notes, prompt, cfg)
+        except RankingUnavailable:
+            raise
         except Exception as exc:
-            # A credentials problem will fail every remaining batch the same
-            # way, so stop now rather than burning through the rest. The SDK
-            # raises a plain TypeError when no key resolves at all.
-            fatal = (
-                getattr(exc, "status_code", None) in (401, 403)
-                or isinstance(exc, (anthropic.AuthenticationError,
-                                    anthropic.PermissionDeniedError))
-                or "authentication" in str(exc).lower()
-            )
-            if fatal:
-                raise RankingUnavailable(f"no usable credentials: {exc}") from exc
-            print(f"  ranking batch failed: {exc}", file=sys.stderr)
+            failures += 1
+            print(f"  batch failed, keeping keyword order for it: {exc}",
+                  file=sys.stderr)
             continue
 
-        for judgement in response.parsed_output.items:
-            if not 0 <= judgement.index < len(batch):
+        for row in result.get("items", []):
+            index = row.get("index")
+            if not isinstance(index, int) or not 0 <= index < len(batch):
                 continue
-            item = batch[judgement.index]
-            item.score = judgement.interest
-            item.why = judgement.why
-            item.blurb = judgement.summary
-            item.credibility = judgement.credibility
+            item = batch[index]
+            delta = max(-MAX_ADJUSTMENT, min(MAX_ADJUSTMENT,
+                                             int(row.get("adjustment", 0))))
+            item.score = max(0, min(100, prior_score(item) + delta))
+            item.why = row.get("reason", "").strip()
+            item.blurb = row.get("summary", "").strip()
+            item.credibility = row.get("credibility", "").strip() or item.signal
+            item.extras["prior"] = prior_score(item)
+            item.extras["adjustment"] = delta
             ranked.append(item)
 
     if not ranked:
         raise RankingUnavailable("every batch failed")
+    if failures:
+        print(f"  {failures} batch(es) dropped", file=sys.stderr)
 
     ranked.sort(key=lambda i: i.score, reverse=True)
     return ranked
@@ -544,6 +608,18 @@ def unranked(items: list[Item], limit: int) -> list[Item]:
 
 # ──────────────────────────── output ────────────────────────────
 
+def score_note(item: Item) -> str:
+    """Final score, and what the model did to the keyword proposal."""
+    if not item.score:
+        return ""
+    delta = item.extras.get("adjustment")
+    if delta is None:
+        return f" &middot; interest {item.score}"
+    arrow = f"{delta:+d}" if delta else "unchanged"
+    return (f" &middot; interest {item.score} "
+            f"(keywords said {item.extras.get('prior')}, {arrow})")
+
+
 def render_html(items: list[Item], considered: int, degraded: str = "") -> str:
     today = datetime.now(timezone.utc).strftime("%d %B %Y")
     rows = []
@@ -554,7 +630,7 @@ def render_html(items: list[Item], considered: int, degraded: str = "") -> str:
           <a href="{html.escape(item.url)}" style="color:#2f6fd0;text-decoration:none;">{html.escape(item.title)}</a>
         </div>
         <div style="font:400 12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#8a8f98;padding-top:4px;">
-          {html.escape(item.source)} &middot; {html.escape(item.published)}{f" &middot; interest {item.score}" if item.score else ""}
+          {html.escape(item.source)} &middot; {html.escape(item.published)}{score_note(item)}
         </div>
         <div style="font:400 14px/1.65 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#333;padding-top:10px;">
           {html.escape(item.blurb)}
@@ -595,7 +671,9 @@ def render_text(items: list[Item], considered: int, degraded: str = "") -> str:
     for item in items:
         lines += [
             item.title,
-            f"  {item.source} | {item.published}" + (f" | interest {item.score}" if item.score else ""),
+            f"  {item.source} | {item.published}"
+            + (re.sub(r"&middot;", "|", score_note(item)).replace("&nbsp;", " ")
+               if item.score else ""),
             f"  {item.blurb}",
             f"  {'Keywords' if degraded else 'Why you'}: {item.why}",
             f"  Standing: {item.credibility}",
@@ -621,8 +699,20 @@ def send(subject: str, html_body: str, text_body: str, to: str) -> None:
             "https://api.resend.com/emails", data=payload, method="POST",
             headers={"Authorization": f"Bearer {resend_key}",
                      "Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            print("  sent via Resend:", resp.status)
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                print("  sent via Resend:", resp.status)
+        except urllib.error.HTTPError as exc:
+            # The reason is in the body, and a bare status code is useless.
+            detail = exc.read().decode("utf8", "replace")[:500]
+            raise SystemExit(
+                f"Resend refused the send ({exc.code}): {detail}\n"
+                f"Sender was {os.environ.get('DIGEST_FROM', 'onboarding@resend.dev')}, "
+                f"recipient {to}.\nOn the free tier the onboarding@resend.dev sender "
+                "only delivers to the address the Resend account was created with. "
+                "Either set DIGEST_TO to that address, or verify a domain and set "
+                "DIGEST_FROM to something at it."
+            ) from None
         return
 
     gmail_user = os.environ.get("GMAIL_USER")
@@ -654,7 +744,16 @@ def main() -> int:
                         help="rank and print, send nothing, record nothing")
     parser.add_argument("--no-model", action="store_true",
                         help="skip ranking, just list what was collected")
+    parser.add_argument("--test-email", action="store_true",
+                        help="send a two line email and stop, for checking delivery")
     args = parser.parse_args()
+
+    if args.test_email:
+        body = "<p>Delivery works. The real digest will look nothing like this.</p>"
+        send("Reading digest, delivery test", body,
+             "Delivery works. The real digest will look nothing like this.",
+             os.environ["DIGEST_TO"])
+        return 0
 
     config = json.loads((HERE / "sources.json").read_text())
     profile = (HERE / "interests.md").read_text()
@@ -711,13 +810,13 @@ def main() -> int:
 
     degraded = ""
     try:
-        ranked = rank(shortlist, profile, notes)
+        ranked = rank(shortlist, profile, notes, config.get("model", {}))
         keep = [i for i in ranked
                 if i.score >= config["min_interest_score"]][:config["max_items"]]
         print(f"  {len(keep)} cleared the bar of {config['min_interest_score']}")
     except RankingUnavailable as exc:
         # Keep the banner readable, the full error stays in the job log.
-        degraded = ("no Anthropic API key is configured for this repository"
+        degraded = ("no Gemini API key is configured for this repository"
                     if "credentials" in str(exc).lower() else str(exc)[:140])
         print(f"  ranking unavailable: {exc}", file=sys.stderr)
         ranked = []

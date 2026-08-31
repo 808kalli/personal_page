@@ -8,12 +8,13 @@ summer). Nothing runs until you add the secrets below.
 
 ## Setup
 
-**1. Anthropic API key.** Repository Settings, Secrets and variables, Actions,
-New repository secret:
+**1. Gemini API key.** Get one at aistudio.google.com, no credit card needed.
+Then in Repository Settings, Secrets and variables, Actions, New repository
+secret:
 
 | Secret | Value |
 | --- | --- |
-| `ANTHROPIC_API_KEY` | a key from console.anthropic.com |
+| `GEMINI_API_KEY` | the key from Google AI Studio |
 | `DIGEST_TO` | eliaskallioras@gmail.com |
 
 **2. Pick a way to send mail.** Either one works, the script uses whichever it
@@ -42,7 +43,7 @@ account, then generate an app password at myaccount.google.com:
 That ranks everything and prints the result in the log without sending mail or
 recording anything as seen.
 
-## Without an Anthropic key
+## Without a Gemini key
 
 If no key is set, or the key is rejected, the run does not fail. It sends the
 keyword shortlist instead, with a banner saying the ranking did not run, no
@@ -54,13 +55,33 @@ Fallback items are recorded in `seen_unranked.json`, not `seen.json`, so they
 do not repeat next week but still get a proper ranking the first time a
 working key exists.
 
-Add `ANTHROPIC_API_KEY` at any point and the next run ranks normally. Nothing
+Add `GEMINI_API_KEY` at any point and the next run ranks normally. Nothing
 else changes.
+
+## How the scoring works
+
+The keyword score proposes, the model refines. Nothing scores from a blank
+slate.
+
+Each candidate's weighted keyword score is stretched onto a 0-100 scale (four
+points per unit, capped at 90) and handed to the model as a *proposed score*.
+The model does not return a score. It returns an **adjustment** between -60
+and +60, which is added to the proposal and clamped to 0-100. The email shows
+both, so a line reads "interest 78 (keywords said 40, +38)".
+
+This means a failed or dim model run degrades toward the keyword ordering
+rather than toward noise, and you can see at a glance when the model is doing
+real work versus rubber stamping. Adjustments of 25 or more are required to
+say plainly what the keywords got wrong.
+
+The cap lives in `MAX_ADJUSTMENT` in `digest.py`. Lower it to trust the
+keywords more, raise it to trust the model more.
 
 ## Cost
 
-Around 60 candidates reach the model each week, batched twelve at a time, so
-roughly five calls of a few thousand tokens. Cents per week on Claude Opus 5.
+Nothing. Around 80 candidates reach the model each week, batched twelve at a
+time, so roughly seven requests. The Gemini free tier allows ten per minute
+and no card, so a weekly run of seven sits far inside it.
 
 ## Teaching it what you like
 
@@ -99,6 +120,7 @@ something irrelevant gets through, add why it was wrong there.
 | `prefilter_keep` | how many candidates reach the model, the rest are dropped on keyword score |
 | `max_items` | hard cap on the email |
 | `min_interest_score` | the bar, 0 to 100. Raise it if the digest feels padded |
+| `model` | provider, model id, endpoint, and batch size |
 | `arxiv_queries` | arXiv API query strings, one request each |
 | `feeds` | RSS or Atom, both parse |
 | `html_indexes` | sites with no feed at all, scraped for the newest links |
@@ -117,11 +139,13 @@ verdicts, editing it by hand works fine.
 
 ## Running it locally
 
+No dependencies, the script is standard library only.
+
 ```bash
-pip install -r digest/requirements.txt
-export ANTHROPIC_API_KEY=...
-python digest/digest.py --dry-run     # rank and print, send nothing
-python digest/digest.py --no-model    # just show what was collected, no API call
+export GEMINI_API_KEY=...
+python3 digest/digest.py --dry-run     # rank and print, send nothing
+python3 digest/digest.py --no-model    # just show what was collected, no API call
+python3 digest/digest.py --test-email  # send a two line email, check delivery only
 ```
 
 ## What it does not do
