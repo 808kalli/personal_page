@@ -833,6 +833,17 @@ def main() -> int:
         keep = [i for i in ranked
                 if i.score >= config["min_interest_score"]][:config["max_items"]]
         print(f"  {len(keep)} cleared the bar of {config['min_interest_score']}")
+
+        deltas = [i.extras.get("adjustment", 0) for i in ranked]
+        pos, neg, zero = (sum(1 for d in deltas if d > 0),
+                          sum(1 for d in deltas if d < 0),
+                          sum(1 for d in deltas if d == 0))
+        avg = sum(deltas) / len(deltas) if deltas else 0
+        print(f"  adjustments across all {len(ranked)} judged: "
+              f"{pos} positive, {neg} negative, {zero} unchanged, "
+              f"mean {avg:+.1f} (a model rubber stamping the keywords would "
+              f"cluster near zero, one that only ever inflates would show "
+              f"almost no negatives here)")
     except RankingUnavailable as exc:
         # Keep the banner readable, the full error stays in the job log.
         degraded = ("no Gemini API key is configured for this repository"
