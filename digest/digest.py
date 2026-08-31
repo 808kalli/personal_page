@@ -32,7 +32,6 @@ from typing import Iterable
 
 HERE = Path(__file__).resolve().parent
 UA = "reading-digest/1.0 (+https://github.com/808kalli/personal_page)"
-MODEL = "claude-opus-5"
 REPO = os.environ.get("GITHUB_REPOSITORY", "808kalli/personal_page")
 
 # Words that earn a candidate a place in the shortlist the model actually
@@ -80,10 +79,21 @@ class Item:
                    for t in terms if t in text)
 
 
+BROWSER_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/128.0 Safari/537.36")
+
+
 def fetch(url: str, timeout: int = 30) -> bytes:
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return resp.read()
+    """Some hosts, Substack among them, refuse a non browser user agent."""
+    for agent in (UA, BROWSER_UA):
+        req = urllib.request.Request(url, headers={"User-Agent": agent})
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.read()
+        except urllib.error.HTTPError as exc:
+            if exc.code != 403 or agent is BROWSER_UA:
+                raise
+    raise RuntimeError("unreachable")
 
 
 ARXIV_ID = re.compile(r"arxiv\.org/(?:abs|pdf)/([0-9]{4}\.[0-9]{4,5})")
@@ -587,6 +597,13 @@ def rank(items: list[Item], profile: str, notes: str = "",
 
     ranked.sort(key=lambda i: i.score, reverse=True)
     return ranked
+
+
+def matched_terms(item: Item) -> list[str]:
+    text = f"{item.title} {item.summary}".lower()
+    hits = [t.strip() for terms in PREFILTER_TERMS.values()
+            for t in terms if t in text]
+    return sorted(set(hits), key=len, reverse=True)[:5]
 
 
 def unranked(items: list[Item], limit: int) -> list[Item]:
