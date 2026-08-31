@@ -79,12 +79,20 @@ keywords more, raise it to trust the model more.
 
 ## Rate limits
 
-The Gemini free tier is 10 requests per minute and 1,500 a day. This digest
-uses at most a few dozen a run, so the day limit never matters, but the
-minute limit does: `pace_seconds` in `sources.json` sleeps that long between
-batches so requests never bunch up. A 429 specifically waits 30 seconds and
-retries once before giving up on that batch, other failures retry
-immediately once. If you see rate limit errors anyway, raise `pace_seconds`.
+The Gemini free tier is generally 10 requests per minute and up to 1,500 a
+day, but Google does not publish fixed numbers for its newest models, and a
+brand new API key can carry a much smaller unpublished daily allowance for a
+short while. `pace_seconds` in `sources.json` sleeps that long between
+batches so requests never bunch up, and a 429 specifically waits 30 seconds
+and retries once before giving up on that batch. That fixes bursty rate
+limiting, but not real quota exhaustion, which shows up as every batch
+failing even after the backoff.
+
+If that happens, the model in use has run out for the day. Two ways out.
+Wait, since it resets in 24 hours. Or switch `model.model` in `sources.json`
+to a sibling model, since quotas are tracked per model, not per key, so an
+untouched one (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`) still has
+its full allowance even when another is exhausted.
 
 ## Cost
 
