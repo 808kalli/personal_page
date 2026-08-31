@@ -30,6 +30,28 @@ Lesson is a touchstone here.
 motion capture, teleoperation, simulation) into usable robot supervision.
 Embodiment transfer, reward inference from video and language.
 
+**Interpretability used for oversight.** Probes and steering vectors as tools
+for telling what a model is doing or making it do something else, and honest
+work on where those tools break. Whether a steering vector generalises, or is
+really a property of the dataset rather than the model. Whether a probe that
+scores well in distribution survives a prompt change.
+
+## People and groups worth watching
+
+These are markers of taste, not a whitelist. Work from the same corner of the
+field counts just as much, and a paper is not interesting because of who wrote
+it. Use them to recognise the neighbourhood.
+
+FAR AI, and Adria Garriga-Alonso in particular. The UCL AI Centre group around
+Robert Kirk, David Chanin, and Daniel Tan. Dimitrios Kanoulas at UCL and
+Archimedes for robot learning. Anthropic's interpretability team. Neel Nanda
+and the DeepMind mechanistic interpretability group. David Bau's lab. Redwood
+Research, Apollo Research, EleutherAI, Goodfire, Transluce.
+
+The 2024 paper "Analysing the Generalisation and Reliability of Steering
+Vectors" is the centre of gravity here: an interpretability technique taken
+seriously enough to find out when it fails.
+
 ## Interesting, but rank lower
 
 Reinforcement learning method papers, especially off policy and offline RL,

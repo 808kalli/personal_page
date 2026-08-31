@@ -103,6 +103,14 @@ something irrelevant gets through, add why it was wrong there.
 | `feeds` | RSS or Atom, both parse |
 | `html_indexes` | sites with no feed at all, scraped for the newest links |
 
+Author queries are how a person gets tracked, batched with `OR` so a group of
+five costs one request. The arXiv API wants full names (`au:"Neel Nanda"`),
+not the `Lastname_I` form, which silently returns nothing.
+
+Several org blogs wrap each post card in an empty anchor, so the index gives a
+link and no title. Where that happens the scraper fetches the post page for
+its `og:title`, one request per new link.
+
 `seen.json` is written back by the workflow so nothing repeats. Deleting it
 makes the next run treat everything as new. `feedback.json` holds your
 verdicts, editing it by hand works fine.

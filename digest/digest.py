@@ -44,10 +44,12 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "808kalli/personal_page")
 PREFILTER_TERMS = {
     5: ["mechanistic interpretab", "sparse autoencoder", "superposition",
         "attribution graph", "circuit trac", "activation steering",
-        "monosemantic", "compounding error", "action chunk"],
+        "steering vector", "activation addition", "monosemantic",
+        "compounding error", "action chunk"],
     3: ["interpretab", "probing", "probe ", "world model", "emergent",
         "distribution shift", "behavior clon", "behaviour clon",
-        "representation engineering", "linear probe", "steering vector"],
+        "representation engineering", "linear probe", "steerab",
+        "deception", "honest", "model organism"],
     1: ["circuit", "feature", "activation", "latent", "representation",
         "vision-language-action", "vla", "manipulation", "policy", "robot",
         "imitation", "demonstration", "offline rl", "offline reinforcement",
@@ -242,6 +244,36 @@ def feed_candidates(feeds: list[dict], since: datetime) -> list[Item]:
     return out
 
 
+def page_metadata(url: str) -> tuple[str, str]:
+    """Title and description straight off a post page.
+
+    Many org blogs wrap each card in an empty anchor and keep the title in a
+    sibling element, so scraping the index alone gives a link and nothing to
+    rank. One request per new link fixes that.
+    """
+    try:
+        page = fetch(url, timeout=20).decode("utf8", "replace")
+    except Exception:
+        return "", ""
+    title = ""
+    for pattern in (r'<meta[^>]+property="og:title"[^>]+content="([^"]+)"',
+                    r"<title[^>]*>(.*?)</title>"):
+        match = re.search(pattern, page, re.S | re.I)
+        if match:
+            title = clean(match.group(1))
+            break
+    desc = ""
+    for pattern in (r'<meta[^>]+property="og:description"[^>]+content="([^"]+)"',
+                    r'<meta[^>]+name="description"[^>]+content="([^"]+)"'):
+        match = re.search(pattern, page, re.S | re.I)
+        if match:
+            desc = clean(match.group(1))
+            break
+    # Sites append their own name to the tag, drop it.
+    title = re.split(r"\s+[|·—–]\s+", title)[0].strip()
+    return title, desc[:800]
+
+
 def index_candidates(indexes: list[dict]) -> list[Item]:
     """Sites with no feed at all. Scrape the newest links off an index page.
 
@@ -258,24 +290,32 @@ def index_candidates(indexes: list[dict]) -> list[Item]:
 
         pattern = re.compile(index["link_pattern"])
         seen_here: set[str] = set()
+        taken = 0
         for href, text in re.findall(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>',
                                      page, re.S | re.I):
+            if taken >= index.get("max_links", 5):
+                break
             if not pattern.search(href) or href in seen_here:
                 continue
             seen_here.add(href)
-            title = clean(text)
+
+            url = urllib.parse.urljoin(index["url"], href)
+            title, summary = clean(text), ""
+            if not title:
+                title, summary = page_metadata(url)
             if not title:
                 continue
+
             out.append(Item(
-                uid=urllib.parse.urljoin(index["url"], href),
+                uid=url,
                 title=title,
-                url=urllib.parse.urljoin(index["url"], href),
+                url=url,
                 source=index["name"],
+                summary=summary,
                 published="undated",
                 signal=f"posted on {index['name']}",
             ))
-            if len(seen_here) >= index.get("max_links", 5):
-                break
+            taken += 1
     return out
 
 

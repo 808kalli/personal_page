@@ -15,7 +15,12 @@
     "abs:\"distribution shift\" AND (cat:cs.RO OR cat:cs.LG)",
     "abs:\"action chunking\"",
     "abs:\"robot\" AND abs:\"pre-training\" AND cat:cs.RO",
-    "abs:\"offline reinforcement learning\" AND cat:cs.LG"
+    "abs:\"offline reinforcement learning\" AND cat:cs.LG",
+    "au:\"Garriga-Alonso\" OR au:Kanoulas OR au:\"Robert Kirk\" OR au:\"David Chanin\" OR au:\"Adam Gleave\"",
+    "au:\"Neel Nanda\" OR au:\"Arthur Conmy\" OR au:\"Samuel Marks\" OR au:\"David Bau\" OR au:\"Atticus Geiger\"",
+    "au:\"Lee Sharkey\" OR au:\"Marius Hobbhahn\" OR au:\"Nora Belrose\" OR au:\"Naomi Saphra\" OR au:\"Stephen Casper\"",
+    "abs:\"steering vector\" OR abs:\"activation addition\"",
+    "abs:\"linear probe\" AND (abs:\"deception\" OR abs:\"honesty\" OR abs:\"truthful\")"
   ],
   "feeds": [
     {
@@ -37,6 +42,14 @@
     {
       "name": "Google DeepMind Blog",
       "url": "https://deepmind.google/blog/rss.xml"
+    },
+    {
+      "name": "Redwood Research",
+      "url": "https://redwoodresearch.substack.com/feed"
+    },
+    {
+      "name": "EleutherAI",
+      "url": "https://blog.eleuther.ai/index.xml"
     }
   ],
   "huggingface_daily_papers": true,
@@ -45,6 +58,24 @@
       "name": "Seohong Park",
       "url": "https://seohong.me/",
       "link_pattern": "/blog/[a-z0-9-]+/?$",
+      "max_links": 5
+    },
+    {
+      "name": "FAR AI",
+      "url": "https://far.ai/news",
+      "link_pattern": "^/blog/[a-z0-9-]+$",
+      "max_links": 5
+    },
+    {
+      "name": "Apollo Research",
+      "url": "https://www.apolloresearch.ai/blog",
+      "link_pattern": "^/blog/[a-z0-9-]+$",
+      "max_links": 5
+    },
+    {
+      "name": "Goodfire",
+      "url": "https://www.goodfire.ai/blog",
+      "link_pattern": "^/blog/[a-z0-9-]+$",
       "max_links": 5
     }
   ]
