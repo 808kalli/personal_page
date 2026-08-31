@@ -2,8 +2,14 @@ name: Reading digest
 
 on:
   schedule:
-    # Monday 06:00 UTC, which is 09:00 in Athens during summer time
-    - cron: "0 6 * * 1"
+    # TEMPORARY one-off test of the scheduled trigger path, checking the
+    # rebase-retry fix for the git push race. Fires once around 22:45 UTC on
+    # 2026-08-31 (01:45 Athens), then repeats daily at that time until this
+    # is reverted back to the normal weekly slot below.
+    - cron: "45 22 * * *"
+    # Normal schedule, restore this and delete the line above once the test
+    # is confirmed: Monday 06:00 UTC, 09:00 in Athens during summer time
+    # - cron: "0 6 * * 1"
   workflow_dispatch:
     inputs:
       dry_run:
