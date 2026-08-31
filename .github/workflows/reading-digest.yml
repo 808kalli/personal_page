@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  issues: write      # closes the feedback issues it has ingested
 
 concurrency:
   group: reading-digest
@@ -40,16 +41,17 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           DIGEST_TO: ${{ secrets.DIGEST_TO }}
           DIGEST_FROM: ${{ secrets.DIGEST_FROM }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python digest/digest.py ${{ inputs.dry_run && '--dry-run' || '' }}
 
       - name: Record what was judged
         if: ${{ !inputs.dry_run }}
         run: |
-          if [ -n "$(git status --porcelain digest/seen.json)" ]; then
+          if [ -n "$(git status --porcelain digest/)" ]; then
             git config user.name "reading-digest"
             git config user.email "actions@github.com"
-            git add digest/seen.json
+            git add -A digest/   # any of the state files may not exist yet
             git commit -m "Record digest candidates for $(date -u +%Y-%m-%d)"
             git push
           fi

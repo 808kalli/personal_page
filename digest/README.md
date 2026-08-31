@@ -62,6 +62,29 @@ else changes.
 Around 60 candidates reach the model each week, batched twelve at a time, so
 roughly five calls of a few thousand tokens. Cents per week on Claude Opus 5.
 
+## Teaching it what you like
+
+Every item in the email has **More like this** and **Less like this** links.
+There is no server behind any of this, so a verdict travels as a GitHub issue:
+the link opens the new-issue form with the title and body already filled in,
+and submitting takes one more click.
+
+The next run reads open issues labelled `digest-feedback`, appends them to
+`feedback.json`, and closes them. Those verdicts then go into the ranking
+prompt as calibration, the twelve most recent on each side, with an
+instruction that where a verdict conflicts with `interests.md` the verdict
+wins. The model is told to infer the pattern rather than match titles, so one
+thumbs down on an application paper pushes down the whole class, not that one
+paper.
+
+The issue body has a `Why (optional)` line. Filling it in is worth far more
+than the thumb alone: "application paper, no mechanism" teaches the ranker
+something that a bare downvote cannot.
+
+Verdicts accumulate, so the profile in `interests.md` can stay as the stable
+statement of taste while the feedback carries the drift. If the two diverge
+badly over time, that is a signal to rewrite the profile.
+
 ## Tuning it
 
 `interests.md` **is** the ranking prompt. It is prose, so edit it in prose. The
@@ -81,7 +104,8 @@ something irrelevant gets through, add why it was wrong there.
 | `html_indexes` | sites with no feed at all, scraped for the newest links |
 
 `seen.json` is written back by the workflow so nothing repeats. Deleting it
-makes the next run treat everything as new.
+makes the next run treat everything as new. `feedback.json` holds your
+verdicts, editing it by hand works fine.
 
 ## Running it locally
 

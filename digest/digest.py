@@ -35,6 +35,7 @@ from pydantic import BaseModel
 HERE = Path(__file__).resolve().parent
 UA = "reading-digest/1.0 (+https://github.com/808kalli/personal_page)"
 MODEL = "claude-opus-5"
+REPO = os.environ.get("GITHUB_REPOSITORY", "808kalli/personal_page")
 
 # Words that earn a candidate a place in the shortlist the model actually
 # reads. Deliberately generous, the model does the real judging.
@@ -278,6 +279,98 @@ def index_candidates(indexes: list[dict]) -> list[Item]:
     return out
 
 
+# ──────────────────────────── feedback ────────────────────────────
+#
+# There is no server behind this, so a verdict travels as a prefilled GitHub
+# issue: the email links open the new-issue form with the title and body
+# already written, and submitting takes one more click. The next run reads
+# those issues, folds them into feedback.json, and closes them.
+
+def feedback_url(item: Item, verdict: str) -> str:
+    title = f"[{verdict}] {item.title}"[:180]
+    body = (f"{item.url}\n\nSource: {item.source}\n\n"
+            f"Why (optional, one line, it is used to calibrate future ranking):\n")
+    query = urllib.parse.urlencode({
+        "title": title, "body": body, "labels": "digest-feedback"})
+    return f"https://github.com/{REPO}/issues/new?{query}"
+
+
+def ingest_feedback(path: Path, close: bool = True) -> list[dict]:
+    """Read open feedback issues, append them to feedback.json, close them."""
+    entries = json.loads(path.read_text()) if path.exists() else []
+    known = {e["title"] for e in entries}
+
+    try:
+        raw = fetch(f"https://api.github.com/repos/{REPO}/issues"
+                    "?state=open&per_page=50&labels=digest-feedback")
+        issues = json.loads(raw)
+    except Exception as exc:
+        print(f"  could not read feedback issues: {exc}", file=sys.stderr)
+        return entries
+
+    token = os.environ.get("GITHUB_TOKEN")
+    added = 0
+    for issue in issues:
+        match = re.match(r"\[(liked|disliked)\]\s*(.+)", issue.get("title", ""), re.I)
+        if not match:
+            continue
+        verdict, title = match.group(1).lower(), match.group(2).strip()
+        note = ""
+        for line in (issue.get("body") or "").splitlines():
+            line = line.strip()
+            if line and not line.startswith(("http", "Source:", "Why (optional")):
+                note = line[:200]
+                break
+        if title not in known:
+            entries.append({"verdict": verdict, "title": title, "note": note,
+                            "added": datetime.now(timezone.utc).strftime("%Y-%m-%d")})
+            known.add(title)
+            added += 1
+
+        if close and token:
+            try:
+                req = urllib.request.Request(
+                    f"https://api.github.com/repos/{REPO}/issues/{issue['number']}",
+                    data=json.dumps({"state": "closed"}).encode(), method="PATCH",
+                    headers={"Authorization": f"Bearer {token}",
+                             "Accept": "application/vnd.github+json",
+                             "User-Agent": UA})
+                urllib.request.urlopen(req, timeout=20).close()
+            except Exception as exc:
+                print(f"  could not close issue #{issue['number']}: {exc}",
+                      file=sys.stderr)
+
+    if added:
+        print(f"  ingested {added} new verdicts")
+        path.write_text(json.dumps(entries[-500:], indent=1))
+    return entries
+
+
+def calibration(entries: list[dict], per_side: int = 12) -> str:
+    """The most recent verdicts, as examples the ranker has to respect."""
+    liked = [e for e in entries if e["verdict"] == "liked"][-per_side:]
+    disliked = [e for e in entries if e["verdict"] == "disliked"][-per_side:]
+    if not liked and not disliked:
+        return ""
+
+    def block(label: str, rows: list[dict]) -> str:
+        if not rows:
+            return ""
+        lines = "\n".join(
+            f'  - "{e["title"]}"' + (f' ({e["note"]})' if e.get("note") else "")
+            for e in rows)
+        return f"{label}\n{lines}\n"
+
+    return (
+        "\n\nThe reader has rated past suggestions. These are real verdicts "
+        "from them, so where they conflict with the written profile above, "
+        "the verdicts win. Infer what the pattern is rather than matching "
+        "titles literally.\n\n"
+        + block("Wanted more like these:", liked)
+        + block("Wanted fewer like these:", disliked)
+    )
+
+
 # ──────────────────────────── ranking ────────────────────────────
 
 class Judgement(BaseModel):
@@ -326,7 +419,8 @@ def matched_terms(item: Item) -> list[str]:
     return sorted(set(hits), key=len, reverse=True)[:5]
 
 
-def rank(items: list[Item], profile: str, batch_size: int = 12) -> list[Item]:
+def rank(items: list[Item], profile: str, notes: str = "",
+         batch_size: int = 12) -> list[Item]:
     try:
         import anthropic
         client = anthropic.Anthropic()
@@ -355,7 +449,7 @@ def rank(items: list[Item], profile: str, batch_size: int = 12) -> list[Item]:
             response = client.messages.parse(
                 model=MODEL,
                 max_tokens=16000,
-                system=SYSTEM.format(profile=profile),
+                system=SYSTEM.format(profile=profile) + notes,
                 messages=[{"role": "user", "content": prompt}],
                 output_format=Judgements,
             )
@@ -429,6 +523,11 @@ def render_html(items: list[Item], considered: int, degraded: str = "") -> str:
           <strong style="color:#333;">{"Keywords" if degraded else "Why you"}:</strong> {html.escape(item.why)}<br>
           <strong style="color:#333;">Standing:</strong> {html.escape(item.credibility)}
         </div>
+        <div style="font:400 12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;padding-top:10px;">
+          <a href="{html.escape(feedback_url(item, 'liked'))}" style="color:#2f8a5b;text-decoration:none;">More like this</a>
+          <span style="color:#c7ccd3;">&nbsp;&nbsp;/&nbsp;&nbsp;</span>
+          <a href="{html.escape(feedback_url(item, 'disliked'))}" style="color:#b4553f;text-decoration:none;">Less like this</a>
+        </div>
       </td></tr>""")
 
     return f"""<!doctype html>
@@ -441,7 +540,8 @@ def render_html(items: list[Item], considered: int, degraded: str = "") -> str:
   {f'<tr><td style="background:#fff6e5;border:1px solid #f0dcb0;border-radius:6px;padding:12px 14px;margin-bottom:20px;font:400 13px/1.6 -apple-system,BlinkMacSystemFont,sans-serif;color:#7a5a1a;">Ranking did not run, so this is the keyword shortlist only. No interest scores and no summaries, the text below is each abstract in its own words. Reason: {html.escape(degraded)}</td></tr><tr><td style="height:20px;"></td></tr>' if degraded else ''}
   {''.join(rows) if rows else '<tr><td style="font:400 14px/1.6 sans-serif;color:#5b6068;">Nothing cleared the bar this week.</td></tr>'}
   <tr><td style="border-top:1px solid #e6e8eb;padding-top:20px;font:400 12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#a0a5ad;">
-    Ranked against digest/interests.md. Edit that file to change what gets through.
+    Ranked against digest/interests.md. The rating links open a prefilled GitHub
+    issue, one more click submits it, and next week's ranking takes it into account.
   </td></tr>
 </table>
 </body></html>"""
@@ -460,6 +560,8 @@ def render_text(items: list[Item], considered: int, degraded: str = "") -> str:
             f"  {'Keywords' if degraded else 'Why you'}: {item.why}",
             f"  Standing: {item.credibility}",
             f"  {item.url}",
+            f"  more like this: {feedback_url(item, 'liked')}",
+            f"  less like this: {feedback_url(item, 'disliked')}",
             "",
         ]
     return "\n".join(lines)
@@ -524,6 +626,11 @@ def main() -> int:
     listed_path = HERE / "seen_unranked.json"
     listed = set(json.loads(listed_path.read_text())) if listed_path.exists() else set()
 
+    feedback = ingest_feedback(HERE / "feedback.json", close=not args.dry_run)
+    notes = calibration(feedback)
+    if notes:
+        print(f"  calibrating on {len(feedback)} past verdicts")
+
     since = datetime.now(timezone.utc) - timedelta(days=config["lookback_days"])
     print(f"Collecting since {since:%Y-%m-%d}")
 
@@ -564,7 +671,7 @@ def main() -> int:
 
     degraded = ""
     try:
-        ranked = rank(shortlist, profile)
+        ranked = rank(shortlist, profile, notes)
         keep = [i for i in ranked
                 if i.score >= config["min_interest_score"]][:config["max_items"]]
         print(f"  {len(keep)} cleared the bar of {config['min_interest_score']}")
