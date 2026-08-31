@@ -2,8 +2,10 @@ name: Reading digest
 
 on:
   schedule:
-    # Tuesday 05:00 UTC, 08:00 in Athens during summer time (EEST, UTC+3)
-    - cron: "0 5 * * 2"
+    # Tuesday 05:17 UTC, 08:17 in Athens during summer time (EEST, UTC+3).
+    # Off the hour on purpose: GitHub's own docs warn that scheduling exactly
+    # on the hour raises the odds of delay from platform-wide congestion.
+    - cron: "17 5 * * 2"
   workflow_dispatch:
     inputs:
       dry_run:
