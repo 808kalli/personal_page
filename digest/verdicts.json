@@ -7,5 +7,14 @@
   "source": "arXiv",
   "why": "The keywords underestimated a core mechanistic interpretability paper using sparse autoencoders and steering vectors for cross-lingual feature transfer.",
   "recorded": "2026-09-01T09:33:47.630Z"
+ },
+ {
+  "id": "arxiv:2608.29936",
+  "verdict": "liked",
+  "title": "When Safety Speaks a Language: A Mechanistic Analysis of Safety-Language Identity Entanglement in LLMs",
+  "url": "http://arxiv.org/abs/2608.29936v1",
+  "source": "arXiv",
+  "why": "The keywords caught general safety terms, but this is a core mechanistic interpretability study examining sparse autoencoders and feature entanglement.",
+  "recorded": "2026-09-01T10:01:37.722Z"
  }
 ]
