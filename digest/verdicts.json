@@ -1,11 +1,1 @@
-[
- {
-  "id": "test:worker-e2e",
-  "verdict": "liked",
-  "title": "End to end test",
-  "url": "https://example.com/test",
-  "source": "arXiv",
-  "why": "Verifying the whole chain works",
-  "recorded": "2026-09-01T09:29:24.424Z"
- }
-]
+[]
