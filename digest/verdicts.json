@@ -1,14 +1,5 @@
 [
  {
-  "id": "arxiv:2608.30462",
-  "verdict": "liked",
-  "title": "Enhancing Low-Resource Language Reasoning via High-Resource Language Feature Transfer",
-  "url": "http://arxiv.org/abs/2608.30462v1",
-  "source": "arXiv",
-  "why": "The keywords underestimated a core mechanistic interpretability paper using sparse autoencoders and steering vectors for cross-lingual feature transfer.",
-  "recorded": "2026-09-01T09:33:47.630Z"
- },
- {
   "id": "arxiv:2608.29936",
   "verdict": "liked",
   "title": "When Safety Speaks a Language: A Mechanistic Analysis of Safety-Language Identity Entanglement in LLMs",
@@ -43,5 +34,14 @@
   "source": "arXiv",
   "why": "A modular latent world-action stack for compact robot policies, directly matching the reader interest in robot policy learning and scaling.",
   "recorded": "2026-09-01T10:07:02.868Z"
+ },
+ {
+  "id": "arxiv:2608.30462",
+  "verdict": "liked",
+  "title": "Enhancing Low-Resource Language Reasoning via High-Resource Language Feature Transfer",
+  "url": "http://arxiv.org/abs/2608.30462v1",
+  "source": "arXiv",
+  "why": "The keywords underestimated a core mechanistic interpretability paper using sparse autoencoders and steering vectors for cross-lingual feature transfer.",
+  "recorded": "2026-09-01T11:26:21.780Z"
  }
 ]
