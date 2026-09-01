@@ -1,10 +1,12 @@
 # Reading digest
 
-A weekly email of new papers and posts worth your time, ranked against
+A daily email of the 5 best new papers and posts, ranked against
 `interests.md` and summarised in two sentences each.
 
-Runs as a GitHub Action every Monday at 06:00 UTC (09:00 in Athens during
-summer). Nothing runs until you add the secrets below.
+Triggered by an external cron service (cron-job.org) calling the workflow's
+`workflow_dispatch` endpoint, since GitHub's own `schedule:` trigger did not
+fire reliably on this repo. Nothing runs until you add the secrets below and
+set up that external trigger.
 
 ## Setup
 
@@ -96,9 +98,9 @@ its full allowance even when another is exhausted.
 
 ## Cost
 
-Nothing. Around 80 candidates reach the model each week, batched twelve at a
-time, so roughly seven requests. The Gemini free tier allows ten per minute
-and no card, so a weekly run of seven sits far inside it.
+Nothing. Around 40 candidates reach the model each day, batched eight at a
+time, so roughly five requests. The Gemini free tier allows ten per minute
+and no card, so a daily run of five sits far inside it.
 
 ## Teaching it what you like
 
@@ -133,7 +135,7 @@ something irrelevant gets through, add why it was wrong there.
 
 | Key | Meaning |
 | --- | --- |
-| `lookback_days` | how far back to look, 8 gives the weekly run a day of overlap |
+| `lookback_days` | how far back to look, 2 gives the daily run a day of overlap |
 | `prefilter_keep` | how many candidates reach the model, the rest are dropped on keyword score |
 | `max_items` | hard cap on the email |
 | `min_interest_score` | the bar, 0 to 100. Raise it if the digest feels padded |

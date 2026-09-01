@@ -1,7 +1,7 @@
 {
-  "lookback_days": 8,
-  "prefilter_keep": 80,
-  "max_items": 15,
+  "lookback_days": 2,
+  "prefilter_keep": 40,
+  "max_items": 5,
   "min_interest_score": 55,
   "model": {
     "provider": "gemini",
