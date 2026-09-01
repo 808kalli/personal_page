@@ -1,9 +1,9 @@
 name: Reading digest
 
 on:
-  # GitHub's own schedule trigger did not fire twice in a row, so triggering
-  # is now external: Google Cloud Scheduler calls the workflow_dispatch REST
-  # endpoint on a timer instead of relying on GitHub's shared cron system.
+  # GitHub's own schedule trigger did not fire reliably, so triggering is
+  # external: cron-job.org calls the workflow_dispatch REST endpoint on a
+  # daily timer instead of relying on GitHub's shared cron system.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -13,7 +13,6 @@ on:
 
 permissions:
   contents: write
-  issues: write      # closes the feedback issues it has ingested
 
 concurrency:
   group: reading-digest
@@ -37,7 +36,6 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           DIGEST_TO: ${{ secrets.DIGEST_TO }}
           DIGEST_FROM: ${{ secrets.DIGEST_FROM }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python digest/digest.py ${{ inputs.dry_run && '--dry-run' || '' }}
 

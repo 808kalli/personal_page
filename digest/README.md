@@ -119,25 +119,38 @@ and no card, so a daily run of five sits far inside it.
 ## Teaching it what you like
 
 Every item in the email has **More like this** and **Less like this** links.
-There is no server behind any of this, so a verdict travels as a GitHub issue:
-the link opens the new-issue form with the title and body already filled in,
-and submitting takes one more click.
+Clicking one is the entire action, no confirmation page to submit. The link
+points at a small Cloudflare Worker (`digest/worker/`) that writes the
+verdict straight into `digest/verdicts.json` in this repo via the GitHub
+Contents API, and shows a plain "Liked" / "Noted" confirmation.
 
-The next run reads open issues labelled `digest-feedback`, appends them to
-`feedback.json`, and closes them. Those verdicts then go into the ranking
-prompt as calibration, the twelve most recent on each side, with an
-instruction that where a verdict conflicts with `interests.md` the verdict
-wins. The model is told to infer the pattern rather than match titles, so one
-thumbs down on an application paper pushes down the whole class, not that one
-paper.
+The next run reads `verdicts.json` directly off disk, since it runs from a
+checkout of this same repo. Those verdicts go into the ranking prompt as
+calibration, the twelve most recent on each side, with an instruction that
+where a verdict conflicts with `interests.md` the verdict wins. The model is
+told to infer the pattern rather than match titles, so one downvote on an
+application paper pushes down the whole class, not that one paper.
 
-The issue body has a `Why (optional)` line. Filling it in is worth far more
-than the thumb alone: "application paper, no mechanism" teaches the ranker
-something that a bare downvote cannot.
+Liked items double as a standing reading list: `liked.html` on the site
+renders the liked half of `verdicts.json`, so what you click through in the
+email becomes something you can actually go back and read later.
 
 Verdicts accumulate, so the profile in `interests.md` can stay as the stable
 statement of taste while the feedback carries the drift. If the two diverge
 badly over time, that is a signal to rewrite the profile.
+
+### Deploying the vote worker
+
+```bash
+cd digest/worker
+npm install -g wrangler          # once
+export CLOUDFLARE_API_TOKEN=...  # a token scoped to Edit Cloudflare Workers
+wrangler deploy
+wrangler secret put GITHUB_TOKEN # a fine-grained PAT, Contents: read and write, this repo only
+```
+
+The deployed URL is hardcoded as `VOTE_ENDPOINT` in `digest.py`, update both
+if you ever redeploy under a different name.
 
 ## Tuning it
 
@@ -167,8 +180,9 @@ link and no title. Where that happens the scraper fetches the post page for
 its `og:title`, one request per new link.
 
 `seen.json` is written back by the workflow so nothing repeats. Deleting it
-makes the next run treat everything as new. `feedback.json` holds your
-verdicts, editing it by hand works fine.
+makes the next run treat everything as new. `verdicts.json` holds your
+likes and dislikes, written by the vote worker, editing it by hand works
+fine too.
 
 ## Running it locally
 

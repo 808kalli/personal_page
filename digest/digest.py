@@ -343,69 +343,35 @@ def index_candidates(indexes: list[dict]) -> list[Item]:
 
 # ──────────────────────────── feedback ────────────────────────────
 #
-# There is no server behind this, so a verdict travels as a prefilled GitHub
-# issue: the email links open the new-issue form with the title and body
-# already written, and submitting takes one more click. The next run reads
-# those issues, folds them into feedback.json, and closes them.
+# Clicking a link IS the whole action, no confirmation page to submit. A
+# small Cloudflare Worker (digest/worker/) receives the click and writes the
+# verdict straight into digest/verdicts.json in this repo. The next run
+# reads that file directly off disk, since it runs from a checkout of this
+# same repo, no fetch needed. liked.html on the site renders the liked half
+# as a standing reading list.
+
+VOTE_ENDPOINT = "https://reading-digest-vote.eliaskallioras.workers.dev/vote"
+
 
 def feedback_url(item: Item, verdict: str) -> str:
-    title = f"[{verdict}] {item.title}"[:180]
-    body = (f"{item.url}\n\nSource: {item.source}\n\n"
-            f"Why (optional, one line, it is used to calibrate future ranking):\n")
-    query = urllib.parse.urlencode({
-        "title": title, "body": body, "labels": "digest-feedback"})
-    return f"https://github.com/{REPO}/issues/new?{query}"
+    params = {
+        "id": canonical(item.uid),
+        "v": verdict,
+        "title": item.title[:200],
+        "url": item.url,
+        "source": item.source,
+        "why": item.why[:200] if verdict == "liked" else "",
+    }
+    return f"{VOTE_ENDPOINT}?{urllib.parse.urlencode(params)}"
 
 
-def ingest_feedback(path: Path, close: bool = True) -> list[dict]:
-    """Read open feedback issues, append them to feedback.json, close them."""
-    entries = json.loads(path.read_text()) if path.exists() else []
-    known = {e["title"] for e in entries}
-
+def load_verdicts(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
     try:
-        raw = fetch(f"https://api.github.com/repos/{REPO}/issues"
-                    "?state=open&per_page=50&labels=digest-feedback")
-        issues = json.loads(raw)
-    except Exception as exc:
-        print(f"  could not read feedback issues: {exc}", file=sys.stderr)
-        return entries
-
-    token = os.environ.get("GITHUB_TOKEN")
-    added = 0
-    for issue in issues:
-        match = re.match(r"\[(liked|disliked)\]\s*(.+)", issue.get("title", ""), re.I)
-        if not match:
-            continue
-        verdict, title = match.group(1).lower(), match.group(2).strip()
-        note = ""
-        for line in (issue.get("body") or "").splitlines():
-            line = line.strip()
-            if line and not line.startswith(("http", "Source:", "Why (optional")):
-                note = line[:200]
-                break
-        if title not in known:
-            entries.append({"verdict": verdict, "title": title, "note": note,
-                            "added": datetime.now(timezone.utc).strftime("%Y-%m-%d")})
-            known.add(title)
-            added += 1
-
-        if close and token:
-            try:
-                req = urllib.request.Request(
-                    f"https://api.github.com/repos/{REPO}/issues/{issue['number']}",
-                    data=json.dumps({"state": "closed"}).encode(), method="PATCH",
-                    headers={"Authorization": f"Bearer {token}",
-                             "Accept": "application/vnd.github+json",
-                             "User-Agent": UA})
-                urllib.request.urlopen(req, timeout=20).close()
-            except Exception as exc:
-                print(f"  could not close issue #{issue['number']}: {exc}",
-                      file=sys.stderr)
-
-    if added:
-        print(f"  ingested {added} new verdicts")
-        path.write_text(json.dumps(entries[-500:], indent=1))
-    return entries
+        return json.loads(path.read_text())
+    except json.JSONDecodeError:
+        return []
 
 
 def calibration(entries: list[dict], per_side: int = 12) -> str:
@@ -419,7 +385,7 @@ def calibration(entries: list[dict], per_side: int = 12) -> str:
         if not rows:
             return ""
         lines = "\n".join(
-            f'  - "{e["title"]}"' + (f' ({e["note"]})' if e.get("note") else "")
+            f'  - "{e["title"]}"' + (f' ({e["why"]})' if e.get("why") else "")
             for e in rows)
         return f"{label}\n{lines}\n"
 
@@ -834,7 +800,7 @@ def main() -> int:
     listed_path = HERE / "seen_unranked.json"
     listed = set(json.loads(listed_path.read_text())) if listed_path.exists() else set()
 
-    feedback = ingest_feedback(HERE / "feedback.json", close=not args.dry_run)
+    feedback = load_verdicts(HERE / "verdicts.json")
     notes = calibration(feedback)
     if notes:
         print(f"  calibrating on {len(feedback)} past verdicts")
