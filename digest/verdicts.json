@@ -34,5 +34,14 @@
   "source": "arXiv",
   "why": "The keywords missed that this is a detailed mechanistic interpretability analysis of failure modes and causal circuits in model refusal.",
   "recorded": "2026-09-01T10:06:27.464Z"
+ },
+ {
+  "id": "arxiv:2608.29937",
+  "verdict": "liked",
+  "title": "AcrossWAM1.0:A Modular Latent World-Action Stack for Compact Robot Policies",
+  "url": "http://arxiv.org/abs/2608.29937v1",
+  "source": "arXiv",
+  "why": "A modular latent world-action stack for compact robot policies, directly matching the reader interest in robot policy learning and scaling.",
+  "recorded": "2026-09-01T10:07:02.868Z"
  }
 ]
