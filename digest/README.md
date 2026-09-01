@@ -79,6 +79,20 @@ say plainly what the keywords got wrong.
 The cap lives in `MAX_ADJUSTMENT` in `digest.py`. Lower it to trust the
 keywords more, raise it to trust the model more.
 
+## Blogs versus papers
+
+arXiv puts out far more candidates than the handful of blog feeds ever will,
+and casual blog prose naturally matches fewer of the exact keyword phrases a
+dense technical abstract does, so blog posts start at a structural
+disadvantage on both counts. A small bonus corrects for that at the two
+points where it would otherwise cost a good post its spot: `BLOG_PREFILTER_BONUS`
+(2 points on the raw keyword score) helps a post survive the initial cut down
+to `prefilter_keep` candidates, before anything reaches the model, and
+`BLOG_FINAL_BONUS` (5 points on the final 0-100 score) tips a close call in
+the model's actual ranking. Neither is large enough to let a mediocre blog
+post beat a genuinely strong paper, they only settle ties and near-ties in
+favor of format diversity. Both constants live at the top of `digest.py`.
+
 ## Rate limits
 
 The Gemini free tier is generally 10 requests per minute and up to 1,500 a

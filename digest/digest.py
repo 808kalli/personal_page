@@ -54,6 +54,20 @@ PREFILTER_TERMS = {
         "calibration", "reward", "teleoperation"],
 }
 
+# Papers dominate by sheer volume, arXiv puts out far more candidates than
+# the handful of blog feeds. Blog prose is also less keyword-dense than a
+# technical abstract, so a genuinely good post can score lower on raw
+# keyword matching even when it is the better read. These bonuses correct
+# for that at each cut, they do not override real quality gaps: a weak blog
+# still loses to a strong paper, they only tip close calls.
+PAPER_SOURCES = {"arXiv", "HF daily papers"}
+BLOG_PREFILTER_BONUS = 2   # added to the raw keyword score (roughly 0-20)
+BLOG_FINAL_BONUS = 5       # added to the final 0-100 interest score
+
+
+def is_blog(item: "Item") -> bool:
+    return item.source not in PAPER_SOURCES
+
 
 # ──────────────────────────── candidates ────────────────────────────
 
@@ -612,6 +626,8 @@ def rank(items: list[Item], profile: str, notes: str = "",
             delta = max(-MAX_ADJUSTMENT, min(MAX_ADJUSTMENT,
                                              int(row.get("adjustment", 0))))
             item.score = max(0, min(100, prior_score(item) + delta))
+            if is_blog(item):
+                item.score = min(100, item.score + BLOG_FINAL_BONUS)
             item.why = row.get("reason", "").strip()
             item.blurb = row.get("summary", "").strip()
             item.credibility = row.get("credibility", "").strip() or item.signal
@@ -642,7 +658,11 @@ def unranked(items: list[Item], limit: int) -> list[Item]:
     admitting the ranking did not run. Each item carries the first part of its
     own abstract and the keywords that matched.
     """
-    picked = sorted(items, key=lambda i: i.prefilter_score(), reverse=True)[:limit]
+    picked = sorted(
+        items,
+        key=lambda i: i.prefilter_score() + (BLOG_PREFILTER_BONUS if is_blog(i) else 0),
+        reverse=True,
+    )[:limit]
     for item in picked:
         sentences = re.split(r"(?<=[.!?]) ", item.summary)
         item.blurb = " ".join(sentences[:2])[:400] or "No abstract available."
@@ -846,7 +866,10 @@ def main() -> int:
         print("Nothing new.")
         return 0
 
-    fresh.sort(key=lambda i: i.prefilter_score(), reverse=True)
+    fresh.sort(
+        key=lambda i: i.prefilter_score() + (BLOG_PREFILTER_BONUS if is_blog(i) else 0),
+        reverse=True,
+    )
     shortlist = fresh[:config["prefilter_keep"]]
     dropped = len(fresh) - len(shortlist)
     if dropped:
