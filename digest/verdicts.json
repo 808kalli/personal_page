@@ -25,5 +25,14 @@
   "source": "arXiv",
   "why": "A robot world model and policy integration paper focused on dexterous manipulation, aligning with robot policy learning interests.",
   "recorded": "2026-09-01T10:05:59.174Z"
+ },
+ {
+  "id": "arxiv:2608.30585",
+  "verdict": "liked",
+  "title": "The Safety Relay in Roleplay Jailbreaks: A Component-Resolved Causal Analysis of Harm Recognition and Refusal",
+  "url": "http://arxiv.org/abs/2608.30585v1",
+  "source": "arXiv",
+  "why": "The keywords missed that this is a detailed mechanistic interpretability analysis of failure modes and causal circuits in model refusal.",
+  "recorded": "2026-09-01T10:06:27.464Z"
  }
 ]
