@@ -1,11 +1,9 @@
 name: Reading digest
 
 on:
-  schedule:
-    # Tuesday 05:17 UTC, 08:17 in Athens during summer time (EEST, UTC+3).
-    # Off the hour on purpose: GitHub's own docs warn that scheduling exactly
-    # on the hour raises the odds of delay from platform-wide congestion.
-    - cron: "17 5 * * 2"
+  # GitHub's own schedule trigger did not fire twice in a row, so triggering
+  # is now external: Google Cloud Scheduler calls the workflow_dispatch REST
+  # endpoint on a timer instead of relying on GitHub's shared cron system.
   workflow_dispatch:
     inputs:
       dry_run:
