@@ -347,7 +347,7 @@ def index_candidates(indexes: list[dict]) -> list[Item]:
 # small Cloudflare Worker (digest/worker/) receives the click and writes the
 # verdict straight into digest/verdicts.json in this repo. The next run
 # reads that file directly off disk, since it runs from a checkout of this
-# same repo, no fetch needed. liked.html on the site renders the liked half
+# same repo, no fetch needed. reading.html on the site renders the liked half
 # as a standing reading list.
 
 VOTE_ENDPOINT = "https://reading-digest-vote.eliaskallioras.workers.dev/vote"

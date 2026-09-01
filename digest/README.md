@@ -131,7 +131,7 @@ where a verdict conflicts with `interests.md` the verdict wins. The model is
 told to infer the pattern rather than match titles, so one downvote on an
 application paper pushes down the whole class, not that one paper.
 
-Liked items double as a standing reading list: `liked.html` on the site
+Liked items double as a standing reading list: `reading.html` on the site
 renders the liked half of `verdicts.json`, so what you click through in the
 email becomes something you can actually go back and read later.
 
