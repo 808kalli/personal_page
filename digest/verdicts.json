@@ -16,5 +16,14 @@
   "source": "arXiv",
   "why": "The keywords caught general safety terms, but this is a core mechanistic interpretability study examining sparse autoencoders and feature entanglement.",
   "recorded": "2026-09-01T10:01:37.722Z"
+ },
+ {
+  "id": "arxiv:2608.30237",
+  "verdict": "liked",
+  "title": "Motus2: A Self-Evolving General World Model for Dexterous Manipulation",
+  "url": "http://arxiv.org/abs/2608.30237v1",
+  "source": "arXiv",
+  "why": "A robot world model and policy integration paper focused on dexterous manipulation, aligning with robot policy learning interests.",
+  "recorded": "2026-09-01T10:05:59.174Z"
  }
 ]
