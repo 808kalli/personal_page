@@ -43,5 +43,14 @@
   "source": "arXiv",
   "why": "The keywords completely missed a core mechanistic interpretability study on causal tracing, activation interventions, and failure modes of model refusal in jailbreaks.",
   "recorded": "2026-09-02T09:00:31.250Z"
+ },
+ {
+  "id": "arxiv:2609.00908",
+  "verdict": "liked",
+  "title": "Knowing When to Stop: Adaptive Action Chunking via Internal Cross-Attention Dynamics in VLAs",
+  "url": "http://arxiv.org/abs/2609.00908v1",
+  "source": "arXiv",
+  "why": "The keywords caught action chunking broadly, but this is a specific mechanistic analysis of cross-attention dynamics addressing policy deployment failure.",
+  "recorded": "2026-09-02T09:02:03.221Z"
  }
 ]
