@@ -266,6 +266,12 @@ def feed_candidates(feeds: list[dict], since: datetime) -> list[Item]:
     return out
 
 
+GENERIC_LINK_TEXT = {
+    "read more", "learn more", "continue reading", "view post",
+    "see more", "read the post", "read on", "more",
+}
+
+
 def page_metadata(url: str) -> tuple[str, str]:
     """Title and description straight off a post page.
 
@@ -323,7 +329,10 @@ def index_candidates(indexes: list[dict]) -> list[Item]:
 
             url = urllib.parse.urljoin(index["url"], href)
             title, summary = clean(text), ""
-            if not title:
+            # A generic CTA ("Read more") is as useless as an empty anchor,
+            # some sites wrap the real card text and a separate button
+            # around the same link.
+            if not title or title.lower() in GENERIC_LINK_TEXT:
                 title, summary = page_metadata(url)
             if not title:
                 continue
