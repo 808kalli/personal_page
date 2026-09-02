@@ -374,31 +374,6 @@ def load_verdicts(path: Path) -> list[dict]:
         return []
 
 
-def calibration(entries: list[dict], per_side: int = 12) -> str:
-    """The most recent verdicts, as examples the ranker has to respect."""
-    liked = [e for e in entries if e["verdict"] == "liked"][-per_side:]
-    disliked = [e for e in entries if e["verdict"] == "disliked"][-per_side:]
-    if not liked and not disliked:
-        return ""
-
-    def block(label: str, rows: list[dict]) -> str:
-        if not rows:
-            return ""
-        lines = "\n".join(
-            f'  - "{e["title"]}"' + (f' ({e["why"]})' if e.get("why") else "")
-            for e in rows)
-        return f"{label}\n{lines}\n"
-
-    return (
-        "\n\nThe reader has rated past suggestions. These are real verdicts "
-        "from them, so where they conflict with the written profile above, "
-        "the verdicts win. Infer what the pattern is rather than matching "
-        "titles literally.\n\n"
-        + block("Wanted more like these:", liked)
-        + block("Wanted fewer like these:", disliked)
-    )
-
-
 # ──────────────────────────── ranking ────────────────────────────
 #
 # The keyword score proposes, the model refines. The model never sees a blank
@@ -530,8 +505,7 @@ def call_model(system: str, prompt: str, cfg: dict) -> dict:
     return json.loads(text)
 
 
-def rank(items: list[Item], profile: str, notes: str = "",
-         cfg: dict | None = None) -> list[Item]:
+def rank(items: list[Item], profile: str, cfg: dict | None = None) -> list[Item]:
     cfg = cfg or {}
     batch_size = cfg.get("batch_size", 12)
     ranked: list[Item] = []
@@ -559,8 +533,8 @@ def rank(items: list[Item], profile: str, notes: str = "",
         result = None
         for attempt in (1, 2):
             try:
-                result = call_model(SYSTEM.format(profile=profile, cap=MAX_ADJUSTMENT)
-                                    + notes, prompt, cfg)
+                result = call_model(SYSTEM.format(profile=profile, cap=MAX_ADJUSTMENT),
+                                    prompt, cfg)
                 break
             except RankingUnavailable:
                 raise
@@ -800,10 +774,15 @@ def main() -> int:
     listed_path = HERE / "seen_unranked.json"
     listed = set(json.loads(listed_path.read_text())) if listed_path.exists() else set()
 
+    # verdicts.json feeds reading.html only. It does not influence ranking:
+    # with only a handful of clicks so far, one misclick would carry outsized
+    # weight, and there is no way to walk a bad vote back except re-voting the
+    # same item. If taste should shift the ranking, edit interests.md by hand.
     feedback = load_verdicts(HERE / "verdicts.json")
-    notes = calibration(feedback)
-    if notes:
-        print(f"  calibrating on {len(feedback)} past verdicts")
+    if feedback:
+        liked_n = sum(1 for e in feedback if e["verdict"] == "liked")
+        print(f"  {len(feedback)} verdicts on file ({liked_n} liked), "
+              f"reading.html only, not used for ranking")
 
     since = datetime.now(timezone.utc) - timedelta(days=config["lookback_days"])
     print(f"Collecting since {since:%Y-%m-%d}")
@@ -848,7 +827,7 @@ def main() -> int:
 
     degraded = ""
     try:
-        ranked = rank(shortlist, profile, notes, config.get("model", {}))
+        ranked = rank(shortlist, profile, config.get("model", {}))
         keep = [i for i in ranked
                 if i.score >= config["min_interest_score"]][:config["max_items"]]
         print(f"  {len(keep)} cleared the bar of {config['min_interest_score']}")

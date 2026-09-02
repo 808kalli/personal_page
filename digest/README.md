@@ -116,7 +116,7 @@ Nothing. Around 40 candidates reach the model each day, batched eight at a
 time, so roughly five requests. The Gemini free tier allows ten per minute
 and no card, so a daily run of five sits far inside it.
 
-## Teaching it what you like
+## Marking what you like
 
 Every item in the email has **More like this** and **Less like this** links.
 Clicking one is the entire action, no confirmation page to submit. The link
@@ -124,20 +124,17 @@ points at a small Cloudflare Worker (`digest/worker/`) that writes the
 verdict straight into `digest/verdicts.json` in this repo via the GitHub
 Contents API, and shows a plain "Liked" / "Noted" confirmation.
 
-The next run reads `verdicts.json` directly off disk, since it runs from a
-checkout of this same repo. Those verdicts go into the ranking prompt as
-calibration, the twelve most recent on each side, with an instruction that
-where a verdict conflicts with `interests.md` the verdict wins. The model is
-told to infer the pattern rather than match titles, so one downvote on an
-application paper pushes down the whole class, not that one paper.
+This does **not** feed back into ranking. It used to: past verdicts went into
+the prompt as calibration, with the model told they override `interests.md`
+on conflict. With only a handful of clicks total, that meant a single
+misclick carried outsized weight, with no way to walk it back except
+re-voting the same item, so it was removed. Ranking is driven by
+`interests.md` alone.
 
-Liked items double as a standing reading list: `reading.html` on the site
-renders the liked half of `verdicts.json`, so what you click through in the
-email becomes something you can actually go back and read later.
-
-Verdicts accumulate, so the profile in `interests.md` can stay as the stable
-statement of taste while the feedback carries the drift. If the two diverge
-badly over time, that is a signal to rewrite the profile.
+What clicking still does: `reading.html` on the site renders the liked half
+of `verdicts.json`, so it becomes a standing reading list, something you can
+actually go back to later. If your taste shifts in a way you want reflected
+in the ranking, edit `interests.md` directly. It is prose, edit it in prose.
 
 ### Deploying the vote worker
 
