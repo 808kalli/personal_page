@@ -61,5 +61,14 @@
   "source": "arXiv",
   "why": "The keywords hit on activation steering, but the paper actually delivers a core mechanistic interpretability contribution by refining concept selectivity with static and dynamic gates.",
   "recorded": "2026-09-03T09:37:29.971Z"
+ },
+ {
+  "id": "arxiv:2609.01832",
+  "verdict": "liked",
+  "title": "Interpretable Symptom Vectors for Depression in a Large Language Model",
+  "url": "http://arxiv.org/abs/2609.01832v1",
+  "source": "arXiv",
+  "why": "This is a direct application of mechanistic interpretability techniques to study internal representations of clinical symptoms inside a language model.",
+  "recorded": "2026-09-03T09:45:24.220Z"
  }
 ]
