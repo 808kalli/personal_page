@@ -52,5 +52,14 @@
   "source": "arXiv",
   "why": "The keywords caught action chunking broadly, but this is a specific mechanistic analysis of cross-attention dynamics addressing policy deployment failure.",
   "recorded": "2026-09-02T09:02:03.221Z"
+ },
+ {
+  "id": "arxiv:2609.01878",
+  "verdict": "liked",
+  "title": "GAPS: Dimension-Level Gates for Conditional Activation Steering",
+  "url": "http://arxiv.org/abs/2609.01878v1",
+  "source": "arXiv",
+  "why": "The keywords hit on activation steering, but the paper actually delivers a core mechanistic interpretability contribution by refining concept selectivity with static and dynamic gates.",
+  "recorded": "2026-09-03T09:37:29.971Z"
  }
 ]
