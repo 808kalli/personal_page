@@ -70,5 +70,14 @@
   "source": "arXiv",
   "why": "This is a direct application of mechanistic interpretability techniques to study internal representations of clinical symptoms inside a language model.",
   "recorded": "2026-09-03T09:45:24.220Z"
+ },
+ {
+  "id": "arxiv:2609.02634",
+  "verdict": "liked",
+  "title": "Latent Cluster Analysis for Vision-Language-Action Models",
+  "url": "http://arxiv.org/abs/2609.02634v1",
+  "source": "arXiv",
+  "why": "The keywords caught vision-language-action models, but the paper focuses on the core interest of interpretability of robot policies and internal representations.",
+  "recorded": "2026-09-03T09:47:05.850Z"
  }
 ]
