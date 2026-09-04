@@ -79,5 +79,14 @@
   "source": "arXiv",
   "why": "The keywords caught vision-language-action models, but the paper focuses on the core interest of interpretability of robot policies and internal representations.",
   "recorded": "2026-09-03T09:47:05.850Z"
+ },
+ {
+  "id": "arxiv:2609.03026",
+  "verdict": "liked",
+  "title": "ObserverBench: Testing Mechanistic Estimates for Intervention and Control",
+  "url": "http://arxiv.org/abs/2609.03026v1",
+  "source": "arXiv",
+  "why": "Keywords undersold a core interpretability paper testing whether internal observers and steering vectors actually direct interventions correctly. It evaluates the gap between estimation accuracy and a",
+  "recorded": "2026-09-04T09:00:32.667Z"
  }
 ]
