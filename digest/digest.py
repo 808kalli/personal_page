@@ -671,8 +671,10 @@ def render_html(items: list[Item], considered: int, degraded: str = "") -> str:
   {f'<tr><td style="background:#fff6e5;border:1px solid #f0dcb0;border-radius:6px;padding:12px 14px;margin-bottom:20px;font:400 13px/1.6 -apple-system,BlinkMacSystemFont,sans-serif;color:#7a5a1a;">Ranking did not run, so this is the keyword shortlist only. No interest scores and no summaries, the text below is each abstract in its own words. Reason: {html.escape(degraded)}</td></tr><tr><td style="height:20px;"></td></tr>' if degraded else ''}
   {''.join(rows) if rows else '<tr><td style="font:400 14px/1.6 sans-serif;color:#5b6068;">Nothing cleared the bar this week.</td></tr>'}
   <tr><td style="border-top:1px solid #e6e8eb;padding-top:20px;font:400 12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#a0a5ad;">
-    Ranked against digest/interests.md. The rating links open a prefilled GitHub
-    issue, one more click submits it, and next week's ranking takes it into account.
+    Ranked against digest/interests.md. Like and Ignore are one click, no
+    confirmation page, and record a verdict on that one entry only, they do
+    not change what gets suggested next. Everything liked collects at
+    <a href="https://808kalli.github.io/personal_page/reading.html" style="color:#a0a5ad;">808kalli.github.io/personal_page/reading.html</a>.
   </td></tr>
 </table>
 </body></html>"""
@@ -697,6 +699,12 @@ def render_text(items: list[Item], considered: int, degraded: str = "") -> str:
             f"  ignore: {feedback_url(item, 'ignored')}",
             "",
         ]
+    lines += [
+        "Ranked against digest/interests.md. Like/Ignore record a verdict on "
+        "that one entry only, they do not change what gets suggested next.",
+        "Everything liked collects at "
+        "https://808kalli.github.io/personal_page/reading.html",
+    ]
     return "\n".join(lines)
 
 
