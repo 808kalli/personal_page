@@ -201,7 +201,7 @@ async function render() {
     .sort((a, b) => new Date(b.recorded) - new Date(a.recorded));
 
   if (liked.length === 0) {
-    list.innerHTML = '<p class="empty-state">Nothing liked yet. "More like this" links in the digest email land here.</p>';
+    list.innerHTML = '<p class="empty-state">Nothing liked yet. "Like" links in the digest email land here.</p>';
     return;
   }
 

@@ -655,9 +655,9 @@ def render_html(items: list[Item], considered: int, degraded: str = "") -> str:
           <strong style="color:#333;">Standing:</strong> {html.escape(item.credibility)}
         </div>
         <div style="font:400 12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;padding-top:10px;">
-          <a href="{html.escape(feedback_url(item, 'liked'))}" style="color:#2f8a5b;text-decoration:none;">More like this</a>
+          <a href="{html.escape(feedback_url(item, 'liked'))}" style="color:#2f8a5b;text-decoration:none;">Like</a>
           <span style="color:#c7ccd3;">&nbsp;&nbsp;/&nbsp;&nbsp;</span>
-          <a href="{html.escape(feedback_url(item, 'disliked'))}" style="color:#b4553f;text-decoration:none;">Less like this</a>
+          <a href="{html.escape(feedback_url(item, 'ignored'))}" style="color:#b4553f;text-decoration:none;">Ignore</a>
         </div>
       </td></tr>""")
 
@@ -693,8 +693,8 @@ def render_text(items: list[Item], considered: int, degraded: str = "") -> str:
             f"  {'Keywords' if degraded else 'Why you'}: {item.why}",
             f"  Standing: {item.credibility}",
             f"  {item.url}",
-            f"  more like this: {feedback_url(item, 'liked')}",
-            f"  less like this: {feedback_url(item, 'disliked')}",
+            f"  like: {feedback_url(item, 'liked')}",
+            f"  ignore: {feedback_url(item, 'ignored')}",
             "",
         ]
     return "\n".join(lines)

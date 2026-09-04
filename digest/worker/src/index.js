@@ -1,7 +1,7 @@
 /**
  * Reading digest vote endpoint.
  *
- * GET /vote?id=<canonical>&v=liked|disliked&title=...&url=...&source=...&why=...
+ * GET /vote?id=<canonical>&v=liked|ignored&title=...&url=...&source=...&why=...
  *
  * The click is the whole action: no confirmation page to submit, no second
  * step. Records the verdict into digest/verdicts.json in the repo via the
@@ -40,7 +40,7 @@ export default {
 
     const id = url.searchParams.get("id");
     const verdict = url.searchParams.get("v");
-    if (!id || (verdict !== "liked" && verdict !== "disliked")) {
+    if (!id || (verdict !== "liked" && verdict !== "ignored")) {
       return new Response("Missing or invalid id/v", { status: 400 });
     }
 
@@ -109,7 +109,7 @@ export default {
       );
     }
 
-    const label = verdict === "liked" ? "Liked" : "Noted";
+    const label = verdict === "liked" ? "Liked" : "Ignored";
     return page(
       label,
       `<p style="font-size:1.3rem;">${label}: ${entry.title || id}</p>

@@ -118,17 +118,25 @@ and no card, so a daily run of five sits far inside it.
 
 ## Marking what you like
 
-Every item in the email has **More like this** and **Less like this** links.
-Clicking one is the entire action, no confirmation page to submit. The link
-points at a small Cloudflare Worker (`digest/worker/`) that writes the
-verdict straight into `digest/verdicts.json` in this repo via the GitHub
-Contents API, and shows a plain "Liked" / "Noted" confirmation.
+Every item in the email has **Like** and **Ignore** links. Clicking one is
+the entire action, no confirmation page to submit. The link points at a
+small Cloudflare Worker (`digest/worker/`) that writes the verdict straight
+into `digest/verdicts.json` in this repo via the GitHub Contents API, and
+shows a plain "Liked" / "Ignored" confirmation.
 
-This does **not** feed back into ranking. It used to: past verdicts went into
-the prompt as calibration, with the model told they override `interests.md`
-on conflict. With only a handful of clicks total, that meant a single
-misclick carried outsized weight, with no way to walk it back except
-re-voting the same item, so it was removed. Ranking is driven by
+Ignore is not a downvote. It carries no judgement about the research
+direction and does not affect what gets suggested next, it is a record for
+this one entry, nothing more. Nothing shown once ever repeats anyway,
+`seen.json` permanently excludes every item the moment it is ranked,
+regardless of whether you click anything, so Ignore has nothing left to
+suppress. It exists purely so you have an honest label for "not for me" that
+does not imply the system is quietly punishing a whole topic over it.
+
+This does **not** feed back into ranking, for either button. It used to: past
+verdicts went into the prompt as calibration, with the model told they
+override `interests.md` on conflict. With only a handful of clicks total,
+that meant a single misclick carried outsized weight, with no way to walk it
+back except re-voting the same item, so it was removed. Ranking is driven by
 `interests.md` alone.
 
 What clicking still does: `reading.html` on the site renders the liked half
