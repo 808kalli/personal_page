@@ -97,5 +97,14 @@
   "source": "arXiv",
   "why": "",
   "recorded": "2026-09-04T09:18:55.369Z"
+ },
+ {
+  "id": "arxiv:2609.03142",
+  "verdict": "liked",
+  "title": "Sensing Which Modality Matters: Evidence-Gated Regularization for Robust VLA Policies",
+  "url": "http://arxiv.org/abs/2609.03142v1",
+  "source": "arXiv",
+  "why": "The keywords missed the core robot policy interpretability and deployment failure aspects, focusing instead on generic modality terms. This work directly addresses why VLA policies fail under distribu",
+  "recorded": "2026-09-04T09:19:32.848Z"
  }
 ]
