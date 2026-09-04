@@ -106,5 +106,14 @@
   "source": "arXiv",
   "why": "The keywords missed the core robot policy interpretability and deployment failure aspects, focusing instead on generic modality terms. This work directly addresses why VLA policies fail under distribu",
   "recorded": "2026-09-04T09:19:32.848Z"
+ },
+ {
+  "id": "test:rename",
+  "verdict": "ignored",
+  "title": "Rename test",
+  "url": "https://example.com",
+  "source": "arXiv",
+  "why": "",
+  "recorded": "2026-09-04T09:23:04.130Z"
  }
 ]
