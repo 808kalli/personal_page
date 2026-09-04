@@ -88,5 +88,14 @@
   "source": "arXiv",
   "why": "Keywords undersold a core interpretability paper testing whether internal observers and steering vectors actually direct interventions correctly. It evaluates the gap between estimation accuracy and a",
   "recorded": "2026-09-04T09:00:32.667Z"
+ },
+ {
+  "id": "arxiv:2609.03687",
+  "verdict": "disliked",
+  "title": "A Circuit for Plural Reference: How LLMs Represent and Retrieve Singular and Plural Entities",
+  "url": "http://arxiv.org/abs/2609.03687v1",
+  "source": "arXiv",
+  "why": "",
+  "recorded": "2026-09-04T09:18:55.369Z"
  }
 ]
