@@ -230,3 +230,12 @@ week-old paper.
 BAIR's blog feed is not in the source list because it was unreachable from
 here. If it works from the Actions runner, add
 `https://bair.berkeley.edu/blog/feed.xml` to `feeds`.
+
+Redwood Research's feed was dropped for the same reason, a persistent 403
+even with the browser user agent fallback. The feed itself moved, Substack
+now 301s `redwoodresearch.substack.com/feed` to `blog.redwoodresearch.org/feed`,
+but that domain is Cloudflare fronted, and Cloudflare bot management is a
+common source of 403s against datacenter IP ranges like the Actions runner's,
+independent of anything in the request itself. Re-add
+`https://blog.redwoodresearch.org/feed` to `feeds` if it ever starts working
+from the runner.
