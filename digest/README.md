@@ -53,9 +53,9 @@ interest scores, and each item's own abstract in place of a summary. That is
 deliberately worse than the ranked digest, the keyword filter cannot tell an
 interpretability paper from a manipulation paper that mentions features.
 
-Fallback items are recorded in `seen_unranked.json`, not `seen.json`, so they
-do not repeat next week but still get a proper ranking the first time a
-working key exists.
+Fallback items go through the same cooldown as everything else once emailed
+(see below), so if the key comes back before the cooldown expires they get a
+proper ranking on the next run that actually collects them again.
 
 Add `GEMINI_API_KEY` at any point and the next run ranks normally. Nothing
 else changes.
@@ -126,11 +126,10 @@ shows a plain "Liked" / "Ignored" confirmation.
 
 Ignore is not a downvote. It carries no judgement about the research
 direction and does not affect what gets suggested next, it is a record for
-this one entry, nothing more. Nothing shown once ever repeats anyway,
-`seen.json` permanently excludes every item the moment it is ranked,
-regardless of whether you click anything, so Ignore has nothing left to
-suppress. It exists purely so you have an honest label for "not for me" that
-does not imply the system is quietly punishing a whole topic over it.
+this one entry, nothing more. It does still do one concrete thing: Like and
+Ignore are the only ways to exclude an item permanently (see the cooldown
+section below), so clicking either one is what actually makes room for
+something else instead of that item resurfacing after 10 days.
 
 This does **not** feed back into ranking, for either button. It used to: past
 verdicts went into the prompt as calibration, with the model told they
@@ -143,6 +142,24 @@ What clicking still does: `reading.html` on the site renders the liked half
 of `verdicts.json`, so it becomes a standing reading list, something you can
 actually go back to later. If your taste shifts in a way you want reflected
 in the ranking, edit `interests.md` directly. It is prose, edit it in prose.
+
+## Cooldown, not permanent exclusion
+
+An item is only ever excluded forever if you actually click Like or Ignore
+on it, recorded in `verdicts.json`. Everything else, shown once and never
+acted on, is only held back for `cooldown_days` (10 by default), tracked in
+`shown.json` as `{canonical id: date last emailed}`.
+
+This exists because a quiet stretch (arXiv does not announce over weekends
+or US holidays, so a 2 day lookback can come back genuinely empty) used to
+mean the same few candidates that already got shown, but never liked or
+ignored, were gone for good, so the digest had nothing left to say. Now they
+just come back after 10 days if nothing new has beaten them to it.
+
+`shown.json` is written back by the workflow. Deleting it makes everything
+eligible again immediately. It only records what was actually emailed, an
+item the model scored below `min_interest_score` was never shown and stays
+eligible for tomorrow's run without waiting out any cooldown.
 
 ### Deploying the vote worker
 
@@ -168,6 +185,7 @@ something irrelevant gets through, add why it was wrong there.
 | Key | Meaning |
 | --- | --- |
 | `lookback_days` | how far back to look, 2 gives the daily run a day of overlap |
+| `cooldown_days` | how long a shown-but-unactioned item stays excluded before it is eligible again |
 | `prefilter_keep` | how many candidates reach the model, the rest are dropped on keyword score |
 | `max_items` | hard cap on the email |
 | `min_interest_score` | the bar, 0 to 100. Raise it if the digest feels padded |
@@ -184,10 +202,9 @@ Several org blogs wrap each post card in an empty anchor, so the index gives a
 link and no title. Where that happens the scraper fetches the post page for
 its `og:title`, one request per new link.
 
-`seen.json` is written back by the workflow so nothing repeats. Deleting it
-makes the next run treat everything as new. `verdicts.json` holds your
-likes and dislikes, written by the vote worker, editing it by hand works
-fine too.
+`verdicts.json` holds your likes and dislikes, written by the vote worker,
+editing it by hand works fine too. See "Cooldown, not permanent exclusion"
+above for `shown.json`.
 
 ## Running it locally
 

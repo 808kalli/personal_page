@@ -25,7 +25,7 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from email.message import EmailMessage
 from pathlib import Path
 from typing import Iterable
@@ -305,8 +305,8 @@ def page_metadata(url: str) -> tuple[str, str]:
 def index_candidates(indexes: list[dict]) -> list[Item]:
     """Sites with no feed at all. Scrape the newest links off an index page.
 
-    There are no dates here, so recency comes from seen.json instead: a link
-    that has not been judged before is treated as new.
+    There are no dates here, so recency comes from shown.json instead: a link
+    that has not been shown recently is treated as new.
     """
     out: list[Item] = []
     for index in indexes:
@@ -783,23 +783,34 @@ def main() -> int:
 
     config = json.loads((HERE / "sources.json").read_text())
     profile = (HERE / "interests.md").read_text()
-    seen_path = HERE / "seen.json"
-    seen = set(json.loads(seen_path.read_text())) if seen_path.exists() else set()
-    # Items listed in a fallback email were never judged, so they are tracked
-    # apart: they should not repeat next week, but they should still get a real
-    # ranking the first time a working key exists.
-    listed_path = HERE / "seen_unranked.json"
-    listed = set(json.loads(listed_path.read_text())) if listed_path.exists() else set()
 
-    # verdicts.json feeds reading.html only. It does not influence ranking:
-    # with only a handful of clicks so far, one misclick would carry outsized
-    # weight, and there is no way to walk a bad vote back except re-voting the
-    # same item. If taste should shift the ranking, edit interests.md by hand.
+    # verdicts.json feeds reading.html and, below, permanent exclusion. It
+    # does not influence ranking: with only a handful of clicks so far, one
+    # misclick would carry outsized weight, and there is no way to walk a bad
+    # vote back except re-voting the same item. If taste should shift the
+    # ranking, edit interests.md by hand.
     feedback = load_verdicts(HERE / "verdicts.json")
     if feedback:
         liked_n = sum(1 for e in feedback if e["verdict"] == "liked")
         print(f"  {len(feedback)} verdicts on file ({liked_n} liked), "
               f"reading.html only, not used for ranking")
+    acted = {e["id"] for e in feedback}
+
+    # Everything else, shown but never liked or ignored, is only excluded for
+    # cooldown_days: quiet stretches (a slow arXiv weekend, say) should not
+    # mean the same handful of suggestions vanish forever the moment they are
+    # first emailed. Liking or ignoring is the only permanent exclusion.
+    shown_path = HERE / "shown.json"
+    shown: dict[str, str] = (json.loads(shown_path.read_text())
+                              if shown_path.exists() else {})
+    cooldown_days = config.get("cooldown_days", 10)
+    today = datetime.now(timezone.utc).date()
+
+    def eligible(uid: str) -> bool:
+        if uid in acted:
+            return False
+        last = shown.get(uid)
+        return last is None or (today - date.fromisoformat(last)).days >= cooldown_days
 
     since = datetime.now(timezone.utc) - timedelta(days=config["lookback_days"])
     print(f"Collecting since {since:%Y-%m-%d}")
@@ -815,14 +826,14 @@ def main() -> int:
     by_uid: dict[str, Item] = {}
     for item in candidates:
         uid = canonical(item.uid)
-        if uid in seen:
+        if not eligible(uid):
             continue
         # arXiv and HF surface the same paper, keep whichever carries a signal
         existing = by_uid.get(uid)
         if existing is None or item.extras.get("upvotes", 0) > existing.extras.get("upvotes", 0):
             by_uid[uid] = item
     fresh = list(by_uid.values())
-    print(f"  {len(fresh)} unseen after dedupe")
+    print(f"  {len(fresh)} eligible after cooldown/dedupe")
 
     if not fresh:
         print("Nothing new.")
@@ -865,8 +876,7 @@ def main() -> int:
                     if "credentials" in str(exc).lower() else str(exc)[:140])
         print(f"  ranking unavailable: {exc}", file=sys.stderr)
         ranked = []
-        pool = [i for i in shortlist if canonical(i.uid) not in listed]
-        keep = unranked(pool, config["max_items"])
+        keep = unranked(shortlist, config["max_items"])
         print(f"  falling back to {len(keep)} keyword matches", file=sys.stderr)
 
     subject = (f"Reading digest, {len(keep)} unranked, {datetime.now():%d %b}"
@@ -888,13 +898,15 @@ def main() -> int:
                 "the digest without sending it.")
         send(subject, html_body, text_body, to)
 
-    # Only record what the model actually judged, so a failed batch retries.
-    seen.update(canonical(i.uid) for i in ranked)
-    seen_path.write_text(json.dumps(sorted(seen)[-4000:], indent=0))
-
-    if degraded:
-        listed.update(canonical(i.uid) for i in keep)
-        listed_path.write_text(json.dumps(sorted(listed)[-4000:], indent=0))
+    # Only the cap on what was actually emailed starts its cooldown, not
+    # every candidate that reached the model, so a sub-threshold item stays
+    # free to be re-ranked tomorrow rather than waiting out the cooldown too.
+    if keep:
+        for item in keep:
+            shown[canonical(item.uid)] = today.isoformat()
+        cutoff = today - timedelta(days=cooldown_days * 3)
+        shown = {uid: d for uid, d in shown.items() if date.fromisoformat(d) >= cutoff}
+        shown_path.write_text(json.dumps(shown, indent=0, sort_keys=True))
     return 0
 
 
