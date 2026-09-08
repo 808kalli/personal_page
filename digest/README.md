@@ -184,7 +184,7 @@ something irrelevant gets through, add why it was wrong there.
 
 | Key | Meaning |
 | --- | --- |
-| `lookback_days` | how far back to look, 2 gives the daily run a day of overlap |
+| `lookback_days` | how far back to look. Wider than it sounds it needs to be, arXiv's search API and Hugging Face's daily papers feed can both lag several days behind arxiv.org's own listing pages, confirmed 2026-09-08 with a 4 day gap on a fresh, uncached request. 6 gives room to absorb that without permanently losing a paper to a lookback window that closed before the index caught up. The per-item cooldown, not this, is what stops repeats |
 | `cooldown_days` | how long a shown-but-unactioned item stays excluded before it is eligible again |
 | `prefilter_keep` | how many candidates reach the model, the rest are dropped on keyword score |
 | `max_items` | hard cap on the email |

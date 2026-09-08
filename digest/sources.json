@@ -1,5 +1,5 @@
 {
-  "lookback_days": 2,
+  "lookback_days": 6,
   "cooldown_days": 10,
   "prefilter_keep": 40,
   "max_items": 5,
