@@ -221,6 +221,7 @@ something irrelevant gets through, add why it was wrong there.
 | `lookback_days` | how far back to look. Wider than it sounds it needs to be, arXiv's search API and Hugging Face's daily papers feed can both lag several days behind arxiv.org's own listing pages, confirmed 2026-09-08 with a 4 day gap on a fresh, uncached request. 6 gives room to absorb that without permanently losing a paper to a lookback window that closed before the index caught up. The per-item cooldown, not this, is what stops repeats |
 | `cooldown_days` | how long a shown-but-unactioned item stays excluded before it is eligible again |
 | `backlog_per_query` | results per arXiv query in the no-date-limit relevance pass, see "Old as well as new" |
+| `voting_enabled` | defaults true. Set false to drop Like/Ignore from the email, required for anyone but the site owner, see "Running it for someone else" |
 | `prefilter_keep` | how many candidates reach the model, the rest are dropped on keyword score |
 | `max_items` | hard cap on the email |
 | `min_interest_score` | the bar, 0 to 100. Raise it if the digest feels padded |
@@ -240,6 +241,31 @@ its `og:title`, one request per new link.
 `verdicts.json` holds your likes and dislikes, written by the vote worker,
 editing it by hand works fine too. See "Cooldown, not permanent exclusion"
 above for `shown.json`.
+
+## Running it for someone else
+
+`--person <name>` points the whole script at `digest/people/<name>/` instead
+of the top level: that directory needs its own `sources.json` and
+`interests.md`, and gets its own `shown.json` written back to it. Nothing
+about the default, owner path changes, `--person` is opt in.
+
+Set `"voting_enabled": false` in that person's `sources.json` to drop Like
+and Ignore from their email entirely. This is not a preference toggle so
+much as a requirement: the vote links point at a single Cloudflare Worker
+hardcoded to write into this repo's top level `verdicts.json`, the one
+`reading.html` renders publicly. Leaving voting on for anyone other than the
+site owner would mean their clicks landing in the owner's public reading
+list. Without voting, cooldown_days is the only thing governing repeats, an
+item is never permanently excluded, only held back for a while.
+
+Each person needs their own repository secrets, `GEMINI_API_KEY`,
+`RESEND_API_KEY` (or the Gmail pair), `DIGEST_TO`, so one person's key
+outage or rate limit does not touch anyone else's run. A GitHub Environment
+per person, holding secrets under those same names, keeps that isolated: a
+workflow job that targets an environment gets that environment's secrets in
+place of the repository level ones of the same name, everything else about
+the job stays identical. See `.github/workflows/reading-digest.yml` for how
+the owner's job and an added person's job sit side by side.
 
 ## Running it locally
 

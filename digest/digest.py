@@ -645,10 +645,17 @@ def score_note(item: Item) -> str:
             f"(keywords said {item.extras.get('prior')}, {arrow})")
 
 
-def render_html(items: list[Item], considered: int, degraded: str = "") -> str:
+def render_html(items: list[Item], considered: int, degraded: str = "",
+                 voting: bool = True) -> str:
     today = datetime.now(timezone.utc).strftime("%d %B %Y")
     rows = []
     for item in items:
+        vote_row = f"""
+        <div style="font:400 12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;padding-top:10px;">
+          <a href="{html.escape(feedback_url(item, 'liked'))}" style="color:#2f8a5b;text-decoration:none;">Like</a>
+          <span style="color:#c7ccd3;">&nbsp;&nbsp;/&nbsp;&nbsp;</span>
+          <a href="{html.escape(feedback_url(item, 'ignored'))}" style="color:#b4553f;text-decoration:none;">Ignore</a>
+        </div>""" if voting else ""
         rows.append(f"""
       <tr><td style="padding:0 0 30px 0;">
         <div style="font:600 16px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
@@ -663,13 +670,16 @@ def render_html(items: list[Item], considered: int, degraded: str = "") -> str:
         <div style="font:400 13px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#5b6068;padding-top:8px;">
           <strong style="color:#333;">{"Keywords" if degraded else "Why you"}:</strong> {html.escape(item.why)}<br>
           <strong style="color:#333;">Standing:</strong> {html.escape(item.credibility)}
-        </div>
-        <div style="font:400 12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;padding-top:10px;">
-          <a href="{html.escape(feedback_url(item, 'liked'))}" style="color:#2f8a5b;text-decoration:none;">Like</a>
-          <span style="color:#c7ccd3;">&nbsp;&nbsp;/&nbsp;&nbsp;</span>
-          <a href="{html.escape(feedback_url(item, 'ignored'))}" style="color:#b4553f;text-decoration:none;">Ignore</a>
-        </div>
+        </div>{vote_row}
       </td></tr>""")
+
+    footer = ("Ranked against your interests.md. Like and Ignore are one click, no "
+              "confirmation page, and record a verdict on that one entry only, they "
+              "do not change what gets suggested next. Everything liked collects at "
+              '<a href="https://808kalli.github.io/personal_page/reading.html" '
+              'style="color:#a0a5ad;">808kalli.github.io/personal_page/reading.html</a>.'
+              if voting else
+              "Ranked against your interests.md.")
 
     return f"""<!doctype html>
 <html><body style="margin:0;padding:24px;background:#f6f7f9;">
@@ -681,16 +691,14 @@ def render_html(items: list[Item], considered: int, degraded: str = "") -> str:
   {f'<tr><td style="background:#fff6e5;border:1px solid #f0dcb0;border-radius:6px;padding:12px 14px;margin-bottom:20px;font:400 13px/1.6 -apple-system,BlinkMacSystemFont,sans-serif;color:#7a5a1a;">Ranking did not run, so this is the keyword shortlist only. No interest scores and no summaries, the text below is each abstract in its own words. Reason: {html.escape(degraded)}</td></tr><tr><td style="height:20px;"></td></tr>' if degraded else ''}
   {''.join(rows) if rows else '<tr><td style="font:400 14px/1.6 sans-serif;color:#5b6068;">Nothing cleared the bar this week.</td></tr>'}
   <tr><td style="border-top:1px solid #e6e8eb;padding-top:20px;font:400 12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#a0a5ad;">
-    Ranked against digest/interests.md. Like and Ignore are one click, no
-    confirmation page, and record a verdict on that one entry only, they do
-    not change what gets suggested next. Everything liked collects at
-    <a href="https://808kalli.github.io/personal_page/reading.html" style="color:#a0a5ad;">808kalli.github.io/personal_page/reading.html</a>.
+    {footer}
   </td></tr>
 </table>
 </body></html>"""
 
 
-def render_text(items: list[Item], considered: int, degraded: str = "") -> str:
+def render_text(items: list[Item], considered: int, degraded: str = "",
+                 voting: bool = True) -> str:
     lines = [f"Reading digest, {len(items)} of {considered} candidates", ""]
     if degraded:
         lines += [f"Ranking did not run ({degraded}). Keyword shortlist only,",
@@ -705,16 +713,21 @@ def render_text(items: list[Item], considered: int, degraded: str = "") -> str:
             f"  {'Keywords' if degraded else 'Why you'}: {item.why}",
             f"  Standing: {item.credibility}",
             f"  {item.url}",
-            f"  like: {feedback_url(item, 'liked')}",
-            f"  ignore: {feedback_url(item, 'ignored')}",
-            "",
         ]
-    lines += [
-        "Ranked against digest/interests.md. Like/Ignore record a verdict on "
-        "that one entry only, they do not change what gets suggested next.",
-        "Everything liked collects at "
-        "https://808kalli.github.io/personal_page/reading.html",
-    ]
+        if voting:
+            lines += [
+                f"  like: {feedback_url(item, 'liked')}",
+                f"  ignore: {feedback_url(item, 'ignored')}",
+            ]
+        lines.append("")
+    lines.append("Ranked against your interests.md.")
+    if voting:
+        lines += [
+            "Like/Ignore record a verdict on that one entry only, they do not "
+            "change what gets suggested next.",
+            "Everything liked collects at "
+            "https://808kalli.github.io/personal_page/reading.html",
+        ]
     return "\n".join(lines)
 
 
@@ -780,6 +793,10 @@ def main() -> int:
                         help="skip ranking, just list what was collected")
     parser.add_argument("--test-email", action="store_true",
                         help="send a two line email and stop, for checking delivery")
+    parser.add_argument("--person", default=None,
+                        help="run digest/people/<name>/ instead of the top level "
+                             "files, everything (config, interests, state) comes "
+                             "from that directory instead")
     args = parser.parse_args()
 
     if args.test_email:
@@ -791,15 +808,22 @@ def main() -> int:
              "Delivery works. The real digest will look nothing like this.", to)
         return 0
 
-    config = json.loads((HERE / "sources.json").read_text())
-    profile = (HERE / "interests.md").read_text()
+    base = HERE / "people" / args.person if args.person else HERE
+    config = json.loads((base / "sources.json").read_text())
+    profile = (base / "interests.md").read_text()
+
+    # voting_enabled is off for anyone without a public liked-list page to
+    # write into: the vote links point at a Cloudflare Worker hardcoded to
+    # this repo's top level verdicts.json, so leaving them on for anyone else
+    # would write their clicks into the owner's public reading list.
+    voting_enabled = config.get("voting_enabled", True)
 
     # verdicts.json feeds reading.html and, below, permanent exclusion. It
     # does not influence ranking: with only a handful of clicks so far, one
     # misclick would carry outsized weight, and there is no way to walk a bad
     # vote back except re-voting the same item. If taste should shift the
     # ranking, edit interests.md by hand.
-    feedback = load_verdicts(HERE / "verdicts.json")
+    feedback = load_verdicts(base / "verdicts.json") if voting_enabled else []
     if feedback:
         liked_n = sum(1 for e in feedback if e["verdict"] == "liked")
         print(f"  {len(feedback)} verdicts on file ({liked_n} liked), "
@@ -810,7 +834,7 @@ def main() -> int:
     # cooldown_days: quiet stretches (a slow arXiv weekend, say) should not
     # mean the same handful of suggestions vanish forever the moment they are
     # first emailed. Liking or ignoring is the only permanent exclusion.
-    shown_path = HERE / "shown.json"
+    shown_path = base / "shown.json"
     shown: dict[str, str] = (json.loads(shown_path.read_text())
                               if shown_path.exists() else {})
     cooldown_days = config.get("cooldown_days", 10)
@@ -904,8 +928,8 @@ def main() -> int:
     subject = (f"Reading digest, {len(keep)} unranked, {datetime.now():%d %b}"
                if degraded else
                f"Reading digest, {len(keep)} papers, {datetime.now():%d %b}")
-    html_body = render_html(keep, len(shortlist), degraded)
-    text_body = render_text(keep, len(shortlist), degraded)
+    html_body = render_html(keep, len(shortlist), degraded, voting_enabled)
+    text_body = render_text(keep, len(shortlist), degraded, voting_enabled)
 
     if args.dry_run:
         print("\n" + text_body)
