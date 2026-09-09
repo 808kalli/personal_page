@@ -5,6 +5,21 @@
   "prefilter_keep": 40,
   "max_items": 5,
   "min_interest_score": 55,
+  "prefilter_terms": {
+    "5": ["mechanistic interpretab", "sparse autoencoder", "superposition",
+          "attribution graph", "circuit trac", "activation steering",
+          "steering vector", "activation addition", "monosemantic",
+          "compounding error", "action chunk"],
+    "3": ["interpretab", "probing", "probe ", "world model", "emergent",
+          "distribution shift", "behavior clon", "behaviour clon",
+          "representation engineering", "linear probe", "steerab",
+          "deception", "honest", "model organism"],
+    "1": ["circuit", "feature", "activation", "latent", "representation",
+          "vision-language-action", "vla", "manipulation", "policy", "robot",
+          "imitation", "demonstration", "offline rl", "offline reinforcement",
+          "generalis", "generaliz", "scaling", "pre-train", "pretrain",
+          "calibration", "reward", "teleoperation"]
+  },
   "model": {
     "provider": "gemini",
     "model": "gemini-3.5-flash-lite",

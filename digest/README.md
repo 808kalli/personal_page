@@ -223,6 +223,7 @@ something irrelevant gets through, add why it was wrong there.
 | `backlog_per_query` | results per arXiv query in the no-date-limit relevance pass, see "Old as well as new" |
 | `voting_enabled` | defaults true. Set false to drop Like/Ignore from the email, required for anyone but the site owner, see "Running it for someone else" |
 | `prefilter_keep` | how many candidates reach the model, the rest are dropped on keyword score |
+| `prefilter_terms` | required, no default. `{weight: [terms]}`, weight 5/3/1 by convention. This is what the initial keyword cut and the model's proposed score are built from, per person, not shared, someone else's interests do not share your vocabulary |
 | `max_items` | hard cap on the email |
 | `min_interest_score` | the bar, 0 to 100. Raise it if the digest feels padded |
 | `model` | provider, model id, endpoint, batch size, timeout, and `pace_seconds` |

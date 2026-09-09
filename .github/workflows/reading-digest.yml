@@ -64,3 +64,52 @@ jobs:
           done
           echo "still could not push after 5 attempts"
           exit 1
+
+  # Same trigger, same pipeline, a different person's interests and their
+  # own API keys, isolated in the "foivos" GitHub Environment (repo Settings
+  # -> Environments). A job that names an environment gets that
+  # environment's secrets in place of the repository level ones of the same
+  # name, so GEMINI_API_KEY here is his key, not the one above. voting_enabled
+  # is false in his sources.json, his email has no Like/Ignore links, so
+  # there is no vote worker involved for him at all. See digest/README.md,
+  # "Running it for someone else".
+  digest-foivos:
+    runs-on: ubuntu-latest
+    environment: foivos
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Build and send Foivos's digest
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          DIGEST_TO: ${{ secrets.DIGEST_TO }}
+        run: |
+          python digest/digest.py --person foivos ${{ inputs.dry_run && '--dry-run' || '' }}
+
+      - name: Record what was judged
+        if: ${{ !inputs.dry_run }}
+        run: |
+          if [ -z "$(git status --porcelain digest/people/foivos/)" ]; then
+            exit 0
+          fi
+          git config user.name "reading-digest"
+          git config user.email "actions@github.com"
+          git add -A digest/people/foivos/
+          git commit -m "Record digest candidates for foivos, $(date -u +%Y-%m-%d)"
+
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            echo "push rejected, fetching and rebasing (attempt $attempt)"
+            git fetch origin main
+            git rebase origin/main || { git rebase --abort; exit 1; }
+            sleep $((attempt * 5))
+          done
+          echo "still could not push after 5 attempts"
+          exit 1

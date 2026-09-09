@@ -38,21 +38,27 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "808kalli/personal_page")
 # reads. Deliberately generous, the model does the real judging.
 # Weighted so a genuine core match outranks a pile of near-miss application
 # papers when the shortlist is cut. The model still does the real judging.
-PREFILTER_TERMS = {
-    5: ["mechanistic interpretab", "sparse autoencoder", "superposition",
-        "attribution graph", "circuit trac", "activation steering",
-        "steering vector", "activation addition", "monosemantic",
-        "compounding error", "action chunk"],
-    3: ["interpretab", "probing", "probe ", "world model", "emergent",
-        "distribution shift", "behavior clon", "behaviour clon",
-        "representation engineering", "linear probe", "steerab",
-        "deception", "honest", "model organism"],
-    1: ["circuit", "feature", "activation", "latent", "representation",
-        "vision-language-action", "vla", "manipulation", "policy", "robot",
-        "imitation", "demonstration", "offline rl", "offline reinforcement",
-        "generalis", "generaliz", "scaling", "pre-train", "pretrain",
-        "calibration", "reward", "teleoperation"],
-}
+#
+# This is per person, not a fixed constant: two people's interests share
+# almost no vocabulary, a keyword list built for one badly miscalibrates the
+# prefilter cut and the model's proposed score for the other. It starts
+# empty and main() fills it in from that run's sources.json before anything
+# gets scored, see load_prefilter_terms().
+PREFILTER_TERMS: dict[int, list[str]] = {}
+
+
+def load_prefilter_terms(config: dict) -> dict[int, list[str]]:
+    try:
+        raw = config["prefilter_terms"]
+    except KeyError:
+        raise SystemExit(
+            "sources.json is missing prefilter_terms, the weighted keyword "
+            "list the prefilter cut and the model's proposed score are both "
+            "built from. There is no sane default, it has to match this "
+            "profile's actual vocabulary."
+        ) from None
+    return {int(weight): terms for weight, terms in raw.items()}
+
 
 # Papers dominate by sheer volume, arXiv puts out far more candidates than
 # the handful of blog feeds. Blog prose is also less keyword-dense than a
@@ -811,6 +817,9 @@ def main() -> int:
     base = HERE / "people" / args.person if args.person else HERE
     config = json.loads((base / "sources.json").read_text())
     profile = (base / "interests.md").read_text()
+
+    global PREFILTER_TERMS
+    PREFILTER_TERMS = load_prefilter_terms(config)
 
     # voting_enabled is off for anyone without a public liked-list page to
     # write into: the vote links point at a Cloudflare Worker hardcoded to
