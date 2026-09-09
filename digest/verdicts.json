@@ -133,5 +133,14 @@
   "source": "arXiv",
   "why": "This is direct mechanistic interpretability work challenging standard assumptions about transformer residual streams, placing it squarely in the core interests. The keywords moderately matched the top",
   "recorded": "2026-09-09T11:05:49.406Z"
+ },
+ {
+  "id": "arxiv:2609.07061",
+  "verdict": "liked",
+  "title": "PhysSAE: Mechanistic Interpretability with Sparse Autoencoders",
+  "url": "http://arxiv.org/abs/2609.07061v1",
+  "source": "arXiv",
+  "why": "Applies sparse autoencoders and causal interventions to Physics-Informed Neural Networks instead of language models, fitting the core mechanistic interpretability line.",
+  "recorded": "2026-09-09T11:06:57.061Z"
  }
 ]
