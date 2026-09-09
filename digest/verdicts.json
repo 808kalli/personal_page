@@ -115,5 +115,14 @@
   "source": "Goodfire",
   "why": "Keywords scored this zero due to missing metadata, but Goodfire is a core group building functional interpretability tools and sparse autoencoders for steering.",
   "recorded": "2026-09-05T08:56:46.212Z"
+ },
+ {
+  "id": "https://www.alignmentforum.org/posts/gHFCgrvfxQtaEnJye/training-on-probes-what-s-going-on",
+  "verdict": "liked",
+  "title": "Training on probes: What's going on",
+  "url": "https://www.alignmentforum.org/posts/gHFCgrvfxQtaEnJye/training-on-probes-what-s-going-on",
+  "source": "Alignment Forum",
+  "why": "Keywords missed a core Alignment Forum post on the limitations of training directly on probes and gradient descent evasion.",
+  "recorded": "2026-09-09T11:04:56.239Z"
  }
 ]
