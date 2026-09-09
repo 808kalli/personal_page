@@ -10,6 +10,14 @@ on:
         description: "Rank and print without sending or recording"
         type: boolean
         default: false
+      only:
+        description: "Run only one person's job (blank runs everyone)"
+        type: choice
+        options:
+          - ""
+          - elias
+          - foivos
+        default: ""
 
 permissions:
   contents: write
@@ -20,6 +28,7 @@ concurrency:
 
 jobs:
   digest:
+    if: ${{ inputs.only == '' || inputs.only == 'elias' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -74,6 +83,7 @@ jobs:
   # there is no vote worker involved for him at all. See digest/README.md,
   # "Running it for someone else".
   digest-foivos:
+    if: ${{ inputs.only == '' || inputs.only == 'foivos' }}
     runs-on: ubuntu-latest
     environment: foivos
     steps:
