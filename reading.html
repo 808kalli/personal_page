@@ -49,7 +49,7 @@ a { color: inherit; text-decoration: none; }
 }
 .back-link:hover { color: var(--accent); }
 
-.page-header { margin-bottom: 48px; }
+.page-header { margin-bottom: 28px; }
 
 .page-title {
   font-family: var(--sans);
@@ -66,50 +66,133 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-muted);
 }
 
-.list {
+.toolbar {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-width: 760px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  max-width: 1000px;
 }
 
-.card {
+.search-wrap {
+  position: relative;
+  flex: 1 1 260px;
+  min-width: 200px;
+}
+
+.search-wrap svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  stroke: var(--text-muted);
+  pointer-events: none;
+}
+
+#search {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--text-primary);
   background: var(--bg-card);
   border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px 10px 34px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+#search:focus { border-color: var(--accent); }
+#search::placeholder { color: var(--text-muted); }
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+.toggle input { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+
+.count {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.table-wrap {
+  max-width: 1000px;
+  border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 24px 28px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px 24px;
-  align-items: start;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  overflow: hidden;
 }
 
-.card:hover {
-  border-color: var(--accent);
-  background: var(--bg-card-hover);
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.card a.title-link {
-  font-size: 1rem;
+thead th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  white-space: nowrap;
+}
+thead th:hover { color: var(--accent); }
+thead th.sorted { color: var(--accent); }
+thead th .arrow { font-size: 0.6rem; margin-left: 3px; opacity: 0.7; }
+thead th.read-col, thead th.link-col { cursor: default; }
+thead th.read-col:hover, thead th.link-col:hover { color: var(--text-muted); }
+
+tbody tr {
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.15s ease;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--bg-card-hover); }
+tbody tr.is-read { opacity: 0.5; }
+
+td {
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  vertical-align: top;
+}
+
+td.read-col { padding-top: 14px; }
+td.read-col input {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  display: block;
+}
+
+td.title-col { max-width: 420px; }
+td.title-col a {
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.4;
 }
-.card a.title-link:hover { color: var(--accent); }
-
-.card .why {
-  font-size: 0.84rem;
+td.title-col a:hover { color: var(--accent); }
+td.title-col .why {
+  font-size: 0.78rem;
   color: var(--text-secondary);
-  line-height: 1.6;
-  margin-top: 6px;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 8px;
+  line-height: 1.5;
+  margin-top: 5px;
 }
 
 .tag {
@@ -120,29 +203,23 @@ a { color: inherit; text-decoration: none; }
   padding: 2px 8px;
   border-radius: 20px;
   letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
-.card-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
-.date {
+td.date-col {
   font-family: var(--mono);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-.open-hint {
+td.link-col { text-align: right; white-space: nowrap; }
+td.link-col a {
   font-family: var(--mono);
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
-  transition: color 0.2s;
 }
-.card:hover .open-hint { color: var(--accent); }
+tbody tr:hover td.link-col a { color: var(--accent); }
 
 .empty-state, .error-state {
   font-family: var(--mono);
@@ -153,6 +230,11 @@ a { color: inherit; text-decoration: none; }
 }
 
 .error-state { color: var(--accent-secondary); }
+
+@media (max-width: 640px) {
+  td.title-col .why { display: none; }
+  thead th.date-col, td.date-col { display: none; }
+}
 </style>
 </head>
 <body>
@@ -163,12 +245,58 @@ a { color: inherit; text-decoration: none; }
   <p class="page-subtitle">Everything marked "more like this" from the reading digest</p>
 </div>
 
-<div class="list" id="list">
-  <p class="empty-state">Loading…</p>
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input id="search" type="text" placeholder="Search title, source, why…">
+  </div>
+  <label class="toggle"><input type="checkbox" id="hideRead"> Hide read</label>
+  <span class="count" id="count"></span>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th class="read-col">Read</th>
+        <th data-sort="title">Title</th>
+        <th data-sort="source">Source</th>
+        <th data-sort="date" class="date-col sorted">Liked <span class="arrow">▾</span></th>
+        <th class="link-col"></th>
+      </tr>
+    </thead>
+    <tbody id="rows">
+      <tr><td colspan="5" class="empty-state">Loading…</td></tr>
+    </tbody>
+  </table>
 </div>
 
 <script>
 const SOURCE = "https://raw.githubusercontent.com/808kalli/personal_page/main/digest/verdicts.json";
+const READ_KEY = "reading-read-ids";
+
+// localStorage only, per browser: there is no account system on this site,
+// so "read" has nowhere shared to live. It survives reloads and revisits in
+// this browser, not a switch to another device or a cleared profile.
+function loadRead() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(READ_KEY) || "[]"));
+  } catch {
+    return new Set();
+  }
+}
+function saveRead(set) {
+  try {
+    localStorage.setItem(READ_KEY, JSON.stringify([...set]));
+  } catch {
+    // private mode or storage disabled, read state just will not persist
+  }
+}
+
+let entries = [];
+let readIds = loadRead();
+let sortKey = "date";
+let sortDir = -1; // -1 desc, 1 asc
 
 function fmtDate(iso) {
   try {
@@ -184,43 +312,111 @@ function escapeHtml(s) {
   return div.innerHTML;
 }
 
-async function render() {
-  const list = document.getElementById("list");
-  let entries;
+function sortedFiltered() {
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  const hideRead = document.getElementById("hideRead").checked;
+
+  let rows = entries.filter((e) => {
+    if (hideRead && readIds.has(e.id)) return false;
+    if (!q) return true;
+    const hay = `${e.title || ""} ${e.source || ""} ${e.why || ""}`.toLowerCase();
+    return hay.includes(q);
+  });
+
+  rows.sort((a, b) => {
+    let av, bv;
+    if (sortKey === "date") { av = new Date(a.recorded); bv = new Date(b.recorded); }
+    else if (sortKey === "source") { av = (a.source || "").toLowerCase(); bv = (b.source || "").toLowerCase(); }
+    else { av = (a.title || a.id || "").toLowerCase(); bv = (b.title || b.id || "").toLowerCase(); }
+    if (av < bv) return -1 * sortDir;
+    if (av > bv) return 1 * sortDir;
+    return 0;
+  });
+
+  return rows;
+}
+
+function renderRows() {
+  const tbody = document.getElementById("rows");
+  const count = document.getElementById("count");
+  const rows = sortedFiltered();
+
+  count.textContent = `${rows.length} of ${entries.length} · ${readIds.size} read`;
+
+  if (entries.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Nothing liked yet. "Like" links in the digest email land here.</td></tr>';
+    return;
+  }
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Nothing matches.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map((e) => {
+    const isRead = readIds.has(e.id);
+    return `
+    <tr class="${isRead ? "is-read" : ""}" data-id="${escapeHtml(e.id)}">
+      <td class="read-col"><input type="checkbox" ${isRead ? "checked" : ""} aria-label="Mark read"></td>
+      <td class="title-col">
+        <a href="${escapeHtml(e.url || "#")}" target="_blank" rel="noopener">${escapeHtml(e.title || e.id)}</a>
+        ${e.why ? `<div class="why">${escapeHtml(e.why)}</div>` : ""}
+      </td>
+      <td><span class="tag">${escapeHtml(e.source || "")}</span></td>
+      <td class="date-col">${escapeHtml(fmtDate(e.recorded))}</td>
+      <td class="link-col"><a href="${escapeHtml(e.url || "#")}" target="_blank" rel="noopener">Open ↗</a></td>
+    </tr>`;
+  }).join("");
+
+  tbody.querySelectorAll('input[type="checkbox"]').forEach((box) => {
+    box.addEventListener("change", () => {
+      const id = box.closest("tr").dataset.id;
+      if (box.checked) readIds.add(id); else readIds.delete(id);
+      saveRead(readIds);
+      renderRows();
+    });
+  });
+}
+
+function updateSortHeaders() {
+  document.querySelectorAll("thead th[data-sort]").forEach((th) => {
+    th.classList.toggle("sorted", th.dataset.sort === sortKey);
+    const arrow = th.querySelector(".arrow");
+    if (arrow) arrow.remove();
+    if (th.dataset.sort === sortKey) {
+      th.insertAdjacentHTML("beforeend", `<span class="arrow">${sortDir === -1 ? "▾" : "▴"}</span>`);
+    }
+  });
+}
+
+document.querySelectorAll("thead th[data-sort]").forEach((th) => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (sortKey === key) sortDir *= -1;
+    else { sortKey = key; sortDir = key === "date" ? -1 : 1; }
+    updateSortHeaders();
+    renderRows();
+  });
+});
+
+document.getElementById("search").addEventListener("input", renderRows);
+document.getElementById("hideRead").addEventListener("change", renderRows);
+
+async function load() {
+  const tbody = document.getElementById("rows");
   try {
     const res = await fetch(SOURCE, { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    entries = await res.json();
+    const all = await res.json();
+    entries = all.filter((e) => e.verdict === "liked");
   } catch (err) {
-    list.innerHTML = `<p class="error-state">Could not load the list right now (${escapeHtml(String(err))}).</p>`;
+    tbody.innerHTML = `<tr><td colspan="5" class="error-state">Could not load the list right now (${escapeHtml(String(err))}).</td></tr>`;
     return;
   }
-
-  const liked = entries
-    .filter((e) => e.verdict === "liked")
-    .sort((a, b) => new Date(b.recorded) - new Date(a.recorded));
-
-  if (liked.length === 0) {
-    list.innerHTML = '<p class="empty-state">Nothing liked yet. "Like" links in the digest email land here.</p>';
-    return;
-  }
-
-  list.innerHTML = liked.map((e) => `
-    <div class="card">
-      <div>
-        <div class="tags"><span class="tag">${escapeHtml(e.source || "")}</span></div>
-        <a class="title-link" href="${escapeHtml(e.url || "#")}" target="_blank" rel="noopener">${escapeHtml(e.title || e.id)}</a>
-        ${e.why ? `<p class="why">${escapeHtml(e.why)}</p>` : ""}
-      </div>
-      <div class="card-right">
-        <div class="date">${escapeHtml(fmtDate(e.recorded))}</div>
-        <a class="open-hint" href="${escapeHtml(e.url || "#")}" target="_blank" rel="noopener">Open ↗</a>
-      </div>
-    </div>
-  `).join("");
+  updateSortHeaders();
+  renderRows();
 }
 
-render();
+load();
 </script>
 
 </body>
