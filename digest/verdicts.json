@@ -124,5 +124,14 @@
   "source": "Alignment Forum",
   "why": "Keywords missed a core Alignment Forum post on the limitations of training directly on probes and gradient descent evasion.",
   "recorded": "2026-09-09T11:04:56.239Z"
+ },
+ {
+  "id": "arxiv:2609.07876",
+  "verdict": "liked",
+  "title": "LLM Layers Immediately Correct Each Other",
+  "url": "http://arxiv.org/abs/2609.07876v1",
+  "source": "arXiv",
+  "why": "This is direct mechanistic interpretability work challenging standard assumptions about transformer residual streams, placing it squarely in the core interests. The keywords moderately matched the top",
+  "recorded": "2026-09-09T11:05:49.406Z"
  }
 ]
