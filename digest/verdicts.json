@@ -142,5 +142,14 @@
   "source": "arXiv",
   "why": "Applies sparse autoencoders and causal interventions to Physics-Informed Neural Networks instead of language models, fitting the core mechanistic interpretability line.",
   "recorded": "2026-09-09T11:06:57.061Z"
+ },
+ {
+  "id": "arxiv:2609.05575",
+  "verdict": "liked",
+  "title": "Capsule Lens: Locating and Tracking Concept Geometry in Model Representations",
+  "url": "http://arxiv.org/abs/2609.05575v1",
+  "source": "arXiv",
+  "why": "This is core mechanistic interpretability research focused on locating and tracking concept geometry in model representations. The keywords hit the general domain, but the specific geometric framework",
+  "recorded": "2026-09-09T11:08:45.603Z"
  }
 ]
