@@ -1,7 +1,7 @@
 {
   "lookback_days": 6,
   "backlog_per_query": 5,
-  "cooldown_days": 10,
+  "cooldown_days": null,
   "prefilter_keep": 40,
   "max_items": 5,
   "min_interest_score": 55,

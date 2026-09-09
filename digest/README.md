@@ -219,7 +219,7 @@ something irrelevant gets through, add why it was wrong there.
 | Key | Meaning |
 | --- | --- |
 | `lookback_days` | how far back to look. Wider than it sounds it needs to be, arXiv's search API and Hugging Face's daily papers feed can both lag several days behind arxiv.org's own listing pages, confirmed 2026-09-08 with a 4 day gap on a fresh, uncached request. 6 gives room to absorb that without permanently losing a paper to a lookback window that closed before the index caught up. The per-item cooldown, not this, is what stops repeats |
-| `cooldown_days` | how long a shown-but-unactioned item stays excluded before it is eligible again |
+| `cooldown_days` | how long a shown-but-unactioned item stays excluded before it is eligible again. `null` makes being shown itself permanent, no expiry, the right setting for anyone without Like/Ignore since there is otherwise no way to distinguish "still deciding" from "already saw this" |
 | `backlog_per_query` | results per arXiv query in the no-date-limit relevance pass, see "Old as well as new" |
 | `voting_enabled` | defaults true. Set false to drop Like/Ignore from the email, required for anyone but the site owner, see "Running it for someone else" |
 | `prefilter_keep` | how many candidates reach the model, the rest are dropped on keyword score |
@@ -256,8 +256,11 @@ much as a requirement: the vote links point at a single Cloudflare Worker
 hardcoded to write into this repo's top level `verdicts.json`, the one
 `reading.html` renders publicly. Leaving voting on for anyone other than the
 site owner would mean their clicks landing in the owner's public reading
-list. Without voting, cooldown_days is the only thing governing repeats, an
-item is never permanently excluded, only held back for a while.
+list. Also set `"cooldown_days": null` for them: without Like/Ignore there is
+no dismissal, and a numeric cooldown means every unactioned item comes back
+on a timer with no way to tell it "already saw this, stop." `null` makes
+being shown itself the permanent exclusion instead, which is what "no voting"
+actually implies.
 
 Each person needs their own repository secrets, `GEMINI_API_KEY`,
 `RESEND_API_KEY` (or the Gmail pair), `DIGEST_TO`, so one person's key

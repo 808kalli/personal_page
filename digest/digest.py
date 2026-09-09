@@ -839,10 +839,17 @@ def main() -> int:
               f"reading.html only, not used for ranking")
     acted = {e["id"] for e in feedback}
 
-    # Everything else, shown but never liked or ignored, is only excluded for
+    # Everything else, shown but never liked or ignored, is excluded for
     # cooldown_days: quiet stretches (a slow arXiv weekend, say) should not
     # mean the same handful of suggestions vanish forever the moment they are
-    # first emailed. Liking or ignoring is the only permanent exclusion.
+    # first emailed. Liking or ignoring is the other permanent exclusion.
+    #
+    # cooldown_days: null (the JSON literal, not the string) turns that off
+    # and makes being shown itself permanent, the only sane setting for
+    # anyone without Like/Ignore: with no way to act on an item at all,
+    # letting it come back after some fixed number of days would just repeat
+    # itself forever, there is no dismissal to distinguish "still deciding"
+    # from "already saw this."
     shown_path = base / "shown.json"
     shown: dict[str, str] = (json.loads(shown_path.read_text())
                               if shown_path.exists() else {})
@@ -853,7 +860,11 @@ def main() -> int:
         if uid in acted:
             return False
         last = shown.get(uid)
-        return last is None or (today - date.fromisoformat(last)).days >= cooldown_days
+        if last is None:
+            return True
+        if cooldown_days is None:
+            return False
+        return (today - date.fromisoformat(last)).days >= cooldown_days
 
     since = datetime.now(timezone.utc) - timedelta(days=config["lookback_days"])
     print(f"Collecting since {since:%Y-%m-%d}, plus an archive pass with no date limit")
@@ -959,8 +970,12 @@ def main() -> int:
     if keep:
         for item in keep:
             shown[canonical(item.uid)] = today.isoformat()
-        cutoff = today - timedelta(days=cooldown_days * 3)
-        shown = {uid: d for uid, d in shown.items() if date.fromisoformat(d) >= cutoff}
+        # Pruning old entries only makes sense where they expire on their
+        # own eventually anyway. With cooldown_days: null nothing in here is
+        # ever safe to drop, that would just let it resurface.
+        if cooldown_days is not None:
+            cutoff = today - timedelta(days=cooldown_days * 3)
+            shown = {uid: d for uid, d in shown.items() if date.fromisoformat(d) >= cutoff}
         shown_path.write_text(json.dumps(shown, indent=0, sort_keys=True))
     return 0
 
