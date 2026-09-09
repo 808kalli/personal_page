@@ -129,7 +129,15 @@ def clean(text: str | None) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-def arxiv_candidates(queries: list[str], since: datetime, per_query: int = 40) -> list[Item]:
+def arxiv_candidates(queries: list[str], since: datetime | None, per_query: int = 40,
+                      sort_by: str = "submittedDate") -> list[Item]:
+    """since=None turns off the date filter and searches the whole archive.
+
+    Paired with sort_by="relevance" that is how older, still-relevant work
+    gets found at all, sorting by date and filtering to a recent window (the
+    normal case, for what is new) can only ever surface the newest matches
+    for a query, never reach backward into the archive.
+    """
     ns = {"a": "http://www.w3.org/2005/Atom"}
     out: list[Item] = []
     for i, query in enumerate(queries):
@@ -139,7 +147,7 @@ def arxiv_candidates(queries: list[str], since: datetime, per_query: int = 40) -
             "search_query": query,
             "start": 0,
             "max_results": per_query,
-            "sortBy": "submittedDate",
+            "sortBy": sort_by,
             "sortOrder": "descending",
         })
         try:
@@ -155,7 +163,7 @@ def arxiv_candidates(queries: list[str], since: datetime, per_query: int = 40) -
                 when = datetime.fromisoformat(published.replace("Z", "+00:00"))
             except ValueError:
                 continue
-            if when < since:
+            if since is not None and when < since:
                 continue
             link = clean(entry.findtext("a:id", default="", namespaces=ns))
             authors = [clean(a.findtext("a:name", default="", namespaces=ns))
@@ -168,7 +176,9 @@ def arxiv_candidates(queries: list[str], since: datetime, per_query: int = 40) -
                 summary=clean(entry.findtext("a:summary", default="", namespaces=ns))[:1500],
                 authors=", ".join(authors[:8]) + (" et al." if len(authors) > 8 else ""),
                 published=when.strftime("%Y-%m-%d"),
-                signal="new preprint, no community signal yet",
+                signal=("new preprint, no community signal yet"
+                        if (datetime.now(timezone.utc) - when).days <= 14
+                        else "not new, surfaced from the archive on relevance"),
             ))
     return out
 
@@ -210,7 +220,7 @@ def huggingface_candidates(since: datetime) -> list[Item]:
     return out
 
 
-def feed_candidates(feeds: list[dict], since: datetime) -> list[Item]:
+def feed_candidates(feeds: list[dict], since: datetime | None) -> list[Item]:
     """Parse both RSS 2.0 and Atom without pulling in a dependency."""
     out: list[Item] = []
     for feed in feeds:
@@ -251,7 +261,7 @@ def feed_candidates(feeds: list[dict], since: datetime) -> list[Item]:
                     if parsed:
                         when = datetime.fromtimestamp(
                             calendar.timegm(parsed[:9]) - (parsed[9] or 0), timezone.utc)
-            if when is None or when < since:
+            if when is None or (since is not None and when < since):
                 continue
 
             out.append(Item(
@@ -813,13 +823,25 @@ def main() -> int:
         return last is None or (today - date.fromisoformat(last)).days >= cooldown_days
 
     since = datetime.now(timezone.utc) - timedelta(days=config["lookback_days"])
-    print(f"Collecting since {since:%Y-%m-%d}")
+    print(f"Collecting since {since:%Y-%m-%d}, plus an archive pass with no date limit")
 
     candidates: list[Item] = []
     candidates += arxiv_candidates(config["arxiv_queries"], since)
+    # A second pass over the same queries, sorted by relevance with no date
+    # filter at all. The one above can only ever surface what is new, sorting
+    # by submission date and cutting off at `since` means an older paper is
+    # never even considered no matter how well it fits. This is what actually
+    # reaches backward into the archive, not just recent history.
+    backlog_per_query = config.get("backlog_per_query", 5)
+    candidates += arxiv_candidates(config["arxiv_queries"], since=None,
+                                    per_query=backlog_per_query, sort_by="relevance")
     if config.get("huggingface_daily_papers"):
         candidates += huggingface_candidates(since)
-    candidates += feed_candidates(config["feeds"], since)
+    # Feeds are naturally bounded to whatever a site's RSS still lists (a
+    # handful to a few dozen posts), so there is no separate backlog pass,
+    # everything currently in the feed is in play, subject to the same
+    # cooldown as everything else.
+    candidates += feed_candidates(config["feeds"], since=None)
     candidates += index_candidates(config.get("html_indexes", []))
     print(f"  collected {len(candidates)}")
 

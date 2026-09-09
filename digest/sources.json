@@ -1,5 +1,6 @@
 {
   "lookback_days": 6,
+  "backlog_per_query": 5,
   "cooldown_days": 10,
   "prefilter_keep": 40,
   "max_items": 5,

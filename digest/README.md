@@ -1,7 +1,9 @@
 # Reading digest
 
-A daily email of the 5 best new papers and posts, ranked against
-`interests.md` and summarised in two sentences each.
+A daily email of the 5 best papers and posts, ranked against `interests.md`
+and summarised in two sentences each. Not just new ones, an archive pass
+searches the same queries with no date limit, so a good paper from 2023 is
+just as reachable as one from this morning. See "Old as well as new" below.
 
 Triggered by an external cron service (cron-job.org) calling the workflow's
 `workflow_dispatch` endpoint, since GitHub's own `schedule:` trigger did not
@@ -92,6 +94,38 @@ to `prefilter_keep` candidates, before anything reaches the model, and
 the model's actual ranking. Neither is large enough to let a mediocre blog
 post beat a genuinely strong paper, they only settle ties and near-ties in
 favor of format diversity. Both constants live at the top of `digest.py`.
+
+## Old as well as new
+
+`arxiv_candidates` runs each query in `arxiv_queries` twice. Once as
+`lookback_days` and sorted by submission date, which is what catches
+something the day it appears. On its own that is also the whole problem:
+sorted by date and cut off at a recent window, an older paper is never even
+considered no matter how well it fits, arXiv publishes enough that the
+newest matches always fill every slot. The second pass drops the date limit
+entirely and sorts by relevance instead, `backlog_per_query` results per
+query (5 by default), so a paper from a year ago that is a strong match for
+the query gets found on its own terms.
+
+This is also what makes the names and papers in `interests.md` more than
+descriptive prose. "Analysing the Generalisation and Reliability of Steering
+Vectors" is never fetched by title, it does not need to be, it is exactly
+the kind of result a relevance search on `abs:"steering vector"` surfaces.
+Anyone in "People and groups worth watching" who already has an `au:` query
+in `arxiv_queries` gets the same treatment, their older work becomes
+reachable, not just whatever they published this week. Add an `au:` query
+for a name that is not tracked yet if you want the same for them.
+
+Feeds work the same way in spirit: `feed_candidates` is not date filtered
+at all now, whatever a site's RSS still lists is in play, not only entries
+inside `lookback_days`. RSS itself is what keeps this bounded, most feeds
+only carry a handful to a few dozen recent posts regardless.
+
+None of this repeats itself once it has been through the cooldown described
+above. The two arXiv passes and the wider feed window mean more of the
+archive becomes reachable, they do not mean the same result reappears every
+day, an item found in the archive pass today and not liked or ignored still
+waits out `cooldown_days` like anything else before it can resurface.
 
 ## Rate limits
 
@@ -186,6 +220,7 @@ something irrelevant gets through, add why it was wrong there.
 | --- | --- |
 | `lookback_days` | how far back to look. Wider than it sounds it needs to be, arXiv's search API and Hugging Face's daily papers feed can both lag several days behind arxiv.org's own listing pages, confirmed 2026-09-08 with a 4 day gap on a fresh, uncached request. 6 gives room to absorb that without permanently losing a paper to a lookback window that closed before the index caught up. The per-item cooldown, not this, is what stops repeats |
 | `cooldown_days` | how long a shown-but-unactioned item stays excluded before it is eligible again |
+| `backlog_per_query` | results per arXiv query in the no-date-limit relevance pass, see "Old as well as new" |
 | `prefilter_keep` | how many candidates reach the model, the rest are dropped on keyword score |
 | `max_items` | hard cap on the email |
 | `min_interest_score` | the bar, 0 to 100. Raise it if the digest feels padded |
