@@ -151,5 +151,14 @@
   "source": "arXiv",
   "why": "This is core mechanistic interpretability research focused on locating and tracking concept geometry in model representations. The keywords hit the general domain, but the specific geometric framework",
   "recorded": "2026-09-09T11:08:45.603Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html",
+  "verdict": "liked",
+  "title": "Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet",
+  "url": "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html",
+  "source": "Transformer Circuits",
+  "why": "Matched sparse autoencoder, monosemantic, interpretab, scaling, feature",
+  "recorded": "2026-09-10T09:33:09.946Z"
  }
 ]
