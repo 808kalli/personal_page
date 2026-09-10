@@ -1,4 +1,7 @@
 {
+"arxiv:2504.19475": "2026-09-10",
+"arxiv:2505.11924": "2026-09-10",
+"arxiv:2603.24543": "2026-09-10",
 "arxiv:2608.30536": "2026-09-05",
 "arxiv:2608.30640": "2026-09-05",
 "arxiv:2608.30643": "2026-09-05",
@@ -93,6 +96,7 @@
 "arxiv:2609.07037": "2026-09-09",
 "arxiv:2609.07061": "2026-09-09",
 "arxiv:2609.07876": "2026-09-09",
+"arxiv:2609.09556": "2026-09-10",
 "https://deepmind.google/blog/introducing-agentic-video-in-gemini": "2026-09-05",
 "https://deepmind.google/blog/introducing-gemini-3-8-flash-and-38-flash-cyber": "2026-09-05",
 "https://deepmind.google/blog/introducing-weathernext-3-our-most-advanced-and-accurate-global-weather-ai-model": "2026-09-05",
@@ -106,6 +110,7 @@
 "https://seohong.me/blog/dual-representations": "2026-09-05",
 "https://seohong.me/blog/q-learning-is-not-yet-scalable": "2026-09-05",
 "https://seohong.me/blog/rl-without-td-learning": "2026-09-05",
+"https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html": "2026-09-10",
 "https://www.alignmentforum.org/posts/J76LZCC55RdHeqEhz/training-a-misaligned-reward-seeker": "2026-09-05",
 "https://www.alignmentforum.org/posts/gHFCgrvfxQtaEnJye/training-on-probes-what-s-going-on": "2026-09-09",
 "https://www.alignmentforum.org/posts/kjPEH4KGEHd8iQ4Hn/value-generalisation-theory-of-change-putting-it-into": "2026-09-05",
