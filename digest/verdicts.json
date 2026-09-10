@@ -160,5 +160,14 @@
   "source": "Transformer Circuits",
   "why": "Matched sparse autoencoder, monosemantic, interpretab, scaling, feature",
   "recorded": "2026-09-10T09:33:09.946Z"
+ },
+ {
+  "id": "arxiv:2609.09556",
+  "verdict": "liked",
+  "title": "High-probability guarantees for linear accessibility in feature superposition",
+  "url": "http://arxiv.org/abs/2609.09556v1",
+  "source": "arXiv",
+  "why": "Matched sparse autoencoder, representation, superposition, interpretab, generaliz",
+  "recorded": "2026-09-10T09:33:55.301Z"
  }
 ]
