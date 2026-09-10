@@ -169,5 +169,14 @@
   "source": "arXiv",
   "why": "Matched sparse autoencoder, representation, superposition, interpretab, generaliz",
   "recorded": "2026-09-10T09:33:55.301Z"
+ },
+ {
+  "id": "arxiv:2504.19475",
+  "verdict": "liked",
+  "title": "Prisma: An Open Source Toolkit for Mechanistic Interpretability in Vision and Video",
+  "url": "http://arxiv.org/abs/2504.19475v3",
+  "source": "arXiv",
+  "why": "Matched mechanistic interpretab, sparse autoencoder, interpretab, activation, pre-train",
+  "recorded": "2026-09-10T09:34:34.209Z"
  }
 ]
