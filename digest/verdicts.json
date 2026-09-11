@@ -187,5 +187,14 @@
   "source": "arXiv",
   "why": "This is the exact centre of gravity paper cited as the core touchstone in the reading interests, but the keyword score was low because the abstract describes evaluation rather than mechanistic constru",
   "recorded": "2026-09-11T13:22:02.217Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2022/toy_model/index.html",
+  "verdict": "liked",
+  "title": "Toy Models of Superposition",
+  "url": "https://transformer-circuits.pub/2022/toy_model/index.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords matched superposition. This is a foundational text of the core mechanistic interpretability interest group defining polysemanticity and sparse features.",
+  "recorded": "2026-09-11T13:22:49.369Z"
  }
 ]
