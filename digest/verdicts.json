@@ -178,5 +178,14 @@
   "source": "arXiv",
   "why": "Matched mechanistic interpretab, sparse autoencoder, interpretab, activation, pre-train",
   "recorded": "2026-09-10T09:34:34.209Z"
+ },
+ {
+  "id": "arxiv:2407.12404",
+  "verdict": "liked",
+  "title": "Analyzing the Generalization and Reliability of Steering Vectors",
+  "url": "http://arxiv.org/abs/2407.12404v8",
+  "source": "arXiv",
+  "why": "This is the exact centre of gravity paper cited as the core touchstone in the reading interests, but the keyword score was low because the abstract describes evaluation rather than mechanistic constru",
+  "recorded": "2026-09-11T13:22:02.217Z"
  }
 ]
