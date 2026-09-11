@@ -196,5 +196,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords matched superposition. This is a foundational text of the core mechanistic interpretability interest group defining polysemanticity and sparse features.",
   "recorded": "2026-09-11T13:22:49.369Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2022/mech-interp-essay/index.html",
+  "verdict": "liked",
+  "title": "Mechanistic Interpretability, Variables, and the Importance of Interpretable Bases",
+  "url": "https://transformer-circuits.pub/2022/mech-interp-essay/index.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords matched mechanistic interpretability. It is a core theoretical note directly from the Anthropic lineage discussing how networks represent variables.",
+  "recorded": "2026-09-11T13:23:21.430Z"
  }
 ]
