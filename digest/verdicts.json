@@ -205,5 +205,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords matched mechanistic interpretability. It is a core theoretical note directly from the Anthropic lineage discussing how networks represent variables.",
   "recorded": "2026-09-11T13:23:21.430Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2023/monosemantic-features/index.html",
+  "verdict": "liked",
+  "title": "Towards Monosemanticity: Decomposing Language Models With Dictionary Learning",
+  "url": "https://transformer-circuits.pub/2023/monosemantic-features/index.html",
+  "source": "Transformer Circuits",
+  "why": "The foundational Anthropic sparse autoencoder paper that established dictionary learning for mechanistic interpretability; keywords heavily undersold its central status.",
+  "recorded": "2026-09-11T13:23:42.824Z"
  }
 ]
