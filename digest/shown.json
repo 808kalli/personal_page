@@ -1,4 +1,5 @@
 {
+"arxiv:2407.12404": "2026-09-11",
 "arxiv:2504.19475": "2026-09-10",
 "arxiv:2505.11924": "2026-09-10",
 "arxiv:2603.24543": "2026-09-10",
@@ -110,6 +111,10 @@
 "https://seohong.me/blog/dual-representations": "2026-09-05",
 "https://seohong.me/blog/q-learning-is-not-yet-scalable": "2026-09-05",
 "https://seohong.me/blog/rl-without-td-learning": "2026-09-05",
+"https://transformer-circuits.pub/2022/mech-interp-essay/index.html": "2026-09-11",
+"https://transformer-circuits.pub/2022/toy_model/index.html": "2026-09-11",
+"https://transformer-circuits.pub/2023/interpretability-dreams/index.html": "2026-09-11",
+"https://transformer-circuits.pub/2023/monosemantic-features/index.html": "2026-09-11",
 "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html": "2026-09-10",
 "https://www.alignmentforum.org/posts/J76LZCC55RdHeqEhz/training-a-misaligned-reward-seeker": "2026-09-05",
 "https://www.alignmentforum.org/posts/gHFCgrvfxQtaEnJye/training-on-probes-what-s-going-on": "2026-09-09",
