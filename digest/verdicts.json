@@ -241,5 +241,14 @@
   "source": "arXiv",
   "why": "Combines linear probes and sparse autoencoders to analyze how deceptive instructions flip internal representations.",
   "recorded": "2026-09-12T10:50:50.256Z"
+ },
+ {
+  "id": "arxiv:2606.09758",
+  "verdict": "liked",
+  "title": "Difference-Aware Retrieval Policies for Imitation Learning",
+  "url": "http://arxiv.org/abs/2606.09758v1",
+  "source": "arXiv",
+  "why": "Directly addresses distribution shift and compounding error in imitation learning via semi-parametric retrieval.",
+  "recorded": "2026-09-12T11:11:57.748Z"
  }
 ]
