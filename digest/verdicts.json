@@ -232,5 +232,14 @@
   "source": "arXiv",
   "why": "Keywords undersold a central result about sparse autoencoder feature stability, which directly targets a core interpretability foundational question.",
   "recorded": "2026-09-12T10:45:57.644Z"
+ },
+ {
+  "id": "arxiv:2507.22149",
+  "verdict": "liked",
+  "title": "When Truthful Representations Flip Under Deceptive Instructions?",
+  "url": "http://arxiv.org/abs/2507.22149v4",
+  "source": "arXiv",
+  "why": "Combines linear probes and sparse autoencoders to analyze how deceptive instructions flip internal representations.",
+  "recorded": "2026-09-12T10:50:50.256Z"
  }
 ]
