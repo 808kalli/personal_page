@@ -250,5 +250,14 @@
   "source": "arXiv",
   "why": "Directly addresses distribution shift and compounding error in imitation learning via semi-parametric retrieval.",
   "recorded": "2026-09-12T11:11:57.748Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2023/toy-double-descent/index.html",
+  "verdict": "liked",
+  "title": "Superposition, Memorization, and Double Descent",
+  "url": "https://transformer-circuits.pub/2023/toy-double-descent/index.html",
+  "source": "Transformer Circuits",
+  "why": "The keywords completely missed that this is core Transformer Circuits work on superposition and generalization. It sits right at the center of the reader profile.",
+  "recorded": "2026-09-14T11:10:33.360Z"
  }
 ]
