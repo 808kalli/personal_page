@@ -1,161 +1,217 @@
-# Research interests - Neural Networks in Battery Management Systems
+# Research interests - Embedded Neural Networks for Battery Management Systems
 
-This file documents my research focus. Updated regularly as interests evolve.
-Be specific about what I *do not* want - it clarifies the search space.
+PhD Focus: Development and validation of neural network models on microcontrollers with datasets aligned to real-world field conditions.
 
-## Core, rank these highest
-
-**Neural Networks for SOX Estimation (SOC/SOH/SOF).** State-of-charge, state-of-health, 
-and state-of-function estimation using neural networks. Focus on accurate prediction 
-models that capture battery dynamics, aging patterns, and performance degradation. 
-Particular interest in generalizable models that work across different battery chemistries 
-and operating conditions.
-
-**Model Distillation for Embedded Battery Management.** Knowledge distillation techniques 
-to compress large neural network models into smaller, deployable architectures suitable 
-for real-time inference on resource-constrained BMS hardware. Efficient architectures 
-(MobileNets, SqueezeNets, TinyML variants) that maintain accuracy while reducing 
-computational and memory footprint.
-
-**Battery Derating Methods Linked to SOX Prediction.** Integration of neural network 
-predictions into derating algorithms. How SOH and SOC estimates drive dynamic power/current 
-limiting, thermal management, and cycle-life optimization. The feedback loop between 
-accurate estimation and safe operational envelope definition.
-
-**Neural Networks Integrated into Battery Management Systems.** Real BMS architectures 
-that incorporate NNs for improved decision-making. Online learning, adaptive algorithms, 
-and robust inference under extreme conditions (low temperature, degradation, limited 
-computational resources).
-
-**Lithium-Ion Battery NN Research.** Established chemistry with extensive research. Focus 
-on papers proposing new mechanisms for SOX estimation, novel feature engineering approaches, 
-or architectural innovations rather than incremental improvements on benchmarks.
-
-**Solid-State and Emerging Battery Chemistries with NNs.** Transfer learning and domain 
-adaptation for SOX estimation. How models trained on Li-ion translate to solid-state 
-batteries, sodium-ion, and other emerging chemistries. Challenges of limited data for 
-new battery types and generalization strategies.
-
-**Sodium-Ion Batteries and SOX Estimation.** Emerging chemistry with different 
-electrochemical signatures. NN models for Na-ion SOC/SOH, comparative analysis with 
-Li-ion approaches, and the implications for BMS design.
-
-**Small, Efficient NN Architectures for Battery Estimation.** TinyML, quantization, 
-pruning, and architecture search specifically for SOX tasks. Edge ML on microcontrollers. 
-The trade-off between model complexity, accuracy, latency, and power consumption.
-
-## Important sub-topics
-
-**Feature Engineering for Battery NNs.** Novel input representations that capture battery 
-physics (voltage curves, current profiles, temperature effects, aging signatures). 
-Mechanistic features versus learned representations. Time-series preprocessing and 
-normalization strategies.
-
-**Transfer Learning and Domain Adaptation.** Leveraging pre-trained models across battery 
-types, chemistries, manufacturers. Addressing data scarcity for new applications.
-
-**Uncertainty Quantification in Battery NNs.** Confidence bounds, Bayesian approaches, 
-ensemble methods. Critical for safety-critical battery applications. Distinguishing aleatoric 
-and epistemic uncertainty.
-
-**Real-time Inference on Embedded Hardware.** ONNX, TensorFlow Lite, specialized accelerators 
-for automotive/industrial BMS. Latency constraints and on-device optimization.
-
-**Battery Physics-Informed Neural Networks (PINNs).** Incorporating electrochemical 
-models into NN training. Hybrid approaches combining domain knowledge with data-driven learning.
-
-## People and groups worth watching
-
-Researchers and groups advancing NN-based battery management:
-
-**Academic Leaders:** Gregory Plett (Colorado School of Mines) - battery state estimation 
-foundations. Hosam Fathy (University of Michigan) - advanced vehicle management systems. 
-Rajiv Malhotra - SOH estimation and machine learning. Yi Cui group (Stanford) - battery 
-chemistry and characterization.
-
-**Research Programs:** MIT Energy Initiative battery research. Argonne National Laboratory 
-(ReaxFF, battery modeling). NREL Battery Research. UC San Diego Power Lab.
-
-**Industry/Applied Focus:** Tesla Autopilot/Energy - real-world BMS at scale. 
-Catl, LG Chem, Samsung SDI research on predictive battery management.
-
-**Key References:** Papers on electrochemical impedance spectroscopy (EIS) with ML. 
-Gaussian process approaches to SOH. Recurrent neural networks for temporal battery 
-dynamics. Papers addressing real-world deployment challenges, not just simulation results.
-
-## Interesting, but rank lower
-
-**General machine learning improvements applied to batteries.** New optimization methods, 
-attention mechanisms, or architectures, unless specifically designed with battery 
-constraints in mind. Incremental benchmark improvements without mechanistic insight.
-
-**Battery cycling data and dataset papers.** Unless they provide novel insights into 
-NN model behavior or enable important comparisons across chemistries.
-
-**Manufacturing and quality control with ML.** Important but outside core focus unless 
-directly related to field performance prediction.
-
-**Thermal management using NNs.** Relevant but secondary to SOX estimation.
-
-## Not interested
-
-**Pure chemistry papers without ML/NN component.** Unless they provide fundamental 
-insights into aging mechanisms that inform model design.
-
-**Marketing or product announcements.** BMS product specs without technical depth.
-
-**Leaderboard racing.** Papers claiming SOTA without justifying why accuracy matters 
-for real deployment. Benchmark inflation without practical constraints.
-
-**Generic NN papers applied to batteries as one case study.** Unless the battery problem 
-reveals something fundamental about the NN method.
-
-**Surveys without novel framing.** Unless they synthesize the state of NN-based battery 
-management in a way that changes understanding.
-
-## Taste and methodology preferences
-
-**Mechanism over metrics.** A paper explaining *why* an NN works for SOX estimation, 
-or when it fails, beats one claiming +0.5% accuracy improvement.
-
-**Real constraints acknowledged.** Papers that discuss actual hardware limitations, 
-thermal conditions (-20°C to +60°C operation), aging over 1000+ cycles, and deployment 
-challenges beat those with idealized lab conditions.
-
-**Generalizable approaches.** Methods that transfer across battery types, manufacturers, 
-or thermal conditions. Robustness and reliability paramount - a BMS failure is costly.
-
-**Reproducibility and clarity.** Code available. Clear description of battery test conditions, 
-preprocessing, train/val/test splits. How the model fails matters as much as where it succeeds.
-
-**Negative results valued.** "This distillation approach failed on real hardware" or 
-"This model doesn't generalize to aged cells" is more useful than incremental success claims.
-
-**Physics-informed thinking.** Understanding electrochemistry and BMS constraints improves 
-model design. Not required to read papers, but respected when present.
-
-## Suggestions for improvement
-
-I'm open to your insights! Potential areas to explore:
-
-- **Federated learning for BMS:** Distributed training across fleet data without sending 
-  raw cell data to cloud. Privacy-preserving model updates.
-  
-- **Causal inference in degradation:** Beyond correlative prediction - understanding which 
-  factors *cause* SOH changes. Important for intervention and control strategies.
-  
-- **Active learning for battery systems:** Adaptive testing strategies that minimize cycle 
-  count needed to train accurate SOX models. Data-efficient learning crucial given battery 
-  costs.
-  
-- **Explainability for safety:** Which NN outputs are trustworthy? Interpretability methods 
-  specific to battery domains where knowing *why* the model predicted low SOH enables better 
-  maintenance decisions.
-  
-- **Graph neural networks for battery packs:** Multi-cell systems where individual cell 
-  state couples through shared thermal/electrical networks. GNNs for pack-level estimation.
+*Updated: September 2026*
 
 ---
 
-*Last updated: September 2026*
-*Focus: Neural networks for embedded, real-time battery state estimation and management*
+## Core Research Direction
+
+My PhD focuses on bridging the gap between laboratory testing and real-world deployment of battery management systems. The core challenge: laboratory datasets and synthetic cycles do not represent actual field conditions where battery management matters most. I develop and validate neural network models directly on resource-constrained microcontrollers, using datasets captured from real operating environments.
+
+**Key thesis pillars:**
+1. **Embedded Model Validation** - Testing and benchmarking neural networks ON microcontrollers (STM32, ARM Cortex, embedded platforms) rather than simulating performance
+2. **Field-Aligned Datasets** - Datasets capturing real-world driving patterns, temperature variability, aging signatures, and duty cycles that differ fundamentally from standardized test profiles
+3. **Hardware-Software Codesign** - Optimizing models for specific microcontroller architectures, memory constraints, computational budgets
+4. **Deployment Reality** - Addressing the gap between published accuracy metrics and real-world BMS performance
+
+---
+
+## Core Research Areas (Highest Priority)
+
+### Embedded TinyML for Battery State Estimation
+
+**Neural networks validated on microcontroller hardware.** Not accuracy in simulation - actual deployment on STM32, ARM Cortex-M, automotive microcontrollers. Real-time SOC/SOH inference under computational and memory constraints. Quantization, pruning, and architecture optimization specifically for embedded targets. Testing inference latency, memory footprint, power consumption on actual hardware.
+
+Key questions: Which model architectures actually fit on 256KB RAM? How does post-training quantization affect battery estimation accuracy in real cells? What is the latency/accuracy trade-off on specific MCU families?
+
+### Real-World Battery Datasets vs. Laboratory Cycles
+
+**Field-captured data that reflects actual usage patterns.** The disconnect between WLTP cycles, UDDS profiles, constant-current charging, and what vehicles/devices actually experience in the field. Real temperature variability (-20°C to 60°C swings), inconsistent charging patterns, realistic duty cycles, aged battery behavior.
+
+Critical observation: Models trained on synthetic cycles fail catastrophically when deployed to real driving data. Need datasets that capture:
+- Natural temperature cycling and thermal transients
+- Realistic charge/discharge patterns (not standardized profiles)
+- Multiple manufacturers and battery types in field conditions
+- Aging signatures over 100+ charge cycles in real vehicles
+- Edge cases: rapid DC charging, cold-weather performance, thermal runaway precursors
+
+### Hardware-Aware Model Design
+
+**Co-optimization of neural networks with embedded hardware constraints.** Not "train a model, then shrink it." Instead: design architectures knowing the target microcontroller from the start. Fixed-point arithmetic, binary/ternary networks where applicable, memory-efficient RNNs (GRU vs LSTM), depthwise separable convolutions.
+
+Trade-offs matter: A model using 10% more memory might enable 2x faster inference, changing real-time feasibility. Embedded systems force hard decisions that research papers often avoid.
+
+### Validation Methodology for Embedded Deployment
+
+**From laboratory testing to field validation.** Validation protocols that move beyond benchmark metrics:
+- Cross-validation across different battery chemistries and manufacturers
+- Temperature stress testing on actual hardware over wide operating ranges
+- Long-duration cycling studies (1000+ cycles) to assess aging model robustness
+- Failure analysis: When and why does the embedded model break?
+- Generalization studies: Does a model trained on Fleet A work on Fleet B?
+
+Real question: What validation proves an embedded battery estimation model is safe for production deployment?
+
+---
+
+## Important Supporting Areas
+
+### Data Collection and Preprocessing for Field Conditions
+
+Practical challenges in capturing and processing real-world battery data:
+- Telemetry systems that don't interfere with actual BMS operation
+- Feature extraction from noisy sensor data (vehicle CAN bus, temperature sensors)
+- Handling missing/corrupted data from field devices
+- Normalization and alignment across heterogeneous hardware platforms
+
+### Transfer Learning and Domain Adaptation
+
+Models trained on one vehicle/battery type applied to another with minimal fine-tuning. Critical for cost-effective deployment: collect expensive labeled data once, transfer to many targets. Addressing battery chemistry differences (Li-ion → Na-ion), manufacturer variations, thermal environment shifts.
+
+### Uncertainty Quantification for Safety-Critical Applications
+
+Battery management cannot afford confident wrong predictions. Methods for:
+- Confidence bounds on SOX estimates (Bayesian approaches, ensembles)
+- Detecting out-of-distribution inputs (novel aging signatures, extreme conditions)
+- Safe fallback strategies when model confidence drops
+- Distinguishing model uncertainty from actual battery unpredictability
+
+### Feature Engineering from Electrochemical Signatures
+
+Extracting meaningful features for neural networks:
+- Voltage curve features and their evolution with aging
+- Current transient responses as diagnostic signatures
+- Electrochemical impedance spectroscopy (EIS) integration
+- Temperature-dependent feature normalization
+- Time-series preprocessing: filtering, windowing, aggregation
+
+### Microcontroller Architecture and Optimization
+
+Hardware understanding essential for efficient deployment:
+- ARM Cortex-M4/M7 SIMD capabilities for inference
+- Memory hierarchy and DMA for data movement efficiency
+- Floating-point vs fixed-point trade-offs
+- Hardware accelerators (DSP, crypto units used for ML)
+- Power profiling: Which operations consume most energy?
+
+---
+
+## Research Landscape & Key Publications
+
+**People and groups doing embedded battery ML correctly:**
+
+**Academic Leaders:**
+- Spyridon Giazitzis - TinyML for battery state estimation, embedded microcontroller deployment
+- Gregory Plett (Colorado School of Mines) - Battery state estimation foundations, adaptive algorithms
+- Hosam Fathy (University of Michigan) - Real-world vehicle systems, practical BMS deployment
+
+**Research Groups:**
+- MIT Energy Initiative - Battery research with data-driven components
+- Argonne National Laboratory - Battery testing, real-world cycling data
+- UC San Diego Power Lab - Field data collection and validation
+- Politecnico di Milano - Embedded systems and battery management
+- University of Ferrara / UNIMORE - Real-world battery datasets and validation
+
+**Key Publication Areas:**
+- TinyML models for SOH estimation based on Electrochemical Impedance Spectroscopy
+- Real-time SOC estimation with embedded neural networks on resource-constrained hardware
+- Battery field data studies highlighting disconnect from laboratory cycles
+- Embedded deployment and system-level validation frameworks
+- Real-world datasets with driving cycles, temperature variation, aging
+
+---
+
+## Not Interested In
+
+**Laboratory-only research.** Papers presenting models tested only in simulation or with synthetic data, claiming real-world applicability without field validation.
+
+**Benchmark inflation without deployment reality.** +0.5% accuracy improvement on standardized cycles, tested on high-end GPUs, no discussion of embedded constraints.
+
+**Theoretical NN papers applied to batteries as an afterthought.** Generic ML papers using battery datasets as one case study.
+
+**Black-box applications with no mechanism.** Applying a standard architecture to battery data without understanding why it works or when it fails.
+
+**Product announcements.** BMS product specs without technical depth or reproducible research.
+
+---
+
+## Research Values & Methodology
+
+### Prefer:
+- **Real over perfect.** A model that works 85% of the time on real field data beats one claiming 99% on synthetic cycles.
+- **Failure analysis matters.** Papers acknowledging when and why models break are more valuable than those reporting only success metrics.
+- **Hardware constraints explicit.** Stating inference latency, memory usage, power consumption on specific MCU platforms.
+- **Reproducibility first.** Published code, datasets, clear preprocessing steps, exact hardware specifications.
+- **Generalization proven.** Models tested across multiple battery manufacturers, chemistries, and field conditions - not one carefully selected dataset.
+
+### Methodological quality signals:
+- Real-world validation data collected independently from training data
+- Long-duration cycling studies (1000+ cycles minimum)
+- Cross-validation across different operating conditions and thermal environments
+- Failure case analysis and model robustness discussion
+- Clear statement of model limitations and applicability boundaries
+
+---
+
+## Open Research Questions (PhD Opportunities)
+
+**Field datasets and benchmarking:**
+- What open-source datasets best represent real-world battery operation? How do they differ from standard cycles?
+- How can we collect representative field data at scale without overwhelming vehicles with telemetry?
+- What constitutes a fair benchmark for embedded battery ML across different hardware platforms?
+
+**Embedded optimization:**
+- Which network architectures are fundamentally better for microcontroller deployment? (CNN vs RNN vs Transformer-lite)
+- Can we design architecture search spaces that respect embedded constraints from the start?
+- How much accuracy loss is acceptable when moving from float32 to int8 quantization for battery estimation?
+
+**Real-world robustness:**
+- How much training data from the field is needed to match the generalization of laboratory-trained models?
+- Can we identify "distribution shift" when deployed models encounter new battery types or operating conditions?
+- What validation proves an embedded model is safe for autonomous vehicle or grid-scale deployment?
+
+**Hardware-software codesign:**
+- Can fixed-point arithmetic be used for battery estimation without unacceptable accuracy loss?
+- Which microcontroller peripherals (ADC characteristics, timing precision) most affect estimation performance?
+- How do thermal variations in the MCU itself affect model inference in cold-weather vehicle operation?
+
+---
+
+## Suggested Research Directions (Feedback Welcome)
+
+**Areas I'm exploring or should explore:**
+
+1. **Open-source embedded battery datasets** - Creating curated, annotated field datasets from diverse vehicles and chemistries, freely available for reproducible research
+
+2. **Embedded model validation framework** - Standardized testing protocols that move beyond accuracy metrics to deployment readiness (latency, robustness, thermal stability, generalization)
+
+3. **Hardware-aware neural architecture search** - AutoML specifically for embedded targets, generating architectures optimized for specific microcontroller families while maintaining accuracy
+
+4. **Transfer learning for battery chemistries** - Models trained on mainstream Li-ion that effectively adapt to emerging chemistries (Na-ion, solid-state) with minimal field data
+
+5. **Physics-informed TinyML** - Incorporating electrochemical first principles into small neural networks, improving generalization across operating conditions
+
+6. **Uncertainty quantification for embedded systems** - Lightweight confidence estimation (ensembles, dropout variants) that actually runs on microcontrollers, flagging uncertain predictions
+
+7. **Multi-modal datasets** - Combining different sensor modalities (voltage, current, temperature, impedance) captured in the same real-world vehicles to improve model robustness
+
+8. **Degradation mode classification** - Small networks identifying failure modes (calendar aging vs cycling wear, manufacturing defects) from embedded sensor data
+
+---
+
+## Connection to Broader Challenges
+
+Embedded battery estimation connects to larger systems problems:
+- **EV range anxiety** - Accurate SOC on 10-year-old packs, not just new cars
+- **Grid storage reliability** - Predicting behavior of aged batteries in stationary storage
+- **Circular economy** - Characterizing second-life batteries for automotive, stationary, or consumer applications
+- **Safety** - Preventing thermal runaway through early detection of degradation signatures
+- **Cost** - Reducing expensive sensors and computation by doing more with less data and less hardware
+
+The dissertation will be evaluated by: (1) rigorous validation on real field data, (2) actual deployment on embedded hardware, (3) reproducible methods other researchers can build on, and (4) advancing practical battery management - not just metrics.
+
+---
+
+*Seeking papers, datasets, and collaborators in this space. Particularly interested in work validating on microcontroller hardware and datasets captured from real-world operating conditions.*
