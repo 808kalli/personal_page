@@ -286,5 +286,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords completely missed the core Anthropic lineage and direct transformer circuits focus.",
   "recorded": "2026-09-14T11:12:01.413Z"
+ },
+ {
+  "id": "https://www.neelnanda.io/blog/interlude-a-mechanistic-interpretability-analysis-of-grokking",
+  "verdict": "liked",
+  "title": "Interlude: A Mechanistic Interpretability Analysis of Grokking",
+  "url": "https://www.neelnanda.io/blog/interlude-a-mechanistic-interpretability-analysis-of-grokking",
+  "source": "Neel Nanda",
+  "why": "Keywords only saw grokking, but this is core Neel Nanda mechanistic interpretability work on how models learn internal circuits during phase transitions.",
+  "recorded": "2026-09-15T09:06:23.947Z"
  }
 ]
