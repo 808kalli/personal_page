@@ -103,6 +103,7 @@
 "arxiv:2609.07876": "2026-09-09",
 "arxiv:2609.08250": "2026-09-12",
 "arxiv:2609.09556": "2026-09-10",
+"arxiv:2609.12641": "2026-09-15",
 "https://blog.eleuther.ai/autointerp": "2026-09-14",
 "https://deepmind.google/blog/introducing-agentic-video-in-gemini": "2026-09-05",
 "https://deepmind.google/blog/introducing-gemini-3-8-flash-and-38-flash-cyber": "2026-09-05",
@@ -126,6 +127,9 @@
 "https://transformer-circuits.pub/2024/august-update/index.html": "2026-09-14",
 "https://transformer-circuits.pub/2024/march-update/index.html": "2026-09-14",
 "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html": "2026-09-10",
+"https://transformer-circuits.pub/2025/attention-qk/index.html": "2026-09-15",
+"https://transformer-circuits.pub/2025/attribution-graphs/methods.html": "2026-09-15",
+"https://transformer-circuits.pub/2026/june-update/index.html": "2026-09-15",
 "https://www.alignmentforum.org/posts/J76LZCC55RdHeqEhz/training-a-misaligned-reward-seeker": "2026-09-05",
 "https://www.alignmentforum.org/posts/gHFCgrvfxQtaEnJye/training-on-probes-what-s-going-on": "2026-09-09",
 "https://www.alignmentforum.org/posts/kjPEH4KGEHd8iQ4Hn/value-generalisation-theory-of-change-putting-it-into": "2026-09-05",
@@ -137,5 +141,6 @@
 "https://www.goodfire.ai/blog/ai-safety-still-needs-great-engineers": "2026-09-05",
 "https://www.goodfire.ai/blog/announcing-goodfire-research-grants": "2026-09-05",
 "https://www.goodfire.ai/blog/interpretability-infra-at-frontier-scale": "2026-09-05",
-"https://www.goodfire.ai/blog/soc-2-type-ii": "2026-09-05"
+"https://www.goodfire.ai/blog/soc-2-type-ii": "2026-09-05",
+"https://www.neelnanda.io/blog/interlude-a-mechanistic-interpretability-analysis-of-grokking": "2026-09-15"
 }
