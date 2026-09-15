@@ -304,5 +304,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords missed the significance entirely, as this is direct Anthropic Transformer Circuits work on sparse autoencoders, which is the highest tier core interest.",
   "recorded": "2026-09-15T09:06:38.865Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2025/attribution-graphs/methods.html",
+  "verdict": "liked",
+  "title": "Circuit Tracing: Revealing Computational Graphs in Language Models",
+  "url": "https://transformer-circuits.pub/2025/attribution-graphs/methods.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords missed the exact match, as this is foundational circuit tracing work from the core Anthropic lineage.",
+  "recorded": "2026-09-15T09:07:27.274Z"
  }
 ]
