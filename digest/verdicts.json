@@ -295,5 +295,14 @@
   "source": "Neel Nanda",
   "why": "Keywords only saw grokking, but this is core Neel Nanda mechanistic interpretability work on how models learn internal circuits during phase transitions.",
   "recorded": "2026-09-15T09:06:23.947Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2026/june-update/index.html",
+  "verdict": "liked",
+  "title": "Circuits Updates — June 2026",
+  "url": "https://transformer-circuits.pub/2026/june-update/index.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords missed the significance entirely, as this is direct Anthropic Transformer Circuits work on sparse autoencoders, which is the highest tier core interest.",
+  "recorded": "2026-09-15T09:06:38.865Z"
  }
 ]
