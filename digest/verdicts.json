@@ -313,5 +313,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords missed the exact match, as this is foundational circuit tracing work from the core Anthropic lineage.",
   "recorded": "2026-09-15T09:07:27.274Z"
+ },
+ {
+  "id": "arxiv:2609.14151",
+  "verdict": "liked",
+  "title": "Signatures of Steerability in Activation Space of Language Models",
+  "url": "http://arxiv.org/abs/2609.14151v1",
+  "source": "arXiv",
+  "why": "Directly tackles the generalisation limits of steering vectors and connects dataset separation to true feature alignment.",
+  "recorded": "2026-09-16T09:08:24.670Z"
  }
 ]
