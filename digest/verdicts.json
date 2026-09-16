@@ -331,5 +331,14 @@
   "source": "arXiv",
   "why": "Directly hits the core interest in turning unstructured human video into robot supervision by learning geometry-grounded latent actions.",
   "recorded": "2026-09-16T09:09:07.362Z"
+ },
+ {
+  "id": "arxiv:2609.15064",
+  "verdict": "liked",
+  "title": "What Does an LLM Learn from Reinforcement Learning? A Mechanistic Interpretability Perspective with Fixed-SAE Track",
+  "url": "http://arxiv.org/abs/2609.15064v1",
+  "source": "arXiv",
+  "why": "Applies sparse autoencoders to track internal representation shifts across reinforcement learning checkpoints.",
+  "recorded": "2026-09-16T09:09:18.021Z"
  }
 ]
