@@ -322,5 +322,14 @@
   "source": "arXiv",
   "why": "Directly tackles the generalisation limits of steering vectors and connects dataset separation to true feature alignment.",
   "recorded": "2026-09-16T09:08:24.670Z"
+ },
+ {
+  "id": "arxiv:2609.17099",
+  "verdict": "liked",
+  "title": "GeoLAM: Learning Geometry-Grounded Latent Actions from Unlabeled Human Videos",
+  "url": "http://arxiv.org/abs/2609.17099v1",
+  "source": "arXiv",
+  "why": "Directly hits the core interest in turning unstructured human video into robot supervision by learning geometry-grounded latent actions.",
+  "recorded": "2026-09-16T09:09:07.362Z"
  }
 ]
