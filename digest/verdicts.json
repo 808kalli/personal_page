@@ -349,5 +349,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords saw distributed representations, but this is foundational Anthropic work on superposition and feature composition. It sits squarely in the core interest profile.",
   "recorded": "2026-09-17T14:51:46.218Z"
+ },
+ {
+  "id": "https://blog.eleuther.ai/aletheia-retrospective",
+  "verdict": "liked",
+  "title": "What We Learned Trying to Catch AI Liars: An Aletheia's Quest Retrospective",
+  "url": "https://blog.eleuther.ai/aletheia-retrospective/",
+  "source": "EleutherAI",
+  "why": "Keywords missed the core interpretability for oversight topic of finding AI deception. This is directly relevant to honesty and steering.",
+  "recorded": "2026-09-17T14:53:31.035Z"
  }
 ]
