@@ -340,5 +340,14 @@
   "source": "arXiv",
   "why": "Applies sparse autoencoders to track internal representation shifts across reinforcement learning checkpoints.",
   "recorded": "2026-09-16T09:09:18.021Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2023/superposition-composition/index.html",
+  "verdict": "liked",
+  "title": "Distributed Representations: Composition & Superposition",
+  "url": "https://transformer-circuits.pub/2023/superposition-composition/index.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords saw distributed representations, but this is foundational Anthropic work on superposition and feature composition. It sits squarely in the core interest profile.",
+  "recorded": "2026-09-17T14:51:46.218Z"
  }
 ]
