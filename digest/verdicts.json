@@ -367,5 +367,14 @@
   "source": "Goodfire",
   "why": "Keywords missed the source and subject entirely; Goodfire is a core group doing frontier scale interpretability and sparse autoencoders.",
   "recorded": "2026-09-18T09:04:52.984Z"
+ },
+ {
+  "id": "https://blog.eleuther.ai/sae_seed_similarity",
+  "verdict": "liked",
+  "title": "SAEs trained on the same data don’t learn the same features",
+  "url": "https://blog.eleuther.ai/sae_seed_similarity/",
+  "source": "EleutherAI",
+  "why": "This paper is right in the core of sparse autoencoders and feature stability, but the keyword score was low because it lacks broader hype words.",
+  "recorded": "2026-09-18T09:05:21.678Z"
  }
 ]
