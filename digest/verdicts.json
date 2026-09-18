@@ -358,5 +358,14 @@
   "source": "EleutherAI",
   "why": "Keywords missed the core interpretability for oversight topic of finding AI deception. This is directly relevant to honesty and steering.",
   "recorded": "2026-09-17T14:53:31.035Z"
+ },
+ {
+  "id": "https://www.goodfire.ai/blog/interpretability-infra-at-frontier-scale",
+  "verdict": "liked",
+  "title": "Interpretability Infrastructure at Frontier Scale: Harvesting Activations from a Trillion-Parameter Model - Goodfire",
+  "url": "https://www.goodfire.ai/blog/interpretability-infra-at-frontier-scale",
+  "source": "Goodfire",
+  "why": "Keywords missed the source and subject entirely; Goodfire is a core group doing frontier scale interpretability and sparse autoencoders.",
+  "recorded": "2026-09-18T09:04:52.984Z"
  }
 ]
