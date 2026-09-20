@@ -385,5 +385,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords completely missed the core relevance here, as this is direct Anthropic transformer-circuits research. The low initial score is an artifact of poor keyword matching on a primary interest.",
   "recorded": "2026-09-20T09:34:09.085Z"
+ },
+ {
+  "id": "https://www.alignmentforum.org/posts/x8BvtWxtoajBGHS3g/an-operationalization-of-opaque-serial-depth",
+  "verdict": "liked",
+  "title": "An operationalization of opaque serial depth",
+  "url": "https://www.alignmentforum.org/posts/x8BvtWxtoajBGHS3g/an-operationalization-of-opaque-serial-depth",
+  "source": "Alignment Forum",
+  "why": "Keywords saw alignment forum and serial depth, but missed that this directly operationalizes interpretable bottlenecks and monitorability for transformer representations in the lineage of mechanistic ",
+  "recorded": "2026-09-20T09:35:23.425Z"
  }
 ]
