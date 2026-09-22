@@ -430,5 +430,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords missed the core mechanistic interpretability relevance. This is central Anthropic work on unsupervised feature extraction and activation interpretation.",
   "recorded": "2026-09-22T11:37:38.319Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2026/emotions/index.html",
+  "verdict": "liked",
+  "title": "Emotion Concepts and their Function in a Large Language Model",
+  "url": "https://transformer-circuits.pub/2026/emotions/index.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords missed the core interpretability and causal feature steering focus. This work maps internal concepts and tests them through causal interventions.",
+  "recorded": "2026-09-22T11:39:32.936Z"
  }
 ]
