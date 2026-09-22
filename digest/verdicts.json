@@ -421,5 +421,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords scored this very low, but it sits squarely in the core mechanistic interpretability lineage of Anthropic publications. The work investigates internal model representations and global workspac",
   "recorded": "2026-09-22T11:36:40.413Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2026/nla/index.html",
+  "verdict": "liked",
+  "title": "Natural Language Autoencoders Produce Unsupervised Explanations of LLM Activations",
+  "url": "https://transformer-circuits.pub/2026/nla/index.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords missed the core mechanistic interpretability relevance. This is central Anthropic work on unsupervised feature extraction and activation interpretation.",
+  "recorded": "2026-09-22T11:37:38.319Z"
  }
 ]
