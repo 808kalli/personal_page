@@ -403,5 +403,14 @@
   "source": "Transformer Circuits",
   "why": "Directly from the Transformer Circuits group laying out core mechanistic interpretability foundations. The keywords undersold the source pedigree and relevance.",
   "recorded": "2026-09-21T09:24:26.682Z"
+ },
+ {
+  "id": "arxiv:2609.24682",
+  "verdict": "liked",
+  "title": "Think Like a World Model, Act Like a VLA: Distilling World-Model Representations into Compact Robot Policies",
+  "url": "https://arxiv.org/abs/2609.24682",
+  "source": "HF daily papers",
+  "why": "The keywords did not show that this is a direct study of internal feature transfer and representation grounding between world models and vision-language-action policies, hitting the core embodiment in",
+  "recorded": "2026-09-22T11:34:32.838Z"
  }
 ]
