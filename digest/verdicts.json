@@ -412,5 +412,14 @@
   "source": "HF daily papers",
   "why": "The keywords did not show that this is a direct study of internal feature transfer and representation grounding between world models and vision-language-action policies, hitting the core embodiment in",
   "recorded": "2026-09-22T11:34:32.838Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2026/workspace/index.html",
+  "verdict": "liked",
+  "title": "Verbalizable Representations Form a Global Workspace in Language Models",
+  "url": "https://transformer-circuits.pub/2026/workspace/index.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords scored this very low, but it sits squarely in the core mechanistic interpretability lineage of Anthropic publications. The work investigates internal model representations and global workspac",
+  "recorded": "2026-09-22T11:36:40.413Z"
  }
 ]
