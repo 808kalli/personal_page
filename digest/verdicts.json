@@ -439,5 +439,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords missed the core interpretability and causal feature steering focus. This work maps internal concepts and tests them through causal interventions.",
   "recorded": "2026-09-22T11:39:32.936Z"
+ },
+ {
+  "id": "arxiv:2609.21996",
+  "verdict": "liked",
+  "title": "A Lie Detector Test for Language Models: Reading Knowledge a Model Won't Reveal",
+  "url": "https://arxiv.org/abs/2609.21996",
+  "source": "HF daily papers",
+  "why": "The keywords caught the probing topic, but the paper actually delivers a direct match for using internal features and probes for oversight and detecting hidden knowledge, which sits right in the core ",
+  "recorded": "2026-09-23T08:59:32.700Z"
  }
 ]
