@@ -466,5 +466,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords matched poorly. This is the foundational text for mechanistic interpretability and circuits in the Anthropic lineage, perfectly matching the core interest.",
   "recorded": "2026-09-24T09:34:03.067Z"
+ },
+ {
+  "id": "https://distill.pub/2020/circuits",
+  "verdict": "liked",
+  "title": "Original Distill Circuits Thread",
+  "url": "https://distill.pub/2020/circuits/",
+  "source": "Transformer Circuits",
+  "why": "Keywords missed the core topic entirely. This is the original Distill circuits thread which defines the entire lineage of mechanistic interpretability research.",
+  "recorded": "2026-09-24T09:34:24.221Z"
  }
 ]
