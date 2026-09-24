@@ -457,5 +457,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords undersold this: this is foundational work from the core Transformer Circuits lineage examining how activation functions affect human interpretability of neurons.",
   "recorded": "2026-09-24T09:33:50.545Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2021/framework/index.html",
+  "verdict": "liked",
+  "title": "A Mathematical Framework for Transformer Circuits",
+  "url": "https://transformer-circuits.pub/2021/framework/index.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords matched poorly. This is the foundational text for mechanistic interpretability and circuits in the Anthropic lineage, perfectly matching the core interest.",
+  "recorded": "2026-09-24T09:34:03.067Z"
  }
 ]
