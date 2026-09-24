@@ -448,5 +448,14 @@
   "source": "HF daily papers",
   "why": "The keywords caught the probing topic, but the paper actually delivers a direct match for using internal features and probes for oversight and detecting hidden knowledge, which sits right in the core ",
   "recorded": "2026-09-23T08:59:32.700Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2022/solu/index.html",
+  "verdict": "liked",
+  "title": "Softmax Linear Units",
+  "url": "https://transformer-circuits.pub/2022/solu/index.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords undersold this: this is foundational work from the core Transformer Circuits lineage examining how activation functions affect human interpretability of neurons.",
+  "recorded": "2026-09-24T09:33:50.545Z"
  }
 ]
