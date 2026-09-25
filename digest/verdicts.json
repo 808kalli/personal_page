@@ -493,5 +493,14 @@
   "source": "HF daily papers",
   "why": "Keywords completely missed a core diagnostic paper uncovering why VLA policies fail at deployment due to low scene entropy making language redundant. It sits directly in the profile for policy failure",
   "recorded": "2026-09-25T13:51:01.184Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2024/qualitative-essay/index.html",
+  "verdict": "liked",
+  "title": "Reflections on Qualitative Research",
+  "url": "https://transformer-circuits.pub/2024/qualitative-essay/index.html",
+  "source": "Transformer Circuits",
+  "why": "The keyword score ignored the prestigious source, missing an insider perspective on interpretability methodology from Anthropic. It directly addresses the qualitative nature of mechanistic interpretab",
+  "recorded": "2026-09-25T13:53:23.101Z"
  }
 ]
