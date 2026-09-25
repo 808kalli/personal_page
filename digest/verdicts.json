@@ -475,5 +475,14 @@
   "source": "Transformer Circuits",
   "why": "Keywords missed the core topic entirely. This is the original Distill circuits thread which defines the entire lineage of mechanistic interpretability research.",
   "recorded": "2026-09-24T09:34:24.221Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2025/attention-qk/index.html",
+  "verdict": "liked",
+  "title": "Tracing Attention Computation Through Feature Interactions",
+  "url": "https://transformer-circuits.pub/2025/attention-qk/index.html",
+  "source": "Transformer Circuits",
+  "why": "Keywords missed the exact match to the core interest lineage of Anthropic's transformer-circuits work.",
+  "recorded": "2026-09-25T13:50:27.745Z"
  }
 ]
