@@ -511,5 +511,14 @@
   "source": "HF daily papers",
   "why": "Keywords undersold this paper, which directly addresses the core interest of robot policy failure modes and history-dependent memory bottlenecks in Vision Language Action models.",
   "recorded": "2026-09-26T12:05:44.150Z"
+ },
+ {
+  "id": "https://transformer-circuits.pub/2021/garcon/index.html",
+  "verdict": "liked",
+  "title": "Garcon",
+  "url": "https://transformer-circuits.pub/2021/garcon/index.html",
+  "source": "Transformer Circuits",
+  "why": "Technical documentation and tooling for mechanistic interpretability work from the Anthropic team. This sits squarely in the core interests.",
+  "recorded": "2026-09-26T12:06:30.471Z"
  }
 ]
