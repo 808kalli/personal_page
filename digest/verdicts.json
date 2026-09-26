@@ -502,5 +502,14 @@
   "source": "Transformer Circuits",
   "why": "The keyword score ignored the prestigious source, missing an insider perspective on interpretability methodology from Anthropic. It directly addresses the qualitative nature of mechanistic interpretab",
   "recorded": "2026-09-25T13:53:23.101Z"
+ },
+ {
+  "id": "arxiv:2609.28256",
+  "verdict": "liked",
+  "title": "MemBodied: Recurrent Associative Memory for Vision-Language-Action Models",
+  "url": "https://arxiv.org/abs/2609.28256",
+  "source": "HF daily papers",
+  "why": "Keywords undersold this paper, which directly addresses the core interest of robot policy failure modes and history-dependent memory bottlenecks in Vision Language Action models.",
+  "recorded": "2026-09-26T12:05:44.150Z"
  }
 ]
