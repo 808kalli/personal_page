@@ -529,5 +529,14 @@
   "source": "arXiv",
   "why": "Applies mechanistic interpretability and contrastive steering vectors to moral self-correction in language models.",
   "recorded": "2026-09-29T09:14:45.556Z"
+ },
+ {
+  "id": "arxiv:2609.30996",
+  "verdict": "liked",
+  "title": "The Linear Representation Hypothesis for Vision-Language-Action Models",
+  "url": "http://arxiv.org/abs/2609.30996v1",
+  "source": "arXiv",
+  "why": "Keywords matched linear representations, but this paper explicitly extends the linear representation hypothesis to vision-language-action models and embodied interaction dynamics.",
+  "recorded": "2026-09-29T09:18:20.434Z"
  }
 ]
