@@ -43,14 +43,6 @@ is the same one probes and steering vectors ask of a single model, whether
 what is actually happening inside or between these systems is still
 legible from outside.
 
-**Connectomes and circuit tracing at the biological ground truth.** Full
-connectome work (fly brains and similar fully mapped nervous systems) as a
-comparative case for what "circuit" and "feature" mean when the wiring is
-completely known rather than inferred through a sparse autoencoder. Network
-motifs, how structure explains flexible behaviour, and what does or does not
-transfer from that framing back to interpretability work on artificial
-networks.
-
 ## People and groups worth watching
 
 These are markers of taste, not a whitelist. Work from the same corner of the
@@ -62,8 +54,7 @@ Robert Kirk, David Chanin, and Daniel Tan. Dimitrios Kanoulas at UCL and
 Archimedes for robot learning. Anthropic's interpretability team. Neel Nanda
 and the DeepMind mechanistic interpretability group. David Bau's lab. Redwood
 Research, Apollo Research, EleutherAI, Goodfire, Transluce. Yoshua Bengio's
-own writing on agentic AI safety and oversight. Janelia FlyEM and the
-Jayaraman lab for connectome work.
+own writing on agentic AI safety and oversight.
 
 The 2024 paper "Analysing the Generalisation and Reliability of Steering
 Vectors" is the centre of gravity here: an interpretability technique taken

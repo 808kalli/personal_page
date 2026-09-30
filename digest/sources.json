@@ -14,9 +14,8 @@
     "3": ["interpretab", "probing", "probe ", "world model", "emergent",
           "distribution shift", "behavior clon", "behaviour clon",
           "representation engineering", "linear probe", "steerab",
-          "deception", "honest", "model organism", "connectome",
-          "network motif", "emergent language", "multi-agent coordination",
-          "agentic deception"],
+          "deception", "honest", "model organism", "emergent language",
+          "multi-agent coordination", "agentic deception"],
     "1": ["circuit", "feature", "activation", "latent", "representation",
           "vision-language-action", "vla", "manipulation", "policy", "robot",
           "imitation", "demonstration", "offline rl", "offline reinforcement",
@@ -51,8 +50,7 @@
     "abs:\"steering vector\" OR abs:\"activation addition\"",
     "abs:\"linear probe\" AND (abs:\"deception\" OR abs:\"honesty\" OR abs:\"truthful\")",
     "abs:\"emergent language\" AND abs:\"multi-agent\"",
-    "abs:\"agentic\" AND (abs:\"deception\" OR abs:\"coordination\") AND abs:\"LLM\"",
-    "abs:\"connectome\" AND (abs:\"circuit\" OR abs:\"network motif\") AND cat:q-bio.NC"
+    "abs:\"agentic\" AND (abs:\"deception\" OR abs:\"coordination\") AND abs:\"LLM\""
   ],
   "feeds": [
     {
