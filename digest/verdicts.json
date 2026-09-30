@@ -583,5 +583,14 @@
   "source": "Yoshua Bengio",
   "why": "Argues that agentic deception and covert coordination are predictable consequences of current training objectives, not signs of intent, core oversight and alignment material from one of the field's most credible voices.",
   "recorded": "2026-09-30T07:59:25.236Z"
+ },
+ {
+  "id": "arxiv:2503.10370",
+  "verdict": "liked",
+  "title": "LUMOS: Language-Conditioned Imitation Learning with World Models",
+  "url": "http://arxiv.org/abs/2503.10370v1",
+  "source": "arXiv",
+  "why": "Tackles compounding error and distribution shift in long-horizon robotic imitation learning via latent world models.",
+  "recorded": "2026-09-30T09:03:51.951Z"
  }
 ]
