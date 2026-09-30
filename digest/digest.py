@@ -144,7 +144,7 @@ def arxiv_candidates(queries: list[str], since: datetime | None, per_query: int 
     normal case, for what is new) can only ever surface the newest matches
     for a query, never reach backward into the archive.
     """
-    ns = {"a": "http://www.w3.org/2005/Atom"}
+    ns = {"a": "http://www.w3.org/2005/Atom", "arxiv": "http://arxiv.org/schemas/atom"}
     out: list[Item] = []
     for i, query in enumerate(queries):
         if i:
@@ -174,6 +174,11 @@ def arxiv_candidates(queries: list[str], since: datetime | None, per_query: int 
             link = clean(entry.findtext("a:id", default="", namespaces=ns))
             authors = [clean(a.findtext("a:name", default="", namespaces=ns))
                        for a in entry.findall("a:author", ns)]
+            # Authors self-report acceptance here ("Accepted to NeurIPS 2026",
+            # "camera ready version"). It is the cheapest possible validation
+            # signal, free, no extra request, sitting right in the response
+            # already being parsed.
+            comment = clean(entry.findtext("arxiv:comment", default="", namespaces=ns))
             out.append(Item(
                 uid=link,
                 title=clean(entry.findtext("a:title", default="", namespaces=ns)),
@@ -185,6 +190,7 @@ def arxiv_candidates(queries: list[str], since: datetime | None, per_query: int 
                 signal=("new preprint, no community signal yet"
                         if (datetime.now(timezone.utc) - when).days <= 14
                         else "not new, surfaced from the archive on relevance"),
+                extras={"arxiv_comment": comment},
             ))
     return out
 
@@ -484,7 +490,7 @@ signal yet" when there is none.
 Write in plain prose. Do not use em dashes, en dashes, or semicolons."""
 
 
-def call_model(system: str, prompt: str, cfg: dict) -> dict:
+def call_model(system: str, prompt: str, cfg: dict, schema: dict = SCHEMA) -> dict:
     """One structured request. Providers differ, the caller should not care."""
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
@@ -499,7 +505,7 @@ def call_model(system: str, prompt: str, cfg: dict) -> dict:
         "response_format": {
             "type": "text",
             "mime_type": "application/json",
-            "schema": SCHEMA,
+            "schema": schema,
         },
     }).encode()
 
@@ -607,6 +613,124 @@ def rank(items: list[Item], profile: str, cfg: dict | None = None) -> list[Item]
 
     ranked.sort(key=lambda i: i.score, reverse=True)
     return ranked
+
+
+# ──────────────────────────── validation ────────────────────────────
+#
+# A high interest score only says a paper matches the profile, not that
+# anyone besides its own authors has looked at it. require_feedback (off by
+# default, see sources.json) adds a second, independent gate: real external
+# review, not just having been posted somewhere. Blogs are exempt, there is
+# no equivalent of peer review for a blog post and holding one to that bar
+# would just mean never sending a good one.
+
+ACCEPTANCE_RE = re.compile(
+    r"\b(accepted (at|to|in|for)|to appear (at|in)|camera[- ]?ready|"
+    r"in proceedings of|published (at|in)|proceedings of the)\b",
+    re.I,
+)
+
+VALIDATION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "matched": {"type": "boolean"},
+        "substantive": {"type": "boolean"},
+        "reason": {"type": "string"},
+    },
+    "required": ["matched", "substantive", "reason"],
+}
+
+VALIDATION_SYSTEM = """You are checking whether a paper has received real \
+external review, not just been posted somewhere. You will see the target \
+paper's title and abstract, then some notes found by searching OpenReview \
+for that title. The search is approximate, some or all of the notes may be \
+about a different paper on a similar topic, not this one.
+
+Decide:
+  matched      True only if at least one note is clearly about this exact \
+paper. A shared topic or similar title is not enough, check the actual \
+content described.
+  substantive  True only if a matched note contains real reviewer content, \
+an assessment of the work: strengths, weaknesses, soundness, a rating, \
+questions raised. A bare submission record with no review text is not \
+feedback, and neither is a note that turns out to be about a different \
+paper.
+  reason       One line. If substantive, say concretely what the feedback \
+covered. If not, say why: no matching paper found, or matched but nothing \
+resembling a review.
+
+Write in plain prose. Do not use em dashes, en dashes, or semicolons."""
+
+
+def openreview_search(title: str) -> list[dict]:
+    query = urllib.parse.urlencode({
+        "term": title[:200],
+        "content": "all",
+        "group": "all",
+        "source": "all",
+        "type": "terms",
+        "limit": 6,
+    })
+    raw = fetch(f"https://api2.openreview.net/notes/search?{query}", timeout=20)
+    return json.loads(raw).get("notes", [])
+
+
+def note_summary(note: dict, limit: int = 500) -> str:
+    content = note.get("content", {})
+    parts = []
+    for key in ("title", "summary", "abstract", "strengths", "weaknesses",
+                "rating", "soundness", "confidence", "comment"):
+        val = content.get(key)
+        if isinstance(val, dict):
+            val = val.get("value")
+        if val:
+            parts.append(f"{key}: {val}")
+    return " | ".join(parts)[:limit] or "(no readable content)"
+
+
+def judge_feedback(item: Item, notes: list[dict], cfg: dict) -> dict:
+    notes_text = "\n\n".join(
+        f"[{i}] {note_summary(n)}" for i, n in enumerate(notes[:6]))
+    prompt = (f"Target paper title: {item.title}\n"
+              f"Target paper abstract: {item.summary[:800]}\n\n"
+              f"OpenReview search results:\n{notes_text}")
+    return call_model(VALIDATION_SYSTEM, prompt, cfg, schema=VALIDATION_SCHEMA)
+
+
+def has_real_feedback(item: Item, cfg: dict) -> tuple[bool, str]:
+    """True plus a one-line reason if the item clears the feedback bar.
+
+    Conference acceptance, self-reported in arXiv's own comment field, is
+    enough on its own, cheap to check and hard to fake by accident. Failing
+    that, OpenReview is searched and the model judges whether what turns up
+    is a real, matching review. Anything that cannot be checked, a network
+    failure, an unreachable API, an unparseable response, fails closed: the
+    point of this gate is to keep out what has no verifiable feedback, so
+    "could not verify" has to mean the same thing as "found none."
+    """
+    if is_blog(item):
+        return True, item.credibility or item.signal
+
+    comment = item.extras.get("arxiv_comment", "")
+    if comment and ACCEPTANCE_RE.search(comment):
+        return True, f"venue noted on arXiv: {comment.strip()}"
+
+    try:
+        notes = openreview_search(item.title)
+    except Exception as exc:
+        return False, f"could not check OpenReview: {exc}"
+    if not notes:
+        return False, "no discussion found on OpenReview"
+
+    try:
+        verdict = judge_feedback(item, notes, cfg)
+    except Exception as exc:
+        return False, f"could not judge OpenReview results: {exc}"
+
+    reason = verdict.get("reason", "").strip() or "no reason given"
+    if verdict.get("matched") and verdict.get("substantive"):
+        return True, reason
+    return False, reason
 
 
 def matched_terms(item: Item) -> list[str]:
@@ -919,12 +1043,37 @@ def main() -> int:
             print(f"  [{item.prefilter_score():2}] {item.source}: {item.title}")
         return 0
 
+    require_feedback = config.get("require_feedback", False)
     degraded = ""
     try:
         ranked = rank(shortlist, profile, config.get("model", {}))
-        keep = [i for i in ranked
-                if i.score >= config["min_interest_score"]][:config["max_items"]]
-        print(f"  {len(keep)} cleared the bar of {config['min_interest_score']}")
+        eligible = [i for i in ranked if i.score >= config["min_interest_score"]]
+        print(f"  {len(eligible)} cleared the bar of {config['min_interest_score']}")
+
+        if require_feedback:
+            # Walk the already-ranked list looking for real external review,
+            # not just a match on interests. Stops at max_items found or a
+            # cap on how many are worth checking, whichever comes first, so
+            # a bad day (nothing validates) cannot make this scan unbounded.
+            keep: list[Item] = []
+            checked = 0
+            for candidate in eligible:
+                if len(keep) >= config["max_items"] or checked >= 25:
+                    break
+                if checked:
+                    time.sleep(1)  # be polite to OpenReview too
+                checked += 1
+                ok, reason = has_real_feedback(candidate, config.get("model", {}))
+                if ok:
+                    candidate.credibility = reason
+                    keep.append(candidate)
+                else:
+                    print(f"    dropped, no real feedback found: "
+                          f"{candidate.title[:60]}: {reason}", file=sys.stderr)
+            print(f"  {len(keep)} passed the feedback check "
+                  f"({checked} candidate(s) checked)")
+        else:
+            keep = eligible[:config["max_items"]]
 
         deltas = [i.extras.get("adjustment", 0) for i in ranked]
         pos, neg, zero = (sum(1 for d in deltas if d > 0),

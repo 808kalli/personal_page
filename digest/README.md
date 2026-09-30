@@ -127,6 +127,54 @@ archive becomes reachable, they do not mean the same result reappears every
 day, an item found in the archive pass today and not liked or ignored still
 waits out `cooldown_days` like anything else before it can resurface.
 
+## Requiring real feedback, not just a good interest match
+
+`"require_feedback": true` in `sources.json` (off by default, on for the
+site owner) adds a second, independent gate after ranking: a paper has to
+show some sign that someone other than its own authors has actually looked
+at it. A high interest score only means it matches the profile well, matching
+well and being any good are not the same thing, and a fluent-sounding,
+confidently-wrong preprint from nobody in particular scores just as well on
+vocabulary as real work. Blogs are exempt, there is no equivalent of peer
+review for a blog post, and holding one to that bar would just mean never
+sending a good one.
+
+A candidate clears the bar either way:
+
+1. **Self-reported venue.** arXiv's own `comment` field is where authors
+   note "Accepted to NeurIPS 2026" or "camera ready version", free, no extra
+   request, already sitting in the response `arxiv_candidates` parses. Found,
+   accepted immediately.
+2. **Real OpenReview discussion.** Failing that, the paper's title is
+   searched against OpenReview, and the model is shown what comes back and
+   asked two separate questions: is this actually about the same paper
+   (title search is approximate, a similar topic is not the same paper), and
+   does it contain real reviewer content, strengths, weaknesses, a rating,
+   not just a bare submission record with nothing said about it.
+
+Nothing found, or a network or API failure partway through checking,
+**fails closed**, treated the same as no feedback existing. The point of
+this gate is to keep out what cannot be verified, so "could not check" has
+to mean the same thing as "checked, found nothing."
+
+This runs on the already-ranked, already-thresholded list, not on every
+candidate that reached the model, walking down from the top until
+`max_items` pass or 25 have been checked, whichever comes first. Only what
+actually gets sent is written to `shown.json`, so a dropped item is not
+excluded going forward either, it stays fully eligible for a future run,
+where it might by then have picked up the venue or the discussion it was
+missing. Whatever does pass has its `credibility` line overwritten with the
+actual reason, not the model's own guess, so the verification shows up in
+the email itself: "venue noted on arXiv: ..." or whatever was found on
+OpenReview, in place of a guessed-at Standing.
+
+Fresh preprints from real researchers with no venue yet and nothing on
+OpenReview will not clear this bar, honestly, working research that has
+simply not accumulated any visible feedback yet looks identical from the
+outside to something with none because it deserves none. That is a real
+cost of turning this on, not a bug, weigh it against what it is filtering
+out.
+
 ## Rate limits
 
 The Gemini free tier is generally 10 requests per minute and up to 1,500 a
@@ -224,6 +272,7 @@ something irrelevant gets through, add why it was wrong there.
 | `voting_enabled` | defaults true. Set false to drop Like/Ignore from the email, required for anyone but the site owner, see "Running it for someone else" |
 | `prefilter_keep` | how many candidates reach the model, the rest are dropped on keyword score |
 | `prefilter_terms` | required, no default. `{weight: [terms]}`, weight 5/3/1 by convention. This is what the initial keyword cut and the model's proposed score are built from, per person, not shared, someone else's interests do not share your vocabulary |
+| `require_feedback` | defaults false. Set true to require real external feedback on top of a good interest match, see "Requiring real feedback, not just a good interest match" |
 | `max_items` | hard cap on the email |
 | `min_interest_score` | the bar, 0 to 100. Raise it if the digest feels padded |
 | `model` | provider, model id, endpoint, batch size, timeout, and `pace_seconds` |
