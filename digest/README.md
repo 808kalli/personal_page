@@ -353,3 +353,7 @@ common source of 403s against datacenter IP ranges like the Actions runner's,
 independent of anything in the request itself. Re-add
 `https://blog.redwoodresearch.org/feed` to `feeds` if it ever starts working
 from the runner.
+
+EleutherAI's feed was dropped outright, not just failing but gone: `/index.xml`
+404s and the blog's own homepage no longer links any RSS or Atom feed at all,
+a site redesign, not a transient break. Re-add it if they bring one back.

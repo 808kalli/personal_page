@@ -538,5 +538,50 @@
   "source": "arXiv",
   "why": "Keywords matched linear representations, but this paper explicitly extends the linear representation hypothesis to vision-language-action models and embodied interaction dynamics.",
   "recorded": "2026-09-29T09:18:20.434Z"
+ },
+ {
+  "id": "https://www.cell.com/cell/fulltext/S0092-8674(26)00942-6",
+  "verdict": "liked",
+  "title": "Sexual dimorphism in the complete connectome of the Drosophila male central nervous system",
+  "url": "https://www.cell.com/cell/fulltext/S0092-8674(26)00942-6",
+  "source": "Cell",
+  "why": "The first complete connectome of an adult fly central nervous system, 166,700 neurons fully proofread and annotated. Circuit tracing at the biological ground truth, the same term the interest profile uses for mechanistic work in language and robot policy models.",
+  "recorded": "2026-09-30T07:59:25.236Z"
+ },
+ {
+  "id": "https://elifesciences.org/articles/66039",
+  "verdict": "liked",
+  "title": "A connectome of the Drosophila central complex reveals network motifs suitable for flexible navigation and context-dependent action selection",
+  "url": "https://elifesciences.org/articles/66039",
+  "source": "eLife",
+  "why": "Earlier, more targeted connectome work identifying the specific network motifs a fly brain uses for flexible navigation and action selection, a direct biological precedent for circuit-level explanations of behavior.",
+  "recorded": "2026-09-30T07:59:25.236Z"
+ },
+ {
+  "id": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4737265",
+  "verdict": "liked",
+  "title": "Theory Is All You Need: AI, Human Cognition, and Causal Reasoning",
+  "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4737265",
+  "source": "Strategy Science",
+  "why": "Peer reviewed argument that AI's data based prediction is a fundamentally different kind of thing from human theory based causal reasoning, bearing directly on what it means for a model's internals to represent something versus merely predict it.",
+  "recorded": "2026-09-30T07:59:25.236Z"
+ },
+ {
+  "id": "arxiv:2609.01491",
+  "verdict": "liked",
+  "title": "GlossoGen: Emergent Language in Complex Multi-Agent LLM Interactions",
+  "url": "https://arxiv.org/abs/2609.01491",
+  "source": "arXiv",
+  "why": "Real, OpenReview reviewed study showing LLM agents evolve compositional languages that drift away from English and become incomprehensible to humans, direct evidence for the monitorability problem in multi-agent oversight.",
+  "recorded": "2026-09-30T07:59:25.236Z"
+ },
+ {
+  "id": "https://yoshuabengio.org/en/blog/why-are-ai-agents-lying-cheating-and-coordinating",
+  "verdict": "liked",
+  "title": "Why are AI agents lying, cheating and coordinating?",
+  "url": "https://yoshuabengio.org/en/blog/why-are-ai-agents-lying-cheating-and-coordinating",
+  "source": "Yoshua Bengio",
+  "why": "Argues that agentic deception and covert coordination are predictable consequences of current training objectives, not signs of intent, core oversight and alignment material from one of the field's most credible voices.",
+  "recorded": "2026-09-30T07:59:25.236Z"
  }
 ]

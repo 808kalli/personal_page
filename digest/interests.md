@@ -34,7 +34,22 @@ Embodiment transfer, reward inference from video and language.
 for telling what a model is doing or making it do something else, and honest
 work on where those tools break. Whether a steering vector generalises, or is
 really a property of the dataset rather than the model. Whether a probe that
-scores well in distribution survives a prompt change.
+scores well in distribution survives a prompt change. This extends to
+multi-agent settings specifically: emergent languages or protocols between
+LLM agents that drift away from anything a human can read, and agentic
+deception, cheating, or covert coordination as predictable consequences of
+training objectives rather than signs of intent. The question in both cases
+is the same one probes and steering vectors ask of a single model, whether
+what is actually happening inside or between these systems is still
+legible from outside.
+
+**Connectomes and circuit tracing at the biological ground truth.** Full
+connectome work (fly brains and similar fully mapped nervous systems) as a
+comparative case for what "circuit" and "feature" mean when the wiring is
+completely known rather than inferred through a sparse autoencoder. Network
+motifs, how structure explains flexible behaviour, and what does or does not
+transfer from that framing back to interpretability work on artificial
+networks.
 
 ## People and groups worth watching
 
@@ -46,7 +61,9 @@ FAR AI, and Adria Garriga-Alonso in particular. The UCL AI Centre group around
 Robert Kirk, David Chanin, and Daniel Tan. Dimitrios Kanoulas at UCL and
 Archimedes for robot learning. Anthropic's interpretability team. Neel Nanda
 and the DeepMind mechanistic interpretability group. David Bau's lab. Redwood
-Research, Apollo Research, EleutherAI, Goodfire, Transluce.
+Research, Apollo Research, EleutherAI, Goodfire, Transluce. Yoshua Bengio's
+own writing on agentic AI safety and oversight. Janelia FlyEM and the
+Jayaraman lab for connectome work.
 
 The 2024 paper "Analysing the Generalisation and Reliability of Steering
 Vectors" is the centre of gravity here: an interpretability technique taken
