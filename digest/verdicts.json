@@ -592,5 +592,14 @@
   "source": "arXiv",
   "why": "Tackles compounding error and distribution shift in long-horizon robotic imitation learning via latent world models.",
   "recorded": "2026-09-30T09:03:51.951Z"
+ },
+ {
+  "id": "arxiv:2602.17560",
+  "verdict": "liked",
+  "title": "ODESteer: A Unified ODE-Based Steering Framework for LLM Alignment",
+  "url": "http://arxiv.org/abs/2602.17560v2",
+  "source": "arXiv",
+  "why": "Uses differential equations for activation steering, fitting well within established representation engineering and control theory paradigms.",
+  "recorded": "2026-10-01T09:28:13.595Z"
  }
 ]
