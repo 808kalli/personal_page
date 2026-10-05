@@ -339,28 +339,30 @@ tbody tr:hover td.link-col a { color: var(--accent); }
   <button type="button" class="add-toggle" id="addToggle">+ Add paper</button>
 </div>
 
-<form class="add-form hidden" id="addForm">
+<form class="add-form hidden" id="addForm" method="GET" target="_blank">
   <div class="add-form-grid">
     <div>
       <label for="addUrl">URL</label>
-      <input id="addUrl" type="url" placeholder="https://arxiv.org/abs/..." required>
+      <input id="addUrl" name="url" type="url" placeholder="https://arxiv.org/abs/..." required>
     </div>
     <div>
-      <label for="addTitle">Title <span id="addTitleAuto" class="add-form-status"></span></label>
-      <input id="addTitle" type="text" placeholder="Paper or post title (auto-fills from URL)" required>
+      <label for="addTitle">Title</label>
+      <input id="addTitle" name="title" type="text" placeholder="Paper or post title" required>
     </div>
     <div>
       <label for="addSource">Source (optional)</label>
-      <input id="addSource" type="text" placeholder="e.g. arXiv, a blog name">
+      <input id="addSource" name="source" type="text" placeholder="e.g. arXiv, a blog name">
     </div>
     <div>
       <label for="addWhy">Why (optional)</label>
-      <input id="addWhy" type="text" placeholder="Why you want to read it">
+      <input id="addWhy" name="why" type="text" placeholder="Why you want to read it">
     </div>
   </div>
+  <input type="hidden" name="id" id="addId">
+  <input type="hidden" name="v" value="liked">
   <div class="add-form-actions">
     <button type="submit" class="add-form-submit" id="addSubmit">Add to list</button>
-    <span class="add-form-status" id="addStatus"></span>
+    <span class="add-form-status" id="addStatus">Opens a confirmation in a new tab</span>
   </div>
 </form>
 
@@ -526,97 +528,60 @@ const addToggle = document.getElementById("addToggle");
 const addForm = document.getElementById("addForm");
 const addStatus = document.getElementById("addStatus");
 const addSubmit = document.getElementById("addSubmit");
-const addTitleAuto = document.getElementById("addTitleAuto");
+
+addForm.action = VOTE_ENDPOINT;
 
 addToggle.addEventListener("click", () => {
   addForm.classList.toggle("hidden");
   if (!addForm.classList.contains("hidden")) document.getElementById("addUrl").focus();
 });
 
-// Auto-fill title/source from the URL once the user leaves that field,
-// but only into fields they have not already typed something into - this
-// never overwrites a manual correction, it only saves typing when there
-// was nothing there yet.
-let resolveSeq = 0;
-document.getElementById("addUrl").addEventListener("blur", async () => {
+// A real form submission (method="GET", target="_blank"), not fetch() -
+// this is deliberate. fetch() needs the worker to send CORS headers, which
+// means redeploying it; a plain browser navigation doesn't go through CORS
+// at all, so this works against the vote worker exactly as it has always
+// been deployed, the same one the email Like/Ignore links already use.
+// The trade-off: the confirmation shows in a new tab (the worker's own
+// plain HTML page, not styled like this site) rather than inline, and
+// there is no response to read, so the add below is optimistic - assumed
+// to have gone through rather than confirmed - reload the page if a title
+// does not show up after a moment.
+addForm.addEventListener("submit", (ev) => {
   const urlField = document.getElementById("addUrl");
   const titleField = document.getElementById("addTitle");
   const sourceField = document.getElementById("addSource");
-
-  const rawUrl = urlField.value.trim();
-  if (!rawUrl || !urlField.checkValidity()) return;
-  if (titleField.value.trim() && sourceField.value.trim()) return; // nothing to fill
-
-  const seq = ++resolveSeq;
-  addTitleAuto.textContent = "looking up…";
-  addTitleAuto.className = "add-form-status";
-
-  try {
-    const res = await fetch(`${VOTE_ENDPOINT.replace("/vote", "/resolve")}?${new URLSearchParams({ url: rawUrl })}`);
-    const data = await res.json();
-    if (seq !== resolveSeq) return; // a newer lookup (or submit) superseded this one
-    if (!res.ok || data.error) throw new Error(data.error || `HTTP ${res.status}`);
-
-    if (!titleField.value.trim() && data.title) titleField.value = data.title;
-    if (!sourceField.value.trim() && data.source) sourceField.value = data.source;
-    addTitleAuto.textContent = "";
-  } catch (err) {
-    if (seq !== resolveSeq) return;
-    addTitleAuto.textContent = "couldn't auto-fill, type it in";
-    addTitleAuto.className = "add-form-status error";
-  }
-});
-
-addForm.addEventListener("submit", async (ev) => {
-  ev.preventDefault();
-
-  const urlField = document.getElementById("addUrl");
-  const titleField = document.getElementById("addTitle");
-  const sourceField = document.getElementById("addSource");
-  const whyField = document.getElementById("addWhy");
 
   const rawUrl = urlField.value.trim();
   const title = titleField.value.trim();
-  if (!rawUrl || !title) return;
+  if (!rawUrl || !title) { ev.preventDefault(); return; }
 
   const id = canonical(rawUrl);
+  document.getElementById("addId").value = id;
+
   let source = sourceField.value.trim();
   if (!source) {
     try { source = new URL(rawUrl).hostname.replace(/^www\./, ""); } catch { source = ""; }
+    sourceField.value = source;
   }
 
-  addSubmit.disabled = true;
-  addStatus.textContent = "Adding…";
-  addStatus.className = "add-form-status";
-
-  const params = new URLSearchParams({
-    id, v: "liked", title, url: rawUrl, source,
-    why: whyField.value.trim(), format: "json",
+  // Not preventDefault()'d: the browser now submits the form itself,
+  // opening the confirmation page in a new tab.
+  entries = entries.filter((e) => e.id !== id);
+  entries.push({
+    id, verdict: "liked", title, url: rawUrl, source,
+    why: document.getElementById("addWhy").value.trim(),
+    recorded: new Date().toISOString(),
   });
+  renderRows();
 
-  try {
-    const res = await fetch(`${VOTE_ENDPOINT}?${params}`);
-    const data = await res.json();
-    if (!res.ok || data.error) throw new Error(data.error || `HTTP ${res.status}`);
-
-    // Optimistic: the raw.githubusercontent.com copy of verdicts.json can
-    // lag a few minutes behind the commit the worker just made, so update
-    // the in-page list straight from the worker's own echoed entry rather
-    // than waiting on a refetch.
-    entries = entries.filter((e) => e.id !== id);
-    entries.push(data.entry);
-    renderRows();
-
-    addStatus.textContent = "Added.";
-    addStatus.className = "add-form-status ok";
+  addStatus.textContent = "Added (check the new tab to confirm).";
+  addStatus.className = "add-form-status ok";
+  setTimeout(() => {
     addForm.reset();
-    setTimeout(() => { addForm.classList.add("hidden"); addStatus.textContent = ""; }, 1200);
-  } catch (err) {
-    addStatus.textContent = `Could not add it (${err.message}).`;
-    addStatus.className = "add-form-status error";
-  } finally {
-    addSubmit.disabled = false;
-  }
+    addForm.classList.add("hidden");
+    addStatus.textContent = "Opens a confirmation in a new tab";
+    addStatus.className = "add-form-status";
+  }, 2000);
 });
 
 async function load() {
