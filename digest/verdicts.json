@@ -601,5 +601,14 @@
   "source": "arXiv",
   "why": "Uses differential equations for activation steering, fitting well within established representation engineering and control theory paradigms.",
   "recorded": "2026-10-01T09:28:13.595Z"
+ },
+ {
+  "id": "arxiv:2212.09748",
+  "verdict": "liked",
+  "title": "Scalable Diffusion Models with Transformers",
+  "url": "https://arxiv.org/pdf/2212.09748",
+  "source": "arXiv",
+  "why": "Diffusion Transofrmer original paper",
+  "recorded": "2026-10-05T11:39:05.462Z"
  }
 ]
