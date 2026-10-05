@@ -299,16 +299,38 @@ eligible for tomorrow's run without waiting out any cooldown.
 
 ### Deploying the vote worker
 
+`.github/workflows/deploy-worker.yml` deploys automatically on every push
+that touches `digest/worker/**`, so this is a one-time setup, not a step you
+repeat per change. In Repository Settings, Secrets and variables, Actions,
+New repository secret:
+
+| Secret | Value |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | a token scoped to Edit Cloudflare Workers, from the Cloudflare dashboard's API Tokens page |
+
+`GITHUB_TOKEN` (the worker's own secret for writing to this repo, a
+fine-grained PAT scoped to Contents: read and write on this repo only,
+unrelated to GitHub Actions' own built-in token of the same name) is set
+once directly on the worker, not through Actions:
+
 ```bash
 cd digest/worker
-npm install -g wrangler          # once
-export CLOUDFLARE_API_TOKEN=...  # a token scoped to Edit Cloudflare Workers
-wrangler deploy
-wrangler secret put GITHUB_TOKEN # a fine-grained PAT, Contents: read and write, this repo only
+npm install -g wrangler  # once, only needed for this one command
+wrangler secret put GITHUB_TOKEN
 ```
 
-The deployed URL is hardcoded as `VOTE_ENDPOINT` in `digest.py`, update both
-if you ever redeploy under a different name.
+To deploy manually instead (debugging, or before the Actions secret is set
+up):
+
+```bash
+cd digest/worker
+export CLOUDFLARE_API_TOKEN=...
+wrangler deploy
+```
+
+The deployed URL is hardcoded as `VOTE_ENDPOINT` in `digest.py` and
+`VOTE_ENDPOINT` in `reading.html`'s script, update all of them if you ever
+redeploy under a different name.
 
 ## Tuning it
 

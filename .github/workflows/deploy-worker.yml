@@ -1,0 +1,25 @@
+# Deploys the reading-digest vote/resolve worker whenever its source
+# changes, so a push is the entire release step - no separate manual
+# `wrangler deploy` from a laptop with the token sitting in its environment.
+name: Deploy reading-digest worker
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "digest/worker/**"
+      - ".github/workflows/deploy-worker.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Deploy with Wrangler
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: digest/worker
+          command: deploy
