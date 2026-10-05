@@ -623,10 +623,10 @@
  {
   "id": "arxiv:2407.04152",
   "verdict": "liked",
-  "title": "Test Title For Verification",
+  "title": "VoxAct-B: Voxel-Based Acting and Stabilizing Policy for Bimanual Manipulation",
   "url": "https://arxiv.org/pdf/2407.04152",
   "source": "arXiv",
-  "why": "end-to-end test of the no-CORS form approach",
-  "recorded": "2026-10-05T12:46:06.590Z"
+  "why": "",
+  "recorded": "2026-10-05T12:46:30.423Z"
  }
 ]
