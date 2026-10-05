@@ -346,8 +346,8 @@ tbody tr:hover td.link-col a { color: var(--accent); }
       <input id="addUrl" type="url" placeholder="https://arxiv.org/abs/..." required>
     </div>
     <div>
-      <label for="addTitle">Title</label>
-      <input id="addTitle" type="text" placeholder="Paper or post title" required>
+      <label for="addTitle">Title <span id="addTitleAuto" class="add-form-status"></span></label>
+      <input id="addTitle" type="text" placeholder="Paper or post title (auto-fills from URL)" required>
     </div>
     <div>
       <label for="addSource">Source (optional)</label>
@@ -526,10 +526,45 @@ const addToggle = document.getElementById("addToggle");
 const addForm = document.getElementById("addForm");
 const addStatus = document.getElementById("addStatus");
 const addSubmit = document.getElementById("addSubmit");
+const addTitleAuto = document.getElementById("addTitleAuto");
 
 addToggle.addEventListener("click", () => {
   addForm.classList.toggle("hidden");
   if (!addForm.classList.contains("hidden")) document.getElementById("addUrl").focus();
+});
+
+// Auto-fill title/source from the URL once the user leaves that field,
+// but only into fields they have not already typed something into - this
+// never overwrites a manual correction, it only saves typing when there
+// was nothing there yet.
+let resolveSeq = 0;
+document.getElementById("addUrl").addEventListener("blur", async () => {
+  const urlField = document.getElementById("addUrl");
+  const titleField = document.getElementById("addTitle");
+  const sourceField = document.getElementById("addSource");
+
+  const rawUrl = urlField.value.trim();
+  if (!rawUrl || !urlField.checkValidity()) return;
+  if (titleField.value.trim() && sourceField.value.trim()) return; // nothing to fill
+
+  const seq = ++resolveSeq;
+  addTitleAuto.textContent = "looking up…";
+  addTitleAuto.className = "add-form-status";
+
+  try {
+    const res = await fetch(`${VOTE_ENDPOINT.replace("/vote", "/resolve")}?${new URLSearchParams({ url: rawUrl })}`);
+    const data = await res.json();
+    if (seq !== resolveSeq) return; // a newer lookup (or submit) superseded this one
+    if (!res.ok || data.error) throw new Error(data.error || `HTTP ${res.status}`);
+
+    if (!titleField.value.trim() && data.title) titleField.value = data.title;
+    if (!sourceField.value.trim() && data.source) sourceField.value = data.source;
+    addTitleAuto.textContent = "";
+  } catch (err) {
+    if (seq !== resolveSeq) return;
+    addTitleAuto.textContent = "couldn't auto-fill, type it in";
+    addTitleAuto.className = "add-form-status error";
+  }
 });
 
 addForm.addEventListener("submit", async (ev) => {

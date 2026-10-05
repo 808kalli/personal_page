@@ -55,12 +55,75 @@ function json(body, status = 200) {
   });
 }
 
+const ARXIV_ID = /arxiv\.org\/(?:abs|pdf)\/([0-9]{4}\.[0-9]{4,5})/;
+
+function decodeEntities(s) {
+  return s
+    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"').replace(/&#0?39;/g, "'")
+    .replace(/\s+/g, " ").trim();
+}
+
+// GET /resolve?url=<paper or post url>
+// Best-effort title + source lookup for the "add a paper" form's URL field,
+// so pasting a link fills in the rest rather than requiring it typed by
+// hand. arXiv gets a real API call (atom feed, one <entry> per id); anything
+// else is a plain og:title/<title> scrape, which can't be done from the
+// browser itself since arbitrary cross-origin fetches are blocked there,
+// it is not a CORS problem this worker's own headers can fix on someone
+// else's site. Failure here is always non-fatal: the caller falls back to
+// the user typing the title in by hand, same as before this existed.
+async function resolveMetadata(targetUrl) {
+  const arxivMatch = targetUrl.match(ARXIV_ID);
+  if (arxivMatch) {
+    const resp = await fetch(
+      `https://export.arxiv.org/api/query?id_list=${arxivMatch[1]}`,
+      { headers: { "User-Agent": "reading-digest-resolve-worker" } }
+    );
+    if (!resp.ok) throw new Error(`arXiv API ${resp.status}`);
+    const xml = await resp.text();
+    const entry = xml.match(/<entry>([\s\S]*?)<\/entry>/);
+    if (!entry) throw new Error("arXiv id not found");
+    const titleMatch = entry[1].match(/<title>([\s\S]*?)<\/title>/);
+    if (!titleMatch) throw new Error("no title in arXiv response");
+    return { title: decodeEntities(titleMatch[1]), source: "arXiv" };
+  }
+
+  const resp = await fetch(targetUrl, {
+    headers: { "User-Agent": "Mozilla/5.0 (compatible; reading-digest-resolve-worker)" },
+  });
+  if (!resp.ok) throw new Error(`fetch ${resp.status}`);
+  const html = await resp.text();
+
+  const og = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']*)["']/i)
+          || html.match(/<meta[^>]+content=["']([^"']*)["'][^>]+property=["']og:title["']/i);
+  const plain = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  const title = decodeEntities((og ? og[1] : plain ? plain[1] : "") || "");
+  if (!title) throw new Error("no title found on page");
+
+  let source = "";
+  try { source = new URL(targetUrl).hostname.replace(/^www\./, ""); } catch {}
+
+  return { title, source };
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: corsHeaders() });
+    }
+
+    if (url.pathname === "/resolve") {
+      const target = url.searchParams.get("url");
+      if (!target) return json({ error: "Missing url" }, 400);
+      try {
+        const meta = await resolveMetadata(target);
+        return json(meta);
+      } catch (exc) {
+        return json({ error: String(exc.message || exc) }, 502);
+      }
     }
 
     if (url.pathname !== "/vote") {

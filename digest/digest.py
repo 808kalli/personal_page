@@ -67,12 +67,19 @@ def load_prefilter_terms(config: dict) -> dict[int, list[str]]:
 # for that at each cut, they do not override real quality gaps: a weak blog
 # still loses to a strong paper, they only tip close calls.
 PAPER_SOURCES = {"arXiv", "HF daily papers"}
+# OpenReview accepted-paper sources carry their own venue+decision label as
+# the source string (e.g. "ICLR 2025 Poster", "NeurIPS 2025 Spotlight"), one
+# per accept tier, so membership can't be a fixed set the way the other
+# paper sources are - prefix match against the configured venues instead.
+PAPER_SOURCE_PREFIXES = ("ICLR ", "NeurIPS ", "CoRL ")
 BLOG_PREFILTER_BONUS = 2   # added to the raw keyword score (roughly 0-20)
 BLOG_FINAL_BONUS = 5       # added to the final 0-100 interest score
 
 
 def is_blog(item: "Item") -> bool:
-    return item.source not in PAPER_SOURCES
+    if item.source in PAPER_SOURCES:
+        return False
+    return not item.source.startswith(PAPER_SOURCE_PREFIXES)
 
 
 # ──────────────────────────── candidates ────────────────────────────
@@ -229,6 +236,87 @@ def huggingface_candidates(since: datetime) -> list[Item]:
             signal=f"{upvotes} upvotes on Hugging Face daily papers",
             extras={"upvotes": upvotes},
         ))
+    return out
+
+
+def openreview_value(content: dict, key: str):
+    v = content.get(key)
+    return v.get("value") if isinstance(v, dict) else v
+
+
+def openreview_venue_candidates(venues: list[str], queries: list[str],
+                                 per_query: int = 20) -> list[Item]:
+    """Searches configured OpenReview venues (ICLR/NeurIPS/CoRL style
+    conferences) for *accepted* papers matching the given plain-text search
+    terms. Not date-limited like the arXiv passes: OpenReview venues are
+    naturally bounded to a handful of recent years each, there is no
+    "everything ever" firehose to cap, so every configured venue is always
+    searched in full.
+
+    Direct venue listing (GET /notes?content.venueid=...) triggers
+    OpenReview's bot-challenge from datacenter IPs (confirmed, both from a
+    home IP and in spirit matching the BAIR/Redwood feed problems described
+    below). The term-search endpoint, already used for the require_feedback
+    OpenReview check, does not trigger it, scoped to a venue's `group` id.
+    That endpoint returns reviews and comments alongside actual submissions,
+    so results are filtered down to notes whose invitation is the venue's
+    own Submission type.
+
+    A note counts as *accepted* only if its `venue` field is set and does
+    not start with "Submitted to" (the still-under-review / not-yet-decided
+    label), and its `venueid` does not contain Reject, Withdraw, or Desk -
+    OpenReview updates both fields once a decision is made, see the digest
+    README for a worked example of accepted vs. rejected venue strings.
+    """
+    out: list[Item] = []
+    seen_forums: set[str] = set()
+    for venue in venues:
+        for q in queries:
+            params = urllib.parse.urlencode({
+                "term": q[:200], "content": "all", "group": venue,
+                "source": "all", "type": "terms", "limit": per_query,
+            })
+            try:
+                raw = fetch(f"https://api2.openreview.net/notes/search?{params}", timeout=20)
+                notes = json.loads(raw).get("notes", [])
+            except Exception as exc:
+                print(f"  openreview {venue} search for {q!r} failed: {exc}", file=sys.stderr)
+                continue
+
+            for note in notes:
+                if not any("/-/Submission" in inv for inv in note.get("invitations", [])):
+                    continue
+                forum = note.get("forum") or note.get("id")
+                if not forum or forum in seen_forums:
+                    continue
+
+                content = note.get("content", {})
+                venue_label = openreview_value(content, "venue") or ""
+                venueid = openreview_value(content, "venueid") or ""
+                if not venue_label or venue_label.startswith("Submitted to"):
+                    continue
+                if any(bad in venueid for bad in ("Reject", "Withdraw", "Desk")):
+                    continue
+
+                title = clean(openreview_value(content, "title"))
+                if not title:
+                    continue
+                abstract = clean(openreview_value(content, "abstract"))
+                authors = openreview_value(content, "authors") or []
+                if isinstance(authors, str):
+                    authors = [authors]
+
+                seen_forums.add(forum)
+                out.append(Item(
+                    uid=f"https://openreview.net/forum?id={forum}",
+                    title=title,
+                    url=f"https://openreview.net/forum?id={forum}",
+                    source=venue_label,
+                    summary=abstract[:1500],
+                    authors=", ".join(authors[:8]) + (" et al." if len(authors) > 8 else ""),
+                    signal=f"accepted, {venue_label}",
+                ))
+            time.sleep(0.3)  # be polite to OpenReview
     return out
 
 
@@ -1011,6 +1099,12 @@ def main() -> int:
     # cooldown as everything else.
     candidates += feed_candidates(config["feeds"], since=None)
     candidates += index_candidates(config.get("html_indexes", []))
+    # Also unbounded like feeds, for the same reason: each configured venue
+    # is a handful of recent years, not a firehose, so there is no separate
+    # backlog pass to run.
+    if config.get("openreview_venues"):
+        candidates += openreview_venue_candidates(
+            config["openreview_venues"], config.get("openreview_queries", []))
     print(f"  collected {len(candidates)}")
 
     by_uid: dict[str, Item] = {}

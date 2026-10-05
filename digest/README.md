@@ -127,6 +127,60 @@ archive becomes reachable, they do not mean the same result reappears every
 day, an item found in the archive pass today and not liked or ignored still
 waits out `cooldown_days` like anything else before it can resurface.
 
+## Conference proceedings
+
+arXiv and HF daily papers are both preprints, unreviewed by construction.
+`openreview_venues` adds a third kind of candidate: papers actually
+**accepted** at a configured venue (ICLR, NeurIPS, CoRL are all hosted on
+OpenReview and use the same note structure, other OpenReview-hosted venues
+should work the same way). This is a genuinely different source, not another
+way of finding the same arXiv preprints earlier, a paper only shows up here
+once it has a real decision attached, after the arXiv version of the same
+work may well already have cycled through and been missed or ignored months
+earlier as an unreviewed preprint.
+
+Each venue in `openreview_venues` is a venue *group id*, the same id used in
+its OpenReview URL, not a display name: `ICLR.cc/2025/Conference`, not
+"ICLR 2025". Find a venue's id from its OpenReview homepage URL, or from
+`https://api2.openreview.net/groups?id=<guess>`, which 404s cleanly on a
+wrong guess rather than hanging.
+
+`openreview_queries` are plain search terms, not arXiv query syntax, one
+request per (venue, query) pair, since OpenReview's own search endpoint
+is what makes this possible at all. Listing every paper straight from a
+venue (`GET /notes?content.venueid=...`) hits OpenReview's bot-challenge
+from a datacenter or server IP (confirmed from this project's own GitHub
+Actions runner and a home server both), the same kind of block that cost
+this project the BAIR and Redwood Research feeds, see "What it does not
+do" below. The search endpoint (`/notes/search`, scoped to a venue with
+its `group` parameter) does not trigger it, so that is what this uses,
+filtered down to just the notes that are actual paper submissions rather
+than the reviews and comments the same search also turns up.
+
+A result only counts as accepted, not merely submitted, if OpenReview's own
+`venue` field is set and does not start with "Submitted to" (its label for
+still-pending or rejected work), and its `venueid` does not contain Reject,
+Withdraw, or Desk. Concretely, for a real ICLR 2025 submission: `venue:
+"ICLR 2025 Poster"`, `venueid: "ICLR.cc/2025/Conference"` passes; `venue:
+"Submitted to ICLR 2025"`, `venueid:
+"ICLR.cc/2025/Conference/Rejected_Submission"` does not. OpenReview sets
+both fields once a decision is made, not before, so a venue's current
+in-review cycle (ICLR 2026 as of this writing) legitimately returns nothing
+yet, that is correct behaviour, not a bug, the papers accepted into it do
+not exist as a knowable fact before the decision is made.
+
+Accepted papers are scored by `interests.md` exactly like everything else,
+with one difference: `is_blog()` treats a source starting with "ICLR ",
+"NeurIPS ", or "CoRL " as a paper, not a blog post, for the purposes of
+`BLOG_PREFILTER_BONUS` / `BLOG_FINAL_BONUS`, add a venue host outside those
+three and update `PAPER_SOURCE_PREFIXES` in `digest.py` to match, or it will
+get the format-diversity bonus meant for actual blog posts.
+
+Not date limited the way the arXiv passes are, every configured venue is
+searched in full on every run: each one is a handful of recent years at
+most, not an unbounded archive, there is no separate backlog pass the way
+there is for arXiv.
+
 ## Requiring real feedback, not just a good interest match
 
 `"require_feedback": true` in `sources.json` (off by default, on for the
@@ -279,6 +333,8 @@ something irrelevant gets through, add why it was wrong there.
 | `arxiv_queries` | arXiv API query strings, one request each |
 | `feeds` | RSS or Atom, both parse |
 | `html_indexes` | sites with no feed at all, scraped for the newest links |
+| `openreview_venues` | OpenReview venue group ids to search for *accepted* papers, e.g. `ICLR.cc/2025/Conference`. See "Conference proceedings" below |
+| `openreview_queries` | plain search terms run against each configured venue, not arXiv query syntax, see below |
 
 Author queries are how a person gets tracked, batched with `OR` so a group of
 five costs one request. The arXiv API wants full names (`au:"Neel Nanda"`),

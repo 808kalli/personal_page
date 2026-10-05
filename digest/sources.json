@@ -78,6 +78,26 @@
       "url": "https://yoshuabengio.org/en/feed/"
     }
   ],
+  "openreview_venues": [
+    "ICLR.cc/2025/Conference",
+    "ICLR.cc/2026/Conference",
+    "NeurIPS.cc/2025/Conference",
+    "robot-learning.org/CoRL/2025/Conference"
+  ],
+  "openreview_queries": [
+    "mechanistic interpretability",
+    "sparse autoencoder",
+    "activation steering",
+    "circuit tracing transformer",
+    "superposition features",
+    "vision-language-action interpretability",
+    "behavior cloning distribution shift",
+    "action chunking imitation learning",
+    "world model robot policy",
+    "probing deception honesty",
+    "emergent language multi-agent",
+    "representation engineering"
+  ],
   "html_indexes": [
     {
       "name": "Seohong Park",
