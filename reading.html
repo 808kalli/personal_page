@@ -127,6 +127,90 @@ a { color: inherit; text-decoration: none; }
   white-space: nowrap;
 }
 
+.add-toggle {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 9px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.add-toggle:hover { border-color: var(--accent); }
+
+.add-form {
+  max-width: 1000px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  background: var(--bg-secondary);
+}
+.add-form.hidden { display: none; }
+
+.add-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+@media (max-width: 640px) {
+  .add-form-grid { grid-template-columns: 1fr; }
+}
+
+.add-form label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.add-form input {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 9px 11px;
+  outline: none;
+}
+.add-form input:focus { border-color: var(--accent); }
+
+.add-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.add-form-submit {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--bg-primary);
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.add-form-submit:hover { opacity: 0.9; }
+.add-form-submit:disabled { opacity: 0.5; cursor: default; }
+
+.add-form-status {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.add-form-status.error { color: #e08080; }
+.add-form-status.ok { color: #7fc97f; }
+
 .table-wrap {
   max-width: 1000px;
   border: 1px solid var(--border);
@@ -252,7 +336,33 @@ tbody tr:hover td.link-col a { color: var(--accent); }
   </div>
   <label class="toggle"><input type="checkbox" id="hideRead"> Hide read</label>
   <span class="count" id="count"></span>
+  <button type="button" class="add-toggle" id="addToggle">+ Add paper</button>
 </div>
+
+<form class="add-form hidden" id="addForm">
+  <div class="add-form-grid">
+    <div>
+      <label for="addUrl">URL</label>
+      <input id="addUrl" type="url" placeholder="https://arxiv.org/abs/..." required>
+    </div>
+    <div>
+      <label for="addTitle">Title</label>
+      <input id="addTitle" type="text" placeholder="Paper or post title" required>
+    </div>
+    <div>
+      <label for="addSource">Source (optional)</label>
+      <input id="addSource" type="text" placeholder="e.g. arXiv, a blog name">
+    </div>
+    <div>
+      <label for="addWhy">Why (optional)</label>
+      <input id="addWhy" type="text" placeholder="Why you want to read it">
+    </div>
+  </div>
+  <div class="add-form-actions">
+    <button type="submit" class="add-form-submit" id="addSubmit">Add to list</button>
+    <span class="add-form-status" id="addStatus"></span>
+  </div>
+</form>
 
 <div class="table-wrap">
   <table>
@@ -273,7 +383,18 @@ tbody tr:hover td.link-col a { color: var(--accent); }
 
 <script>
 const SOURCE = "https://raw.githubusercontent.com/808kalli/personal_page/main/digest/verdicts.json";
+const VOTE_ENDPOINT = "https://reading-digest-vote.eliaskallioras.workers.dev/vote";
 const READ_KEY = "reading-read-ids";
+
+// Mirrors canonical() in digest/digest.py: one id per paper regardless of
+// how it arrived, so a manually-added arXiv link lands on the same id an
+// automated digest run would have used, rather than creating a duplicate.
+const ARXIV_ID = /arxiv\.org\/(?:abs|pdf)\/([0-9]{4}\.[0-9]{4,5})/;
+function canonical(url) {
+  const match = url.match(ARXIV_ID);
+  if (match) return `arxiv:${match[1]}`;
+  return url.replace(/\/+$/, "");
+}
 
 // localStorage only, per browser: there is no account system on this site,
 // so "read" has nowhere shared to live. It survives reloads and revisits in
@@ -400,6 +521,68 @@ document.querySelectorAll("thead th[data-sort]").forEach((th) => {
 
 document.getElementById("search").addEventListener("input", renderRows);
 document.getElementById("hideRead").addEventListener("change", renderRows);
+
+const addToggle = document.getElementById("addToggle");
+const addForm = document.getElementById("addForm");
+const addStatus = document.getElementById("addStatus");
+const addSubmit = document.getElementById("addSubmit");
+
+addToggle.addEventListener("click", () => {
+  addForm.classList.toggle("hidden");
+  if (!addForm.classList.contains("hidden")) document.getElementById("addUrl").focus();
+});
+
+addForm.addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+
+  const urlField = document.getElementById("addUrl");
+  const titleField = document.getElementById("addTitle");
+  const sourceField = document.getElementById("addSource");
+  const whyField = document.getElementById("addWhy");
+
+  const rawUrl = urlField.value.trim();
+  const title = titleField.value.trim();
+  if (!rawUrl || !title) return;
+
+  const id = canonical(rawUrl);
+  let source = sourceField.value.trim();
+  if (!source) {
+    try { source = new URL(rawUrl).hostname.replace(/^www\./, ""); } catch { source = ""; }
+  }
+
+  addSubmit.disabled = true;
+  addStatus.textContent = "Adding…";
+  addStatus.className = "add-form-status";
+
+  const params = new URLSearchParams({
+    id, v: "liked", title, url: rawUrl, source,
+    why: whyField.value.trim(), format: "json",
+  });
+
+  try {
+    const res = await fetch(`${VOTE_ENDPOINT}?${params}`);
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || `HTTP ${res.status}`);
+
+    // Optimistic: the raw.githubusercontent.com copy of verdicts.json can
+    // lag a few minutes behind the commit the worker just made, so update
+    // the in-page list straight from the worker's own echoed entry rather
+    // than waiting on a refetch.
+    entries = entries.filter((e) => e.id !== id);
+    entries.push(data.entry);
+    renderRows();
+
+    addStatus.textContent = "Added.";
+    addStatus.className = "add-form-status ok";
+    addForm.reset();
+    setTimeout(() => { addForm.classList.add("hidden"); addStatus.textContent = ""; }, 1200);
+  } catch (err) {
+    addStatus.textContent = `Could not add it (${err.message}).`;
+    addStatus.className = "add-form-status error";
+  } finally {
+    addSubmit.disabled = false;
+  }
+});
 
 async function load() {
   const tbody = document.getElementById("rows");
