@@ -612,15 +612,6 @@
   "recorded": "2026-10-05T11:39:05.462Z"
  },
  {
-  "id": "x",
-  "verdict": "liked",
-  "title": "",
-  "url": "",
-  "source": "",
-  "why": "",
-  "recorded": "2026-10-05T12:42:00.799Z"
- },
- {
   "id": "arxiv:2407.04152",
   "verdict": "liked",
   "title": "VoxAct-B: Voxel-Based Acting and Stabilizing Policy for Bimanual Manipulation",
