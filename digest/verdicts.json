@@ -619,5 +619,14 @@
   "source": "arXiv",
   "why": "",
   "recorded": "2026-10-05T12:46:30.423Z"
+ },
+ {
+  "id": "arxiv:2312.11598",
+  "verdict": "liked",
+  "title": "SkillDiffuser",
+  "url": "https://arxiv.org/abs/2312.11598v1",
+  "source": "arxiv.org",
+  "why": "",
+  "recorded": "2026-10-07T15:18:33.433Z"
  }
 ]
