@@ -276,11 +276,36 @@ def openreview_venue_candidates(venues: list[str], queries: list[str],
                 "term": q[:200], "content": "all", "group": venue,
                 "source": "all", "type": "terms", "limit": per_query,
             })
-            try:
-                raw = fetch(f"https://api2.openreview.net/notes/search?{params}", timeout=20)
-                notes = json.loads(raw).get("notes", [])
-            except Exception as exc:
-                print(f"  openreview {venue} search for {q!r} failed: {exc}", file=sys.stderr)
+            search_url = f"https://api2.openreview.net/notes/search?{params}"
+            # Confirmed by hand: a run across every (venue, query) pair is
+            # enough requests in a row to get a real 429 from OpenReview
+            # partway through, not a hypothetical. One 30s wait and retry,
+            # same policy already used for the Gemini 429 case, rather than
+            # the fast single retry everything else here gets - silently
+            # dropping whichever venues/queries happen to run last (CoRL,
+            # at the end of the configured list) is a worse failure mode
+            # than one slow pass.
+            for attempt in (1, 2):
+                try:
+                    raw = fetch(search_url, timeout=20)
+                    notes = json.loads(raw).get("notes", [])
+                    break
+                except urllib.error.HTTPError as exc:
+                    if exc.code == 429 and attempt == 1:
+                        print(f"  openreview rate limited on {venue} {q!r}, "
+                              f"waiting 30s", file=sys.stderr)
+                        time.sleep(30)
+                        continue
+                    print(f"  openreview {venue} search for {q!r} failed: {exc}",
+                          file=sys.stderr)
+                    notes = None
+                    break
+                except Exception as exc:
+                    print(f"  openreview {venue} search for {q!r} failed: {exc}",
+                          file=sys.stderr)
+                    notes = None
+                    break
+            if notes is None:
                 continue
 
             for note in notes:
@@ -316,7 +341,7 @@ def openreview_venue_candidates(venues: list[str], queries: list[str],
                     authors=", ".join(authors[:8]) + (" et al." if len(authors) > 8 else ""),
                     signal=f"accepted, {venue_label}",
                 ))
-            time.sleep(0.3)  # be polite to OpenReview
+            time.sleep(1)  # be polite to OpenReview, matches has_real_feedback's pace
     return out
 
 
@@ -798,6 +823,18 @@ def has_real_feedback(item: Item, cfg: dict) -> tuple[bool, str]:
     """
     if is_blog(item):
         return True, item.credibility or item.signal
+
+    # An openreview_venue_candidates() item already *is* a confirmed accept
+    # decision at a real venue - that is strictly stronger evidence than
+    # anything the checks below are built to find (they exist to verify an
+    # arXiv preprint some other way). Re-running an approximate title search
+    # against these items was actively working against them: a match that
+    # does not turn up (or that the model judges insubstantial) would drop
+    # a genuinely peer-reviewed, accepted paper for the same reason a random
+    # preprint gets dropped, the one case this gate exists to let through
+    # without question.
+    if item.source.startswith(PAPER_SOURCE_PREFIXES):
+        return True, item.signal or item.source
 
     comment = item.extras.get("arxiv_comment", "")
     if comment and ACCEPTANCE_RE.search(comment):

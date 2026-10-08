@@ -181,6 +181,25 @@ searched in full on every run: each one is a handful of recent years at
 most, not an unbounded archive, there is no separate backlog pass the way
 there is for arXiv.
 
+A full run (every configured venue × every configured query) is enough
+requests to OpenReview's search endpoint in a row to draw a real 429,
+confirmed by hand, not hypothetical. One 30 second wait and retry per
+request, same policy as the Gemini 429 case below, otherwise whichever
+venue happens to be queried last (currently CoRL) silently loses candidates
+on an unlucky run, logged to stderr but never visible in the email itself.
+
+If `require_feedback` is on (see below), accepted conference papers skip
+that check entirely rather than going through it: `has_real_feedback()`
+treats a source starting with "ICLR ", "NeurIPS ", or "CoRL " as already
+proven, since arriving here at all means OpenReview already confirmed a
+real accept decision, strictly stronger evidence than what that check
+exists to establish for an arXiv preprint. Running these through the
+normal path anyway (an approximate title re-search, then asking the model
+to judge what turns up) was actively working against them: a mismatched
+or inconclusive search result would drop a genuinely peer-reviewed,
+accepted paper for the same reason a random preprint gets dropped, which
+defeats the purpose of sourcing from accepted papers in the first place.
+
 ## Requiring real feedback, not just a good interest match
 
 `"require_feedback": true` in `sources.json` (off by default, on for the
