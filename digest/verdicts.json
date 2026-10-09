@@ -646,5 +646,14 @@
   "source": "NeurIPS 2025 spotlight",
   "why": "Keywords undersold a core paper on agentic deception and the generalisation limits of probing activations.",
   "recorded": "2026-10-09T09:18:34.806Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=jiWXDvw1Lf",
+  "verdict": "liked",
+  "title": "Action Chunking and Data Augmentation Yield Exponential Improvements in Behavior Cloning for Continuous Spaces",
+  "url": "https://openreview.net/forum?id=jiWXDvw1Lf",
+  "source": "ICLR 2026 Poster",
+  "why": "Provides a rigorous theoretical analysis of why policies learned from demonstrations fail, specifically addressing action chunking and compounding errors.",
+  "recorded": "2026-10-09T09:19:03.608Z"
  }
 ]
