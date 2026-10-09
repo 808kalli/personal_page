@@ -655,5 +655,14 @@
   "source": "ICLR 2026 Poster",
   "why": "Provides a rigorous theoretical analysis of why policies learned from demonstrations fail, specifically addressing action chunking and compounding errors.",
   "recorded": "2026-10-09T09:19:03.608Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=OJAW2mHVND",
+  "verdict": "liked",
+  "title": "Revising and Falsifying Sparse Autoencoder Feature Explanations",
+  "url": "https://openreview.net/forum?id=OJAW2mHVND",
+  "source": "NeurIPS 2025 poster",
+  "why": "Strong fit for the evaluation and critique of sparse autoencoder feature explanations in line with rigorous interpretability standards.",
+  "recorded": "2026-10-09T09:19:53.232Z"
  }
 ]
