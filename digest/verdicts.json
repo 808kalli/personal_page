@@ -628,5 +628,14 @@
   "source": "arxiv.org",
   "why": "",
   "recorded": "2026-10-07T15:18:33.433Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=YvsUD8C9QS",
+  "verdict": "liked",
+  "title": "Mechanistic Interpretability for Steering Vision-Language-Action Models",
+  "url": "https://openreview.net/forum?id=YvsUD8C9QS",
+  "source": "CoRL 2025 Poster",
+  "why": "Directly applies mechanistic interpretability and steering to vision language action models, fitting the core robotics policy interests.",
+  "recorded": "2026-10-09T09:18:19.280Z"
  }
 ]
