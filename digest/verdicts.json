@@ -664,5 +664,14 @@
   "source": "NeurIPS 2025 poster",
   "why": "Strong fit for the evaluation and critique of sparse autoencoder feature explanations in line with rigorous interpretability standards.",
   "recorded": "2026-10-09T09:19:53.232Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=REHjkmWdQL",
+  "verdict": "liked",
+  "title": "Measuring and Guiding Monosemanticity",
+  "url": "https://openreview.net/forum?id=REHjkmWdQL",
+  "source": "NeurIPS 2025 spotlight",
+  "why": "Directly addresses feature monosemanticity and the limitations of sparse autoencoders, which is a core interest for this reader profile.",
+  "recorded": "2026-10-09T09:20:28.989Z"
  }
 ]
