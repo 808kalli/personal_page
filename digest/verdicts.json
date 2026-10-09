@@ -637,5 +637,14 @@
   "source": "CoRL 2025 Poster",
   "why": "Directly applies mechanistic interpretability and steering to vision language action models, fitting the core robotics policy interests.",
   "recorded": "2026-10-09T09:18:19.280Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=XP3v1THxsq",
+  "verdict": "liked",
+  "title": "Among Us: A Sandbox for Measuring and Detecting Agentic Deception",
+  "url": "https://openreview.net/forum?id=XP3v1THxsq",
+  "source": "NeurIPS 2025 spotlight",
+  "why": "Keywords undersold a core paper on agentic deception and the generalisation limits of probing activations.",
+  "recorded": "2026-10-09T09:18:34.806Z"
  }
 ]
