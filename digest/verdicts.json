@@ -673,5 +673,14 @@
   "source": "NeurIPS 2025 spotlight",
   "why": "Directly addresses feature monosemanticity and the limitations of sparse autoencoders, which is a core interest for this reader profile.",
   "recorded": "2026-10-09T09:20:28.989Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=7akSRQS5Xh",
+  "verdict": "liked",
+  "title": "From Data Statistics to Feature Geometry: How Correlations Shape Superposition",
+  "url": "https://openreview.net/forum?id=7akSRQS5Xh",
+  "source": "ICLR 2026 Poster",
+  "why": "Theoretical work on feature geometry and superposition in language models.",
+  "recorded": "2026-10-10T09:01:37.500Z"
  }
 ]
