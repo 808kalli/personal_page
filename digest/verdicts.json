@@ -682,5 +682,14 @@
   "source": "ICLR 2026 Poster",
   "why": "Theoretical work on feature geometry and superposition in language models.",
   "recorded": "2026-10-10T09:01:37.500Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=MDvecs7EvO",
+  "verdict": "liked",
+  "title": "Mechanistic Permutability: Match Features Across Layers",
+  "url": "https://openreview.net/forum?id=MDvecs7EvO",
+  "source": "ICLR 2025 Poster",
+  "why": "Direct contribution to mechanistic interpretability and sparse autoencoders across layers.",
+  "recorded": "2026-10-10T09:02:16.115Z"
  }
 ]
