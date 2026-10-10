@@ -691,5 +691,14 @@
   "source": "ICLR 2025 Poster",
   "why": "Direct contribution to mechanistic interpretability and sparse autoencoders across layers.",
   "recorded": "2026-10-10T09:02:16.115Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=C7LxkebvVW",
+  "verdict": "liked",
+  "title": "Emergence and Evolution of Interpretable Concepts in Diffusion Models",
+  "url": "https://openreview.net/forum?id=C7LxkebvVW",
+  "source": "NeurIPS 2025 spotlight",
+  "why": "Applies sparse autoencoders to diffusion model activations and reveals interpretable composition concepts.",
+  "recorded": "2026-10-10T09:11:54.976Z"
  }
 ]
