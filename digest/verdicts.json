@@ -709,5 +709,14 @@
   "source": "CoRL 2025 Poster",
   "why": "Connects robot policy learning with latent world modeling and handles training on unstructured human video demonstrations without action labels.",
   "recorded": "2026-10-12T09:02:26.938Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=5IWJBStfU7",
+  "verdict": "liked",
+  "title": "Everything, Everywhere, All at Once: Is Mechanistic Interpretability Identifiable?",
+  "url": "https://openreview.net/forum?id=5IWJBStfU7",
+  "source": "ICLR 2025 Poster",
+  "why": "Sits squarely in the core mechanistic interpretability interest, tackling fundamental theoretical questions about the identifiability of extracted circuits and explanations.",
+  "recorded": "2026-10-13T13:41:11.977Z"
  }
 ]
