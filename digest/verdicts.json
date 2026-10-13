@@ -718,5 +718,14 @@
   "source": "ICLR 2025 Poster",
   "why": "Sits squarely in the core mechanistic interpretability interest, tackling fundamental theoretical questions about the identifiability of extracted circuits and explanations.",
   "recorded": "2026-10-13T13:41:11.977Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=ZYXTLo7kCi",
+  "verdict": "liked",
+  "title": "The Non-Linear Representation Dilemma: Is Causal Abstraction Enough for Mechanistic Interpretability?",
+  "url": "https://openreview.net/forum?id=ZYXTLo7kCi",
+  "source": "NeurIPS 2025 spotlight",
+  "why": "Directly addresses the limitations of foundational assumptions in mechanistic interpretability, providing a vital negative result on causal abstraction and linear representation hypotheses.",
+  "recorded": "2026-10-13T13:41:42.317Z"
  }
 ]
