@@ -727,5 +727,14 @@
   "source": "NeurIPS 2025 spotlight",
   "why": "Directly addresses the limitations of foundational assumptions in mechanistic interpretability, providing a vital negative result on causal abstraction and linear representation hypotheses.",
   "recorded": "2026-10-13T13:41:42.317Z"
+ },
+ {
+  "id": "arxiv:2511.08544",
+  "verdict": "liked",
+  "title": "LeJEPA",
+  "url": "https://arxiv.org/pdf/2511.08544",
+  "source": "arxiv.org",
+  "why": "",
+  "recorded": "2026-10-15T13:16:54.476Z"
  }
 ]
