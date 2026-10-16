@@ -5,7 +5,6 @@
 "arxiv:2505.11924": "2026-09-29",
 "arxiv:2509.03647": "2026-10-11",
 "arxiv:2602.17560": "2026-10-01",
-"arxiv:2609.12641": "2026-09-15",
 "arxiv:2609.14151": "2026-09-16",
 "arxiv:2609.15064": "2026-09-16",
 "arxiv:2609.16745": "2026-09-16",
@@ -31,6 +30,7 @@
 "arxiv:2610.12285": "2026-10-12",
 "arxiv:2610.16084": "2026-10-14",
 "arxiv:2610.20504": "2026-10-15",
+"arxiv:2610.20851": "2026-10-16",
 "https://alignment.anthropic.com/2025/activation-oracles": "2026-09-20",
 "https://alignment.anthropic.com/2025/automated-auditing": "2026-09-27",
 "https://blog.eleuther.ai/aletheia-retrospective": "2026-09-17",
@@ -83,7 +83,6 @@
 "https://transformer-circuits.pub/2024/september-update/index.html": "2026-09-23",
 "https://transformer-circuits.pub/2025/april-update/index.html": "2026-09-19",
 "https://transformer-circuits.pub/2025/attention-qk/index.html": "2026-09-25",
-"https://transformer-circuits.pub/2025/attribution-graphs/methods.html": "2026-09-15",
 "https://transformer-circuits.pub/2025/august-update/index.html": "2026-09-23",
 "https://transformer-circuits.pub/2025/introspection/index.html": "2026-09-21",
 "https://transformer-circuits.pub/2025/january-update/index.html": "2026-09-23",
@@ -92,13 +91,11 @@
 "https://transformer-circuits.pub/2025/october-update/index.html": "2026-09-20",
 "https://transformer-circuits.pub/2025/september-update/index.html": "2026-09-20",
 "https://transformer-circuits.pub/2026/emotions/index.html": "2026-09-22",
-"https://transformer-circuits.pub/2026/june-update/index.html": "2026-09-15",
 "https://transformer-circuits.pub/2026/may-update/index.html": "2026-09-19",
 "https://transformer-circuits.pub/2026/nla/index.html": "2026-09-22",
 "https://transformer-circuits.pub/2026/workspace/index.html": "2026-09-22",
 "https://www.alignmentforum.org/posts/Zeg2JztbdhguL48uH/workspacebench-evaluating-interpretability-methods-for-the": "2026-09-24",
 "https://www.alignmentforum.org/posts/khxvR2fgAeDvG5N2F/shallow-beliefs-midtraining-does-not-inoculate-against-em": "2026-09-27",
 "https://www.alignmentforum.org/posts/x8BvtWxtoajBGHS3g/an-operationalization-of-opaque-serial-depth": "2026-09-20",
-"https://www.goodfire.ai/blog/interpretability-infra-at-frontier-scale": "2026-09-18",
-"https://www.neelnanda.io/blog/interlude-a-mechanistic-interpretability-analysis-of-grokking": "2026-09-15"
+"https://www.goodfire.ai/blog/interpretability-infra-at-frontier-scale": "2026-09-18"
 }
