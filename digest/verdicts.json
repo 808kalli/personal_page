@@ -763,5 +763,14 @@
   "source": "arxiv.org",
   "why": "",
   "recorded": "2026-10-18T08:05:47.061Z"
+ },
+ {
+  "id": "arxiv:2610.22655",
+  "verdict": "liked",
+  "title": "Is a Linear Probe Evidence of a Linear Representation?",
+  "url": "http://arxiv.org/abs/2610.22655v1",
+  "source": "arXiv",
+  "why": "Keywords matched linear probes, and the content is a rigorous negative result questioning standard interpretability assumptions.",
+  "recorded": "2026-10-19T09:19:35.925Z"
  }
 ]
