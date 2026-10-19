@@ -27,10 +27,10 @@
 "arxiv:2610.20504": "2026-10-15",
 "arxiv:2610.20683": "2026-10-17",
 "arxiv:2610.20851": "2026-10-16",
+"arxiv:2610.22655": "2026-10-19",
 "https://alignment.anthropic.com/2025/activation-oracles": "2026-09-20",
 "https://alignment.anthropic.com/2025/automated-auditing": "2026-09-27",
 "https://blog.eleuther.ai/generating-text-using-nl-to-simulate-activations": "2026-09-19",
-"https://blog.eleuther.ai/sae_seed_similarity": "2026-09-18",
 "https://blog.eleuther.ai/trlx-exploratory-analysis": "2026-09-21",
 "https://deepmind.google/blog/gemma-scope-2-helping-the-ai-safety-community-deepen-understanding-of-complex-language-model-behavior": "2026-09-27",
 "https://distill.pub/2020/circuits": "2026-09-24",
@@ -61,6 +61,7 @@
 "https://openreview.net/forum?id=gwBqVheRiD": "2026-10-15",
 "https://openreview.net/forum?id=h0aA8xpL4U": "2026-10-18",
 "https://openreview.net/forum?id=jiWXDvw1Lf": "2026-10-09",
+"https://openreview.net/forum?id=lkmlNHuzY4": "2026-10-19",
 "https://openreview.net/forum?id=o2w2iiMyEU": "2026-10-11",
 "https://openreview.net/forum?id=p8lKcNkJRi": "2026-10-11",
 "https://openreview.net/forum?id=wj4lM45xQR": "2026-10-15",
@@ -94,6 +95,5 @@
 "https://transformer-circuits.pub/2026/workspace/index.html": "2026-09-22",
 "https://www.alignmentforum.org/posts/Zeg2JztbdhguL48uH/workspacebench-evaluating-interpretability-methods-for-the": "2026-09-24",
 "https://www.alignmentforum.org/posts/khxvR2fgAeDvG5N2F/shallow-beliefs-midtraining-does-not-inoculate-against-em": "2026-09-27",
-"https://www.alignmentforum.org/posts/x8BvtWxtoajBGHS3g/an-operationalization-of-opaque-serial-depth": "2026-09-20",
-"https://www.goodfire.ai/blog/interpretability-infra-at-frontier-scale": "2026-09-18"
+"https://www.alignmentforum.org/posts/x8BvtWxtoajBGHS3g/an-operationalization-of-opaque-serial-depth": "2026-09-20"
 }
