@@ -781,5 +781,14 @@
   "source": "already-clean.goodfire.com",
   "why": "",
   "recorded": "2026-10-20T11:01:50.625Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=DaNnkQJSQf",
+  "verdict": "liked",
+  "title": "Sparse Autoencoders Learn Monosemantic Features in Vision-Language Models",
+  "url": "https://openreview.net/forum?id=DaNnkQJSQf",
+  "source": "NeurIPS 2025 poster",
+  "why": "Extends sparse autoencoders and monosemanticity analysis to vision-language models like CLIP, fitting directly into the core interpretability interest.",
+  "recorded": "2026-10-20T11:04:28.415Z"
  }
 ]
