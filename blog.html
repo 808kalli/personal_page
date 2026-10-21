@@ -441,22 +441,6 @@ a { color: inherit; text-decoration: none; }
     </div>
   </div>
 
-  <!-- ── POST: cli-timer ── -->
-  <div class="post-card" onclick="openModal('modal-cli-timer')">
-    <div class="post-card-left">
-      <div class="post-tags">
-        <span class="post-tag">project</span>
-        <span class="post-tag purple">terminal</span>
-      </div>
-      <h3>A terminal timer with a slime living in it</h3>
-      <p>A full screen countdown, stopwatch, and clock drawn in a seven segment font, and how you fake a hover event in a terminal that has none.</p>
-    </div>
-    <div class="post-card-right">
-      <div class="post-date">Jul 2026</div>
-      <div class="post-open-hint">Read ↗</div>
-    </div>
-  </div>
-
   <!-- ── POST: mars rover nav ── -->
   <div class="post-card" onclick="openModal('modal-mars-rover-nav')">
     <div class="post-card-left">
@@ -469,6 +453,22 @@ a { color: inherit; text-decoration: none; }
     </div>
     <div class="post-card-right">
       <div class="post-date">Oct 2026</div>
+      <div class="post-open-hint">Read ↗</div>
+    </div>
+  </div>
+
+  <!-- ── POST: cli-timer ── -->
+  <div class="post-card" onclick="openModal('modal-cli-timer')">
+    <div class="post-card-left">
+      <div class="post-tags">
+        <span class="post-tag">project</span>
+        <span class="post-tag purple">terminal</span>
+      </div>
+      <h3>A terminal timer with a slime living in it</h3>
+      <p>A full screen countdown, stopwatch, and clock drawn in a seven segment font, and how you fake a hover event in a terminal that has none.</p>
+    </div>
+    <div class="post-card-right">
+      <div class="post-date">Jul 2026</div>
       <div class="post-open-hint">Read ↗</div>
     </div>
   </div>
@@ -618,12 +618,15 @@ a { color: inherit; text-decoration: none; }
       </p>
       <figure class="modal-figure">
         <video src="photos/projects/drone-bounce/tuned_success_h2.0.mp4" autoplay muted loop playsinline></video>
-        <figcaption>The adopted controller rallying to a 2.0 m apex under nominal wind</figcaption>
+        <figcaption>The adopted controller with a 2.0 m target. 21 of its 23 apexes land in the green band and the ball is still bouncing at 20 s.</figcaption>
       </figure>
 
       <h4>How a bounce is scored</h4>
       <p>
         A bounce counts as good only if its apex is within 15 cm of the commanded height and the ball fell below 1.25 m beforehand. The second condition is the honest part, since without it a controller can score by nudging the ball near the top of its arc. Two conditions are used throughout. Nominal has light wind and a fixed drop height, and moderate has stronger wind and a randomised drop height. Every number below uses 100 seeds so none of it can be cherry picked.
+      </p>
+      <p>
+        The clips below are drawn from the simulation logs, so they show exactly what the grader scored. The green band is the target height plus or minus 15 cm. A green dot marks a good apex, a red ring marks a missed one, and a blue ring flashes when a sensor reading arrives. The counters at the top keep the running totals.
       </p>
 
       <h4>Seeing the ball</h4>
@@ -651,16 +654,12 @@ a { color: inherit; text-decoration: none; }
         What the controller actually consumes is the predicted contact. 250 ms before impact it is within 2.5 cm and 123 ms, and by 100 ms before impact it is within 1.8 cm and 75 ms.
       </p>
       <figure class="modal-figure">
-        <video src="photos/projects/drone-bounce/estimator_tracking.mp4" autoplay muted loop playsinline></video>
-        <figcaption>The filter following the ball through a decaying rally</figcaption>
-      </figure>
-      <figure class="modal-figure">
         <img src="photos/projects/drone-bounce/estimator_tracking.png" alt="true ball state against the bounce aware Kalman estimate" loading="lazy">
         <figcaption>The bounce aware filter tracking the ball. Note how the velocity covariance fans out between the sparse measurements (green) and snaps back at each contact (grey lines).</figcaption>
       </figure>
       <figure class="modal-figure">
         <img src="photos/projects/drone-bounce/estimator_onboard.png" alt="the estimate running inside the closed loop during an eight second rally" loading="lazy">
-        <figcaption>The same filter running inside the closed loop while the controller is hitting the ball. The estimate stays locked to the true arcs around the target line.</figcaption>
+        <figcaption>Ball position and velocity over 8 s of closed loop rally, true state in black and the onboard estimate in red with its 2 sigma band. The green dots are the sparse measurements. The estimate follows the true arcs, the band widens between readings, and the height estimate dips below the truth just before some contacts.</figcaption>
       </figure>
 
       <h4>Five controllers, each fixing the last one's failure</h4>
@@ -694,16 +693,16 @@ a { color: inherit; text-decoration: none; }
       <div class="modal-figure-row">
         <figure class="modal-figure">
           <video src="photos/projects/drone-bounce/s1_baseline_success_h1.5.mp4" autoplay muted loop playsinline></video>
-          <figcaption>Baseline at 1.5 m: 44 good bounces and no drop</figcaption>
+          <figcaption>Baseline at 1.5 m. All 44 apexes land in the band and the ball is still bouncing at 20 s.</figcaption>
         </figure>
         <figure class="modal-figure">
           <video src="photos/projects/drone-bounce/s1_baseline_fail_drop_h2.0.mp4" autoplay muted loop playsinline></video>
-          <figcaption>Baseline at 2.0 m: undershoots, drifts and drops with 0 good bounces</figcaption>
+          <figcaption>Baseline at 2.0 m. It keeps bouncing, but the apexes sit around 1.8 m, short of the band, so none count. In the last seconds the ball slides about 0.23 m off the racket's centre and drops at 14.6 s.</figcaption>
         </figure>
       </div>
       <figure class="modal-figure">
         <img src="photos/projects/drone-bounce/apexerr_vs_height.png" alt="apex error against target height for each controller" loading="lazy">
-        <figcaption>Apex error against target height. For the baseline two things degrade at once, the accuracy and the survival.</figcaption>
+        <figcaption>Mean apex error against target height for all five controllers. Every one gets worse as the target rises, and only the tuned anchored controller stays under the 0.15 m grader tolerance out to 2.2 m (0.13 m there, 0.22 m at 2.4 m).</figcaption>
       </figure>
 
       <p>
@@ -712,11 +711,11 @@ a { color: inherit; text-decoration: none; }
       <div class="modal-figure-row">
         <figure class="modal-figure">
           <video src="photos/projects/drone-bounce/s2_fixedz_success_h1.5.mp4" autoplay muted loop playsinline></video>
-          <figcaption>Fixed z at 1.5 m: 43 good bounces and it survives the full horizon</figcaption>
+          <figcaption>Fixed z at 1.5 m. All 43 apexes are good and it survives the full 20 s.</figcaption>
         </figure>
         <figure class="modal-figure">
           <video src="photos/projects/drone-bounce/s2_fixedz_fail_undershoot_h2.0.mp4" autoplay muted loop playsinline></video>
-          <figcaption>Fixed z at 2.0 m: 27 bounces, zero on target</figcaption>
+          <figcaption>Fixed z at 2.0 m. The ball stays alive for all 20 s and 27 apexes, but they average about 1.78 m, so none reach the band.</figcaption>
         </figure>
       </div>
 
@@ -729,7 +728,7 @@ a { color: inherit; text-decoration: none; }
       </figure>
       <figure class="modal-figure">
         <video src="photos/projects/drone-bounce/s3_leadfloat_fail_tap_h1.5.mp4" autoplay muted loop playsinline></video>
-        <figcaption>Lead float at 1.5 m: 89 near apex events and only 5 real good bounces</figcaption>
+        <figcaption>Lead float at 1.5 m. 72 of the 89 apexes sit inside the band, but 67 of those are taps near the top of the arc, which the grader rejects, leaving 5 good bounces.</figcaption>
       </figure>
 
       <p>
@@ -738,11 +737,11 @@ a { color: inherit; text-decoration: none; }
       <div class="modal-figure-row">
         <figure class="modal-figure">
           <video src="photos/projects/drone-bounce/s4_anchored_success_h1.5.mp4" autoplay muted loop playsinline></video>
-          <figcaption>Anchored at 1.5 m: 36 genuine good bounces</figcaption>
+          <figcaption>Anchored at 1.5 m. All 36 apexes are good bounces.</figcaption>
         </figure>
         <figure class="modal-figure">
           <video src="photos/projects/drone-bounce/s4_anchored_fail_drift_h2.2.mp4" autoplay muted loop playsinline></video>
-          <figcaption>Anchored at 2.2 m: hits the high apex 15 times, then drifts sideways and drops</figcaption>
+          <figcaption>Anchored at 2.2 m. 15 good apexes, then the ball slides about 0.27 m off the racket's centre and drops at 17.7 s.</figcaption>
         </figure>
       </div>
 
@@ -755,15 +754,15 @@ a { color: inherit; text-decoration: none; }
       </figure>
       <figure class="modal-figure">
         <img src="photos/projects/drone-bounce/survival_vs_height.png" alt="survival against target height for each controller" loading="lazy">
-        <figcaption>Survival against target height. The tuned controller holds 98 percent at 1.5 m and still 72 percent at 2.4 m, where every earlier version had already collapsed.</figcaption>
+        <figcaption>Survival against target height. The tuned controller holds 98 percent at 1.5 m and 72 percent at 2.4 m. Lead float also survives (67 percent at 2.4 m) but scores almost nothing, and the other three are at 9 percent or less by then.</figcaption>
       </figure>
       <figure class="modal-figure">
         <video src="photos/projects/drone-bounce/s5_tuned_robust_h1.5_moderate.mp4" autoplay muted loop playsinline></video>
-        <figcaption>Tuned controller at 1.5 m with raised wind and a randomised drop height: 33 good bounces</figcaption>
+        <figcaption>Tuned controller at 1.5 m with raised wind and a randomised drop height. 33 of 34 apexes are good and it survives 20 s.</figcaption>
       </figure>
       <figure class="modal-figure">
         <img src="photos/projects/drone-bounce/nominal_vs_moderate.png" alt="the five controllers compared under nominal and moderate wind" loading="lazy">
-        <figcaption>Nominal against moderate conditions. The ranking holds and the absolute numbers compress. The survival drop under wind is shared by every version, which points at the 0.30 s blind gap against a roughly one second arc rather than at any gain.</figcaption>
+        <figcaption>Good bounces per 20 s under nominal wind (left) and under moderate wind with a varied drop height (right), note the different vertical scales. The tuned controller leads at every height in both, except at 1.5 m nominal where fixed z edges it, and its best score falls from 35 to about 8. Every controller loses the same way, which points at the 0.30 s blind gap against a roughly one second arc rather than at any gain.</figcaption>
       </figure>
 
       <h4>What I took from it</h4>
