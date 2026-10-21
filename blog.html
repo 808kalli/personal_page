@@ -408,18 +408,18 @@ a { color: inherit; text-decoration: none; }
      ════════════════════════════════════ -->
 <div class="post-list">
 
-  <!-- ── POST: example entry ── -->
+  <!-- ── POST: thesis ── -->
   <div class="post-card" onclick="openModal('modal-vla-distillation')">
     <div class="post-card-left">
       <div class="post-tags">
         <span class="post-tag">robotics</span>
         <span class="post-tag purple">VLA</span>
       </div>
-      <h3>What I learned distilling a VLA model for 6 months</h3>
-      <p>Reflections on the practical difficulties of teacher-student distillation for manipulation policies — what worked, what didn't, and what I'd do differently.</p>
+      <h3>Distilling a latent action model into smaller robot policies</h3>
+      <p>My diploma thesis at NTUA. A frozen 7B teacher shapes OpenVLA and SmolVLA through a contrastive loss that is dropped after training, and the students gain 4.7 and 10.4 points on LIBERO-Spatial at no inference cost.</p>
     </div>
     <div class="post-card-right">
-      <div class="post-date">Mar 2026</div>
+      <div class="post-date">Feb 2026</div>
       <div class="post-open-hint">Read ↗</div>
     </div>
   </div>
@@ -457,6 +457,22 @@ a { color: inherit; text-decoration: none; }
     </div>
   </div>
 
+  <!-- ── POST: mars rover nav ── -->
+  <div class="post-card" onclick="openModal('modal-mars-rover-nav')">
+    <div class="post-card-left">
+      <div class="post-tags">
+        <span class="post-tag">project</span>
+        <span class="post-tag purple">vision</span>
+      </div>
+      <h3>Mars Rover Nav: crossing a rock field with only stereo vision</h3>
+      <p>A simulated rover with a stereo pair, wheel encoders and a gyro has to find a marked rock, drive up to it without touching anything, and photograph it. 40 of 40 random fields, and an ablation of what each safety layer is worth.</p>
+    </div>
+    <div class="post-card-right">
+      <div class="post-date">Oct 2026</div>
+      <div class="post-open-hint">Read ↗</div>
+    </div>
+  </div>
+
   <!-- ── ADD NEW POSTS ABOVE THIS LINE ── -->
 
 </div>
@@ -475,29 +491,107 @@ a { color: inherit; text-decoration: none; }
       <span class="modal-tag">robotics</span>
       <span class="modal-tag purple">VLA</span>
     </div>
-    <h2>What I learned distilling a VLA model for 6 months</h2>
-    <div class="modal-date">March 2026</div>
+    <h2>Distilling a latent action model into smaller robot policies</h2>
+    <div class="modal-date">February 2026</div>
     <hr class="modal-divider">
     <div class="modal-body">
       <p>
-        Spending six months making a large Vision-Language-Action model smaller taught me a surprising amount — mostly about how fragile these systems are when you start pulling them apart.
+        This is the summary of my diploma thesis at NTUA, supervised by Panayiotis Tsanakas with Vasileios Balntas as co-supervisor. The full title is Teacher-Student Knowledge Distillation for Efficient Deployment of Vision-Language-Action Models in Robotic Manipulation.
+      </p>
+      <h4>The problem</h4>
+      <p>
+        Vision-Language-Action models learn to control robots from expert demonstrations, and those are expensive and not very diverse. LAPA sidesteps part of this by pretraining a 7B model on latent actions extracted from videos, so it never needs action labels. The catch is the ratio. Robot demonstrations number in the hundreds of thousands while human videos number in the billions, and a model large enough to absorb that much video will be too slow for real time control. The thesis asks whether a big model like that can hand what it knows to a small one that stays fast.
+      </p>
+      <h4>The setup</h4>
+      <p>
+        LAPA is the frozen teacher. I used two students. OpenVLA shares LAPA's Llama 2 backbone and the OXE training data, so it is the friendly case. SmolVLA has a 450M parameter backbone that is 15.5 times smaller, a different architecture and a different pretraining set, so it is the stress test.
       </p>
       <p>
-        The basic setup sounds clean: take a large VLA teacher, supervise a smaller student with a mix of behavioural cloning and feature-level distillation, and hope the student picks up the important stuff. In practice it's messier. Feature alignment between architectures of different sizes is not obvious — matching layers naively leads to the student memorising representations that are locally correct but globally inconsistent.
+        Both models see the same frame and instruction. I take the last hidden states from each, average them over the sequence, and pass the student's vector through a small MLP that maps it to the teacher's dimension (4096 for LAPA and OpenVLA, 960 for SmolVLA). An InfoNCE loss then pulls each student vector toward the teacher vector of the same frame and pushes it away from the other frames in the batch. The total loss is the student's own behavioral cloning loss plus a weight λ times the InfoNCE term.
+      </p>
+      <figure class="modal-figure">
+        <img src="photos/projects/thesis/arch.png" alt="diagram of the distillation pipeline from a frozen teacher and a trainable student through mean aggregation, an MLP, and an InfoNCE loss" loading="lazy">
+        <figcaption>The pipeline. The MLP and the contrastive loss exist only during training, so the saved student has exactly the size and speed of a normally trained one.</figcaption>
+      </figure>
+      <p>
+        For OpenVLA I used LoRA for 25,000 steps at batch size 20 on a rented A100, with λ of 0.05, a temperature of 0.07 and an MLP hidden size of 2048. SmolVLA trained for 30,000 steps at batch size 32 on a local RTX 3060 with λ of 0.1, a temperature of 0.12 and a hidden size of 8192. Everything was scored on LIBERO-Spatial, ten tabletop tasks of the form pick up the black bowl at some location and place it on the plate, over three seeds.
+      </p>
+      <h4>Does it transfer</h4>
+      <div class="modal-table-wrap">
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>student</th>
+              <th>vanilla</th>
+              <th>distilled</th>
+              <th>gain</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>OpenVLA (7B)</td><td>86.0</td><td>90.7</td><td>+4.7</td></tr>
+            <tr class="adopted"><td>SmolVLA (450M)</td><td>77.1</td><td>87.5</td><td>+10.4</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure class="modal-figure">
+        <img src="photos/projects/thesis/bars.png" alt="bar chart of LIBERO-Spatial success rate for vanilla and distilled OpenVLA and SmolVLA" loading="lazy">
+        <figcaption>Success rate on LIBERO-Spatial. The smaller student gains more, even though its architecture and data differ from the teacher's.</figcaption>
+      </figure>
+      <p>
+        The larger gain on SmolVLA was the result I cared about most, because it means the transfer survives a mismatched backbone. A likely part of why OpenVLA gains less is that it can only be fine-tuned with LoRA and has to run in 8-bit on my hardware, and both of those cost it some accuracy before distillation even starts.
+      </p>
+      <h4>What mattered in the ablations</h4>
+      <p>
+        Mean aggregation over the sequence beat taking the last hidden state, 87.5 against 84.1. The loss weight and temperature interact, and the best cell for OpenVLA (λ of 0.05, temperature 0.07) reached 90.7 while its neighbours dropped as low as 81.5. The standard deviations across seeds run from 6 to 19 points, so I would not read much into differences inside that range.
+      </p>
+      <div class="modal-table-wrap">
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>OpenVLA</th>
+              <th>τ = 0.02</th>
+              <th>τ = 0.07</th>
+              <th>τ = 0.12</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>λ = 0.01</td><td>87.7</td><td>88.0</td><td>84.5</td></tr>
+            <tr class="adopted"><td>λ = 0.05</td><td>88.2</td><td>90.7</td><td>82.5</td></tr>
+            <tr><td>λ = 0.10</td><td>90.2</td><td>82.3</td><td>81.5</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The MLP size told a consistent story. OpenVLA, whose representations already sit close to the teacher's, did best with a hidden size of 2048 (90.7, against 86.0 at 512 and 85.8 at 8192). SmolVLA kept improving up to 8192 (87.5, against 80.5 at 512), which fits the idea that a mismatched backbone needs a more expressive bridge. A 2048 MLP for SmolVLA still gave a 9.5 point gain with 17M extra training parameters, so the extra 24M for the last point is a real tradeoff.
+      </p>
+      <h4>Did the representations actually align</h4>
+      <figure class="modal-figure">
+        <img src="photos/projects/thesis/pca.png" alt="PCA of aggregated hidden states for the teacher, the distilled student, the vanilla student, and the student before training" loading="lazy">
+        <figcaption>PCA of the aggregated hidden states of OpenVLA. After plain behavioral cloning (green) the states drift far from the teacher, and with distillation (red) they land closer to it and keep a variance more like the teacher's. The teacher cluster is tiny because the two models normalize differently, so it is magnified in the inset.</figcaption>
+      </figure>
+      <h4>Few-shot behavior</h4>
+      <p>
+        To test whether the student inherits something general, I trained SmolVLA on only ten demonstrations, one per task. The distilled model scored 19.2 and the vanilla one 15.4, about 25 percent better with identical data and capacity.
       </p>
       <p>
-        What helped most was a staged training curriculum: first warm up the student on pure behavioural cloning, then introduce distillation losses progressively. Jumping straight into joint training made the student collapse to imitating the teacher's activations without understanding the task.
+        I then took OpenVLA models trained on LIBERO-Spatial and fine-tuned them on ten episodes of LIBERO-Object, which is a different set of tasks. Success was 1 percent for the distilled model and 0 for the vanilla one, which is too low to mean anything on its own. The trajectories are more informative. The mean end-effector path of the distilled model heads for the right object and tries to grasp it, while the vanilla model moves to arbitrary points in free space and then goes straight to the goal.
       </p>
+      <figure class="modal-figure">
+        <img src="photos/projects/thesis/traj_task2.png" alt="mean end-effector trajectories for the cream cheese task, comparing expert, distilled and vanilla models" loading="lazy">
+        <figcaption>Cream cheese task. Blue is the expert, red the distilled model and green the vanilla one. The distilled path enters the object region, the vanilla path never does.</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <img src="photos/projects/thesis/fail_task5.png" alt="mean end-effector trajectories for the milk task where the distilled model approaches a distractor" loading="lazy">
+        <figcaption>Milk task, where the distilled model picks the wrong but similar object (orange juice). It still follows the right sequence of grasping and carrying, while the vanilla model skips the object altogether.</figcaption>
+      </figure>
+      <h4>Limits</h4>
       <p>
-        LoRA for fine-tuning the student backbone was the right call — full fine-tuning diverged quickly on the small LIBERO datasets. The adapter ranks needed careful tuning per module; attention layers wanted lower rank than feed-forward layers.
+        Compute decided most of the design. OpenVLA ran with LoRA and a limited number of steps on a rented GPU, and everything was evaluated in simulation on one LIBERO suite. I did not test a real arm, other suites, or other teacher pretraining sets. The experiment I most want to see is a teacher pretrained on pure human video instead of robot video, because that is the setting the method is meant for.
       </p>
-      <p>
-        Long-horizon tasks exposed the main remaining gap. The student performs well on short, atomic operations but accumulates errors over sequences. This is the classic compounding error problem under behavioural cloning, and distillation doesn't fix it — it just inherits the teacher's same failure mode at lower cost.
-      </p>
-      <h4>What I'd do differently</h4>
-      <p>
-        Start with a much simpler student architecture and only scale up if needed. The pressure to match the teacher's design biased me toward an unnecessarily similar structure. Also: instrument everything from day one. Loss curves lie; per-task success rates tell the real story.
-      </p>
+      <h4>Tools</h4>
+      <div class="modal-tech">
+        <span>PyTorch</span><span>LIBERO</span><span>OpenVLA</span><span>SmolVLA</span><span>LAPA</span><span>LoRA</span><span>Contrastive Learning</span>
+      </div>
     </div>
   </div>
 </div>
@@ -526,6 +620,50 @@ a { color: inherit; text-decoration: none; }
         <video src="photos/projects/drone-bounce/tuned_success_h2.0.mp4" autoplay muted loop playsinline></video>
         <figcaption>The adopted controller rallying to a 2.0 m apex under nominal wind</figcaption>
       </figure>
+
+      <h4>How a bounce is scored</h4>
+      <p>
+        A bounce counts as good only if its apex is within 15 cm of the commanded height and the ball fell below 1.25 m beforehand. The second condition is the honest part, since without it a controller can score by nudging the ball near the top of its arc. Two conditions are used throughout. Nominal has light wind and a fixed drop height, and moderate has stronger wind and a randomised drop height. Every number below uses 100 seeds so none of it can be cherry picked.
+      </p>
+
+      <h4>Seeing the ball</h4>
+      <p>
+        The ball is observed once every 0.30 s and a bounce arc lasts about a second, so the controller sees two or three samples per bounce and never the moment of contact. It has to predict where and when the ball will cross the racket. A plain constant velocity filter breaks at every impact, so the filter I use flips the vertical velocity at the strike plane, inflates its process noise through contact, and supports the ball while it rests on the racket.
+      </p>
+      <div class="modal-table-wrap">
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>RMS error</th>
+              <th>plain filter</th>
+              <th>bounce aware</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>height, whole run</td><td>22.7 cm</td><td>3.3 cm</td></tr>
+            <tr><td>height, free flight</td><td>12.2 cm</td><td>1.4 cm</td></tr>
+            <tr><td>vertical speed, whole run</td><td>1.81 m/s</td><td>0.44 m/s</td></tr>
+            <tr class="adopted"><td>vertical speed, free flight</td><td>0.86 m/s</td><td>0.085 m/s</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        What the controller actually consumes is the predicted contact. 250 ms before impact it is within 2.5 cm and 123 ms, and by 100 ms before impact it is within 1.8 cm and 75 ms.
+      </p>
+      <figure class="modal-figure">
+        <video src="photos/projects/drone-bounce/estimator_tracking.mp4" autoplay muted loop playsinline></video>
+        <figcaption>The filter following the ball through a decaying rally</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/estimator_tracking.png" alt="true ball state against the bounce aware Kalman estimate" loading="lazy">
+        <figcaption>The bounce aware filter tracking the ball. Note how the velocity covariance fans out between the sparse measurements (green) and snaps back at each contact (grey lines).</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/estimator_onboard.png" alt="the estimate running inside the closed loop during an eight second rally" loading="lazy">
+        <figcaption>The same filter running inside the closed loop while the controller is hitting the ball. The estimate stays locked to the true arcs around the target line.</figcaption>
+      </figure>
+
+      <h4>Five controllers, each fixing the last one's failure</h4>
       <div class="modal-table-wrap">
         <table class="modal-table">
           <thead>
@@ -549,17 +687,184 @@ a { color: inherit; text-decoration: none; }
         <img src="photos/projects/drone-bounce/good_vs_height.png" alt="good bounces per 20 s against target apex height, for each landmark controller" loading="lazy">
         <figcaption>Scoring rate against target apex height. Fixed z matches the adopted controller at 1.5 m and collapses to zero by 2.0 m, which is what the single number in the table hides.</figcaption>
       </figure>
+
+      <p>
+        <strong>1. Baseline.</strong> A proportional velocity loop computes the rebound speed needed for the target apex and drives the racket to it. At 1.5 m it rallies happily, but asked for 2.0 m it undershoots, has no lateral authority, and lets the ball walk off.
+      </p>
+      <div class="modal-figure-row">
+        <figure class="modal-figure">
+          <video src="photos/projects/drone-bounce/s1_baseline_success_h1.5.mp4" autoplay muted loop playsinline></video>
+          <figcaption>Baseline at 1.5 m: 44 good bounces and no drop</figcaption>
+        </figure>
+        <figure class="modal-figure">
+          <video src="photos/projects/drone-bounce/s1_baseline_fail_drop_h2.0.mp4" autoplay muted loop playsinline></video>
+          <figcaption>Baseline at 2.0 m: undershoots, drifts and drops with 0 good bounces</figcaption>
+        </figure>
+      </div>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/apexerr_vs_height.png" alt="apex error against target height for each controller" loading="lazy">
+        <figcaption>Apex error against target height. For the baseline two things degrade at once, the accuracy and the survival.</figcaption>
+      </figure>
+
+      <p>
+        <strong>2. Fixed z flick.</strong> Flicking from a fixed racket height and adding a small tilt bias proportional to the ball's horizontal speed keeps the ball centred. It is the best easy target scorer of all five, but it has no way to lift the apex. At 2.0 m it keeps the ball alive for 27 bounces and none of them is on target.
+      </p>
+      <div class="modal-figure-row">
+        <figure class="modal-figure">
+          <video src="photos/projects/drone-bounce/s2_fixedz_success_h1.5.mp4" autoplay muted loop playsinline></video>
+          <figcaption>Fixed z at 1.5 m: 43 good bounces and it survives the full horizon</figcaption>
+        </figure>
+        <figure class="modal-figure">
+          <video src="photos/projects/drone-bounce/s2_fixedz_fail_undershoot_h2.0.mp4" autoplay muted loop playsinline></video>
+          <figcaption>Fixed z at 2.0 m: 27 bounces, zero on target</figcaption>
+        </figure>
+      </div>
+
+      <p>
+        <strong>3. Lead float.</strong> I tried striking earlier by leading the ball off the live, rising racket plane. Planning against a plane that is itself rising makes the timing circular, the approach shrinks toward zero, and the strike degenerates into a tap near the apex. It scores well on the wrong metric, with 67 to 87 percent survival at every height, while its real good bounces collapse.
+      </p>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/hollow_survival.png" alt="survival against good bounces for every controller, with lead float in the high survival low score corner" loading="lazy">
+        <figcaption>Survival is not competence. The lead float cluster sits in the corner with high survival and near zero good bounces.</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <video src="photos/projects/drone-bounce/s3_leadfloat_fail_tap_h1.5.mp4" autoplay muted loop playsinline></video>
+        <figcaption>Lead float at 1.5 m: 89 near apex events and only 5 real good bounces</figcaption>
+      </figure>
+
+      <p>
+        <strong>4. Anchored strike.</strong> The cure is to plan against a fixed plane at 1.043 m instead of the live racket. The ball must actually fall to that plane, and the strike gives it the rebound speed needed for the target apex. The racket to ball map is fit online with a two point secant, so the flick lands despite a restitution of 0.831. The bounces are real now and the high targets are reachable, but at height the racket does not get under the ball fast enough and the ball drifts away after a good run.
+      </p>
+      <div class="modal-figure-row">
+        <figure class="modal-figure">
+          <video src="photos/projects/drone-bounce/s4_anchored_success_h1.5.mp4" autoplay muted loop playsinline></video>
+          <figcaption>Anchored at 1.5 m: 36 genuine good bounces</figcaption>
+        </figure>
+        <figure class="modal-figure">
+          <video src="photos/projects/drone-bounce/s4_anchored_fail_drift_h2.2.mp4" autoplay muted loop playsinline></video>
+          <figcaption>Anchored at 2.2 m: hits the high apex 15 times, then drifts sideways and drops</figcaption>
+        </figure>
+      </div>
+
+      <p>
+        <strong>5. Tuned lateral follow.</strong> The vertical game was solved, so the leak was lateral. Because the drone is underactuated, sideways acceleration is commanded through pitch, with a PD on the horizontal error and the damping kept critical. The one free knob is the follow stiffness, and sweeping it shows a window.
+      </p>
       <figure class="modal-figure">
         <img src="photos/projects/drone-bounce/kpx_tuning.png" alt="sweep of the lateral follow gain against good bounces and survival" loading="lazy">
         <figcaption>The lateral follow gain sweep. Scores rise, plateau between 12 and 20, then fall off a cliff past 24, so 20 was adopted.</figcaption>
       </figure>
       <figure class="modal-figure">
-        <img src="photos/projects/drone-bounce/estimator_tracking.png" alt="true ball state against the bounce aware Kalman estimate" loading="lazy">
-        <figcaption>The bounce aware filter tracking the ball. Note how the velocity covariance fans out between the sparse measurements (green) and snaps back at each contact (grey lines).</figcaption>
+        <img src="photos/projects/drone-bounce/survival_vs_height.png" alt="survival against target height for each controller" loading="lazy">
+        <figcaption>Survival against target height. The tuned controller holds 98 percent at 1.5 m and still 72 percent at 2.4 m, where every earlier version had already collapsed.</figcaption>
       </figure>
+      <figure class="modal-figure">
+        <video src="photos/projects/drone-bounce/s5_tuned_robust_h1.5_moderate.mp4" autoplay muted loop playsinline></video>
+        <figcaption>Tuned controller at 1.5 m with raised wind and a randomised drop height: 33 good bounces</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <img src="photos/projects/drone-bounce/nominal_vs_moderate.png" alt="the five controllers compared under nominal and moderate wind" loading="lazy">
+        <figcaption>Nominal against moderate conditions. The ranking holds and the absolute numbers compress. The survival drop under wind is shared by every version, which points at the 0.30 s blind gap against a roughly one second arc rather than at any gain.</figcaption>
+      </figure>
+
+      <h4>What I took from it</h4>
+      <p>
+        Two things mattered more than any gain. The first was the grader. A metric that measures survival alone would have crowned the lead float controller, so the honest grader with its valley test is what kept the project honest. The second was structural. Anchoring the strike plane fixed more than any amount of tuning did, and the tuning only became worth doing once the structure was right.
+      </p>
       <h4>Tools</h4>
       <div class="modal-tech">
         <span>Python</span><span>MuJoCo</span><span>NumPy</span><span>Kalman Filtering</span><span>Control Systems</span><span>Matplotlib</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-mars-rover-nav" onclick="closeModalOnBg(event,'modal-mars-rover-nav')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-mars-rover-nav')">×</button>
+    <div class="modal-tags">
+      <span class="modal-tag">project</span>
+      <span class="modal-tag purple">vision</span>
+    </div>
+    <h2>Mars Rover Nav: crossing a rock field with only stereo vision</h2>
+    <div class="modal-date">October 2026</div>
+    <hr class="modal-divider">
+    <div class="modal-body">
+      <p>
+        A simulated rover starts at one end of a 7 m wide corridor full of rocks and soft soil. It has to find the one rock with a cyan marker about 22 m away, drive up to it without touching a rock or leaving the corridor, and take a photo of it. All it has is a stereo camera pair, wheel encoders, a gyro and an IMU. There is no GPS, no map and no ground truth, and the true traction, motor lags and gyro bias change from field to field, so it cannot trust its own motion model either.
+      </p>
+      <p>
+        I wrote the whole thing in pure Python and OpenCV, simulator included. The stereo images come from a ray caster that intersects a height field and textured ellipsoid rocks, with noisy sensors and slope and slip in the dynamics.
+      </p>
+      <figure class="modal-figure">
+        <video src="photos/projects/mars-rover-nav/mpc_3d.mp4" autoplay muted loop playsinline></video>
+        <figcaption>One run of the final controller. The yellow line is the true path, the dashed green one is where the rover thinks it went, and the panel on the right is the left camera.</figcaption>
+      </figure>
+
+      <h4>Seeing</h4>
+      <p>
+        Block matching gives a disparity map. A robust polynomial fit in disparity space models the ground, whatever the slope, and removes it. What remains is split into connected components and each one becomes a rock with a point cloud, a radius and a footprint. Rocks that are too close for good stereo are found from the shift between the left and right silhouettes instead. The beacon is found by its cyan marker in HSV, checked against stereo support and refined with GrabCut. Detections are fused across frames into landmarks with covariances, and footprints are remembered so a rock that leaves the view is not forgotten.
+      </p>
+      <figure class="modal-figure">
+        <video src="photos/projects/mars-rover-nav/mpc_stereo.mp4" autoplay muted loop playsinline></video>
+        <figcaption>What the rover sees. The left and right frames, once per simulated second, with the yellow box appearing when it submits the beacon photo.</figcaption>
+      </figure>
+
+      <h4>Knowing where it is</h4>
+      <p>
+        Position comes from dead reckoning on the wheel encoders and gyro. Soil changes how much the wheels slip in a way the encoders cannot see, so a bank of yaw response filters with different lags estimates a traction scale online and corrects speed and heading rate with it. The IMU supplies pitch and roll for the slope terms. The mean position error over a run is about 9 cm.
+      </p>
+
+      <h4>Deciding where to go</h4>
+      <p>
+        The planner is a sampling MPC. Every half second it scores 105 candidates (three speeds, seven first yaw rates, five second yaw rates), rolls each one out as a unicycle for six seconds, and charges for corridor edges, rock footprints and lack of progress toward a lane or the beacon. A short horizon safety filter sits between the planner and the wheels. It re-checks a small grid of commands using the measured speed, yaw rate and slip, and can stop or reverse when something is close. If the rover makes less than 0.45 m of forward progress in 12 s, a kinodynamic beam search (nine layers, width 36) takes over to find a way out, and the MPC follows the route it returns.
+      </p>
+
+      <h4>Results over 40 random fields</h4>
+      <div class="modal-table-wrap">
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th>variant</th>
+              <th>reached</th>
+              <th>rock contacts</th>
+              <th>beacon error</th>
+              <th>mean time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="adopted"><td>Direct MPC</td><td>40 / 40</td><td>0</td><td>0.30 m</td><td>72 s</td></tr>
+            <tr><td>without stall recovery</td><td>40 / 40</td><td>0</td><td>0.31 m</td><td>71 s</td></tr>
+            <tr><td>without safety filter</td><td>36 / 40</td><td>4</td><td>0.26 m</td><td>72 s</td></tr>
+            <tr><td>sampling MPC only</td><td>36 / 40</td><td>4</td><td>0.26 m</td><td>72 s</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        The safety filter is what keeps the rover from touching rocks. Removing it costs four fields out of forty, and the four failures are the same with or without the recovery planner. Beacon error is averaged over the runs that reached it, so the variants without the filter look slightly better on that column because their crashing runs are not counted.
+      </p>
+      <p>
+        The stall recovery did something less impressive than I expected. It changes only 2 of the 40 runs and never decides whether the rover gets there. On the slowest field it finished in 130 s with recovery against 120 s without. I am keeping it because it is cheap, but the data does not make a case for it in this simulator.
+      </p>
+      <figure class="modal-figure">
+        <video src="photos/projects/mars-rover-nav/compare4.mp4" autoplay muted loop playsinline></video>
+        <figcaption>The four variants on the same field. Both runs without the safety filter end in rock contact, the other two reach the beacon.</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <video src="photos/projects/mars-rover-nav/compare_safety.mp4" autoplay muted loop playsinline></video>
+        <figcaption>A second field. With the filter the rover reaches the beacon, and without it the rover drives into a rock.</figcaption>
+      </figure>
+      <figure class="modal-figure">
+        <img src="photos/projects/mars-rover-nav/mpc_overview.png" alt="true rover paths over 40 random fields, pose error over time, and beacon position error at capture" loading="lazy">
+        <figcaption>The true paths over all 40 fields, the dead reckoning error growing with time, and the beacon position error at the moment of capture.</figcaption>
+      </figure>
+
+      <h4>A bug I am glad I caught</h4>
+      <p>
+        When I ran the evaluation in parallel, the same field gave a different answer depending on what had run before it in the same process. GrabCut seeds its internal clustering from OpenCV's global random number generator, so each episode inherited the state the previous one left behind. Reseeding it at the start of every episode fixed it, and I reran all four evaluations afterwards so every number above can be reproduced.
+      </p>
+      <h4>Tools</h4>
+      <div class="modal-tech">
+        <span>Python</span><span>OpenCV</span><span>NumPy</span><span>Stereo Vision</span><span>Model Predictive Control</span><span>Matplotlib</span>
       </div>
     </div>
   </div>
