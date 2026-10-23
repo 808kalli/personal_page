@@ -799,5 +799,14 @@
   "source": "NeurIPS 2025 poster",
   "why": "The keywords caught sparse autoencoders, but missed that this uses them specifically to solve model-centric data selection via monosemantic neuronal activations.",
   "recorded": "2026-10-23T09:36:27.645Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=sT1U2enBh0",
+  "verdict": "liked",
+  "title": "Interactive and Hybrid Imitation Learning: Provably Beating Behavior Cloning",
+  "url": "https://openreview.net/forum?id=sT1U2enBh0",
+  "source": "NeurIPS 2025 poster",
+  "why": "This paper addresses why policies learned from demonstrations fail at deployment by revisiting behavior cloning and compounding errors theoretically.",
+  "recorded": "2026-10-23T09:41:58.314Z"
  }
 ]
