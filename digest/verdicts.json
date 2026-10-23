@@ -790,5 +790,14 @@
   "source": "NeurIPS 2025 poster",
   "why": "Extends sparse autoencoders and monosemanticity analysis to vision-language models like CLIP, fitting directly into the core interpretability interest.",
   "recorded": "2026-10-20T11:04:28.415Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=9AHkbALT2t",
+  "verdict": "liked",
+  "title": "Task-Specific Data Selection for Instruction Tuning via Monosemantic Neuronal Activations",
+  "url": "https://openreview.net/forum?id=9AHkbALT2t",
+  "source": "NeurIPS 2025 poster",
+  "why": "The keywords caught sparse autoencoders, but missed that this uses them specifically to solve model-centric data selection via monosemantic neuronal activations.",
+  "recorded": "2026-10-23T09:36:27.645Z"
  }
 ]
