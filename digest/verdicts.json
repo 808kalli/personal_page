@@ -808,5 +808,14 @@
   "source": "NeurIPS 2025 poster",
   "why": "This paper addresses why policies learned from demonstrations fail at deployment by revisiting behavior cloning and compounding errors theoretically.",
   "recorded": "2026-10-23T09:41:58.314Z"
+ },
+ {
+  "id": "arxiv:2609.37441",
+  "verdict": "liked",
+  "title": "ANISOTROPIC REPRESENTATIONS IMPROVE PLANNING IN JEPA WORLD MODELS",
+  "url": "https://arxiv.org/pdf/2609.37441",
+  "source": "arxiv.org",
+  "why": "",
+  "recorded": "2026-10-23T14:49:31.614Z"
  }
 ]
