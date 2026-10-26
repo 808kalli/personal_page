@@ -826,5 +826,14 @@
   "source": "openreview.net",
   "why": "",
   "recorded": "2026-10-23T14:55:30.958Z"
+ },
+ {
+  "id": "arxiv:2610.32208",
+  "verdict": "liked",
+  "title": "Do VLAs Know They Will Fail? Interpretable Success and Failure Patterns in Physical AI Systems",
+  "url": "http://arxiv.org/abs/2610.32208v1",
+  "source": "arXiv",
+  "why": "The keywords drastically undersold this paper. It sits squarely at the intersection of robot policy interpretability, sparse autoencoders, and failure prediction.",
+  "recorded": "2026-10-26T10:07:28.853Z"
  }
 ]
