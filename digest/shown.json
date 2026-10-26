@@ -1,15 +1,13 @@
 {
 "arxiv:2404.14082": "2026-10-25",
+"arxiv:2411.14257": "2026-10-26",
 "arxiv:2503.10370": "2026-09-30",
 "arxiv:2505.11924": "2026-09-29",
 "arxiv:2509.03647": "2026-10-21",
 "arxiv:2602.17560": "2026-10-01",
 "arxiv:2609.24118": "2026-09-26",
-"arxiv:2609.25187": "2026-09-25",
-"arxiv:2609.25636": "2026-09-25",
 "arxiv:2609.27158": "2026-09-26",
 "arxiv:2609.28256": "2026-09-26",
-"arxiv:2609.29362": "2026-09-25",
 "arxiv:2609.29845": "2026-09-27",
 "arxiv:2609.30996": "2026-09-29",
 "arxiv:2609.31056": "2026-09-29",
@@ -29,6 +27,7 @@
 "arxiv:2610.28799": "2026-10-22",
 "arxiv:2610.29676": "2026-10-24",
 "arxiv:2610.30474": "2026-10-23",
+"arxiv:2610.32208": "2026-10-26",
 "https://alignment.anthropic.com/2025/automated-auditing": "2026-09-27",
 "https://deepmind.google/blog/gemma-scope-2-helping-the-ai-safety-community-deepen-understanding-of-complex-language-model-behavior": "2026-09-27",
 "https://github.com/anthropics/PySvelte": "2026-09-28",
@@ -76,7 +75,5 @@
 "https://transformer-circuits.pub/2023/may-update/index.html": "2026-09-28",
 "https://transformer-circuits.pub/2024/jan-update/index.html": "2026-09-28",
 "https://transformer-circuits.pub/2024/july-update/index.html": "2026-09-27",
-"https://transformer-circuits.pub/2024/qualitative-essay/index.html": "2026-09-25",
-"https://transformer-circuits.pub/2025/attention-qk/index.html": "2026-09-25",
 "https://www.alignmentforum.org/posts/khxvR2fgAeDvG5N2F/shallow-beliefs-midtraining-does-not-inoculate-against-em": "2026-09-27"
 }
