@@ -1,4 +1,5 @@
 {
+"arxiv:2308.14179": "2026-10-29",
 "arxiv:2404.14082": "2026-10-25",
 "arxiv:2411.14257": "2026-10-26",
 "arxiv:2503.10370": "2026-09-30",
@@ -8,7 +9,6 @@
 "arxiv:2602.17560": "2026-10-01",
 "arxiv:2609.30996": "2026-09-29",
 "arxiv:2609.31056": "2026-09-29",
-"arxiv:2609.31394": "2026-09-28",
 "arxiv:2609.34091": "2026-09-29",
 "arxiv:2609.35686": "2026-09-29",
 "arxiv:2610.02666": "2026-10-05",
@@ -27,7 +27,8 @@
 "arxiv:2610.32208": "2026-10-26",
 "arxiv:2610.34756": "2026-10-27",
 "arxiv:2610.35636": "2026-10-27",
-"https://github.com/anthropics/PySvelte": "2026-09-28",
+"arxiv:2610.36269": "2026-10-29",
+"arxiv:2610.36823": "2026-10-29",
 "https://openreview.net/forum?id=1Sb0363f2y": "2026-10-28",
 "https://openreview.net/forum?id=1WkolvkTVi": "2026-10-20",
 "https://openreview.net/forum?id=3aNvX9TQTo": "2026-10-28",
@@ -41,6 +42,7 @@
 "https://openreview.net/forum?id=BO7qo66YJ2": "2026-10-23",
 "https://openreview.net/forum?id=C7LxkebvVW": "2026-10-10",
 "https://openreview.net/forum?id=DaNnkQJSQf": "2026-10-20",
+"https://openreview.net/forum?id=EGSSHukI05": "2026-10-29",
 "https://openreview.net/forum?id=GjkuXI7hX7": "2026-10-22",
 "https://openreview.net/forum?id=HXJ6pUSn1L": "2026-10-12",
 "https://openreview.net/forum?id=MDvecs7EvO": "2026-10-10",
@@ -61,13 +63,10 @@
 "https://openreview.net/forum?id=ibLGUkBWlz": "2026-10-20",
 "https://openreview.net/forum?id=jiWXDvw1Lf": "2026-10-09",
 "https://openreview.net/forum?id=lGyXq0LOeQ": "2026-10-20",
-"https://openreview.net/forum?id=lkmlNHuzY4": "2026-10-19",
+"https://openreview.net/forum?id=lkmlNHuzY4": "2026-10-29",
 "https://openreview.net/forum?id=o2w2iiMyEU": "2026-10-21",
 "https://openreview.net/forum?id=p8lKcNkJRi": "2026-10-21",
 "https://openreview.net/forum?id=sT1U2enBh0": "2026-10-23",
 "https://openreview.net/forum?id=wj4lM45xQR": "2026-10-27",
-"https://openreview.net/forum?id=wozhdnRCtw": "2026-10-23",
-"https://transformer-circuits.pub/2023/july-update/index.html": "2026-09-28",
-"https://transformer-circuits.pub/2023/may-update/index.html": "2026-09-28",
-"https://transformer-circuits.pub/2024/jan-update/index.html": "2026-09-28"
+"https://openreview.net/forum?id=wozhdnRCtw": "2026-10-23"
 }
