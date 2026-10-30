@@ -844,5 +844,14 @@
   "source": "NeurIPS 2025 poster",
   "why": "Applies sparse autoencoders to vision foundation models for dataset bias characterization, fitting neatly into the core interest in sparse autoencoders and feature interpretability.",
   "recorded": "2026-10-30T10:13:09.071Z"
+ },
+ {
+  "id": "arxiv:2610.36823",
+  "verdict": "liked",
+  "title": "TAPESTRY: A Single Backbone for Video Generation and Robot Control",
+  "url": "http://arxiv.org/abs/2610.36823v1",
+  "source": "arXiv",
+  "why": "Addresses how to leverage pretrained video models for robot control without expensive generation at inference time.",
+  "recorded": "2026-10-30T10:14:11.672Z"
  }
 ]
