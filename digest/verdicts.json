@@ -835,5 +835,14 @@
   "source": "arXiv",
   "why": "The keywords drastically undersold this paper. It sits squarely at the intersection of robot policy interpretability, sparse autoencoders, and failure prediction.",
   "recorded": "2026-10-26T10:07:28.853Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=lkmlNHuzY4",
+  "verdict": "liked",
+  "title": "ConceptScope: Characterizing Dataset Bias via Disentangled Visual Concepts",
+  "url": "https://openreview.net/forum?id=lkmlNHuzY4",
+  "source": "NeurIPS 2025 poster",
+  "why": "Applies sparse autoencoders to vision foundation models for dataset bias characterization, fitting neatly into the core interest in sparse autoencoders and feature interpretability.",
+  "recorded": "2026-10-30T10:13:09.071Z"
  }
 ]
