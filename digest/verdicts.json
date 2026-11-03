@@ -862,5 +862,14 @@
   "source": "arxiv.org",
   "why": "",
   "recorded": "2026-11-01T20:42:37.708Z"
+ },
+ {
+  "id": "arxiv:2610.41185",
+  "verdict": "liked",
+  "title": "Mechanistic Interpretability for End-to-End Self-Driving",
+  "url": "http://arxiv.org/abs/2610.41185v1",
+  "source": "arXiv",
+  "why": "Applies mechanistic interpretability and sparse autoencoders to embodied robot policies rather than language models, matching a core interest.",
+  "recorded": "2026-11-03T13:32:58.489Z"
  }
 ]
