@@ -871,5 +871,14 @@
   "source": "arXiv",
   "why": "Applies mechanistic interpretability and sparse autoencoders to embodied robot policies rather than language models, matching a core interest.",
   "recorded": "2026-11-03T13:32:58.489Z"
+ },
+ {
+  "id": "arxiv:2605.03907",
+  "verdict": "liked",
+  "title": "Steer Like the LLM: Activation Steering that Mimics Prompting",
+  "url": "http://arxiv.org/abs/2605.03907v1",
+  "source": "arXiv",
+  "why": "Critically examines the mechanics of activation steering versus prompting, aligning with core interpretability oversight interests.",
+  "recorded": "2026-11-03T13:35:55.237Z"
  }
 ]
