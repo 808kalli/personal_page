@@ -880,5 +880,14 @@
   "source": "arXiv",
   "why": "Critically examines the mechanics of activation steering versus prompting, aligning with core interpretability oversight interests.",
   "recorded": "2026-11-03T13:35:55.237Z"
+ },
+ {
+  "id": "https://openreview.net/forum?id=gwBqVheRiD",
+  "verdict": "liked",
+  "title": "Curvature Tuning: Provable Training-free Model Steering From a Single Parameter",
+  "url": "https://openreview.net/forum?id=gwBqVheRiD",
+  "source": "NeurIPS 2025 poster",
+  "why": "This paper shifts focus from weight adaptation to activation functions for interpretable model steering which aligns with the core interest.",
+  "recorded": "2026-11-03T13:37:15.726Z"
  }
 ]
