@@ -889,5 +889,14 @@
   "source": "NeurIPS 2025 poster",
   "why": "This paper shifts focus from weight adaptation to activation functions for interpretable model steering which aligns with the core interest.",
   "recorded": "2026-11-03T13:37:15.726Z"
+ },
+ {
+  "id": "arxiv:2611.10872",
+  "verdict": "liked",
+  "title": "DreamVLA: From Generated Human Motions to Humanoid Vision-Language-Action Policies",
+  "url": "http://arxiv.org/abs/2611.10872v1",
+  "source": "arXiv",
+  "why": "Directly targets robot learning data and vision language action models through generated human motion and DAgger distillation. The keywords missed the connection to our core interest in why demonstrat",
+  "recorded": "2026-11-10T12:53:16.619Z"
  }
 ]
