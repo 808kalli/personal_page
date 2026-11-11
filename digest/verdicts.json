@@ -898,5 +898,14 @@
   "source": "arXiv",
   "why": "Directly targets robot learning data and vision language action models through generated human motion and DAgger distillation. The keywords missed the connection to our core interest in why demonstrat",
   "recorded": "2026-11-10T12:53:16.619Z"
+ },
+ {
+  "id": "arxiv:2611.13160",
+  "verdict": "liked",
+  "title": "How Much of Your VLA Is kNN",
+  "url": "http://arxiv.org/abs/2611.13160v1",
+  "source": "arXiv",
+  "why": "Analyzes why Vision Language Action models rely heavily on retrieval and action chunking rather than true generalization.",
+  "recorded": "2026-11-11T11:04:25.316Z"
  }
 ]
