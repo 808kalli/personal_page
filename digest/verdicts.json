@@ -907,5 +907,14 @@
   "source": "arXiv",
   "why": "Analyzes why Vision Language Action models rely heavily on retrieval and action chunking rather than true generalization.",
   "recorded": "2026-11-11T11:04:25.316Z"
+ },
+ {
+  "id": "arxiv:2611.23403",
+  "verdict": "liked",
+  "title": "Tracking Representations in LLM Reasoning Traces for Iterated Games",
+  "url": "http://arxiv.org/abs/2611.23403v1",
+  "source": "arXiv",
+  "why": "Keywords matched LLM reasoning, but the substance directly addresses internal representation tracking in agentic multi-agent settings and reasoning trace failures.",
+  "recorded": "2026-11-19T10:53:32.056Z"
  }
 ]
